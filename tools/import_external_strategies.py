@@ -7,7 +7,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 
 COMP_TRIBE_OVERRIDES = {
@@ -111,7 +111,15 @@ class SourceUrls:
 
 def load_json(source: str) -> Any:
     if source.startswith("http://") or source.startswith("https://"):
-        with urlopen(source) as response:
+        request = Request(
+            source,
+            headers={
+                "User-Agent": "Mozilla/5.0 (compatible; BGTacticianBot/1.0; +https://github.com/245138061/Hearthstone)",
+                "Accept": "application/json,text/plain,*/*",
+                "Accept-Language": "en-US,en;q=0.9,zh-CN;q=0.8",
+            },
+        )
+        with urlopen(request, timeout=30) as response:
             return json.loads(response.read().decode("utf-8"))
     return json.loads(Path(source).read_text())
 
