@@ -1,0 +1,269 @@
+{
+  "version": "2026.04.01",
+  "comps": [
+    {
+      "id": "mech_divine_reset",
+      "name": "圣盾机械重置流",
+      "tier": "T1",
+      "difficulty": "中",
+      "required_tribes": ["Mech"],
+      "allowed_anomalies": ["无畸变", "黄金竞技场", "传说酒馆"],
+      "recommended_mode": "BOTH",
+      "overview": "依靠磁力和圣盾刷新打中后期，容错高，适合稳血转吃鸡。",
+      "early_strategy": "2-4 回合优先拿稳场机械，三连尽量找 4 星中继件。",
+      "late_strategy": "核心是补盾和高频攻击，死神 4000 型到位后优先保站位。",
+      "upgrade_turns": ["3 铸币升 2", "7 铸币升 3", "9 铸币升 4", "13 铸币冲 5"],
+      "positioning_hints": [
+        { "slot": 1, "label": "圣盾冲锋位", "note": "先手破盾后吃回收收益。" },
+        { "slot": 6, "label": "死神 4000 型", "note": "放尾位吃更多保护，避免被先解。" }
+      ],
+      "key_minions": [
+        { "id": 101, "name": "偏折机器人", "star": 3, "phase": "3 星核心", "image_asset": "minions/tribes/mech.svg" },
+        { "id": 102, "name": "滑油机器人", "star": 4, "phase": "中期磁力", "image_asset": "minions/tribes/mech.svg" },
+        { "id": 103, "name": "死神 4000 型", "star": 6, "phase": "终局大核", "image_asset": "minions/tribes/mech.svg" }
+      ]
+    },
+    {
+      "id": "undead_reborn",
+      "name": "亡语亡灵复生流",
+      "tier": "T1",
+      "difficulty": "低",
+      "required_tribes": ["Undead"],
+      "allowed_anomalies": ["无畸变", "全员复生", "黄金竞技场"],
+      "recommended_mode": "BOTH",
+      "overview": "前中期强度平滑，依赖复生与召唤链滚雪球，适合保分。",
+      "early_strategy": "优先凑复生和召唤 token，酒馆 3 本前不急着贪高本。",
+      "late_strategy": "补充亡语放大器与群体增益，靠第二波怪物压制残局。",
+      "upgrade_turns": ["3 铸币升 2", "6 铸币升 3", "9 铸币升 4"],
+      "positioning_hints": [
+        { "slot": 1, "label": "送头亡语", "note": "先送掉触发整套召唤链。" },
+        { "slot": 7, "label": "增益后排", "note": "留在尾位避免被无效换掉。" }
+      ],
+      "key_minions": [
+        { "id": 201, "name": "复生斗士", "star": 2, "phase": "前期稳血", "image_asset": "minions/tribes/undead.svg" },
+        { "id": 202, "name": "缝合指挥官", "star": 4, "phase": "中期提质", "image_asset": "minions/tribes/undead.svg" },
+        { "id": 203, "name": "骸骨歌者", "star": 5, "phase": "终局增益", "image_asset": "minions/tribes/undead.svg" }
+      ]
+    },
+    {
+      "id": "elemental_azzinoth",
+      "name": "元素飙本经济流",
+      "tier": "T0",
+      "difficulty": "高",
+      "required_tribes": ["Elemental"],
+      "allowed_anomalies": ["无畸变", "铸币风暴", "传说酒馆"],
+      "recommended_mode": "SOLO",
+      "overview": "依赖大量铸币和刷新收益滚经济，成型上限极高。",
+      "early_strategy": "前期优先拿铸币和酒馆成长件，宁可卖血也要抢节奏。",
+      "late_strategy": "5-6 本集中找大身材联动，成型后用滚雪球压死全场。",
+      "upgrade_turns": ["2 铸币升 2", "5 铸币升 3", "8 铸币升 4", "10 铸币升 5", "13 铸币升 6"],
+      "positioning_hints": [
+        { "slot": 1, "label": "风怒元素", "note": "顶前面先破圣盾和嘲讽。" },
+        { "slot": 7, "label": "成长主核", "note": "后排保住持续成长件。" }
+      ],
+      "key_minions": [
+        { "id": 301, "name": "熔火旅店主", "star": 2, "phase": "铸币引擎", "image_asset": "minions/tribes/elemental.svg" },
+        { "id": 302, "name": "飓风塑形者", "star": 4, "phase": "中期提速", "image_asset": "minions/tribes/elemental.svg" },
+        { "id": 303, "name": "烈焰巨灵", "star": 6, "phase": "终局主核", "image_asset": "minions/tribes/elemental.svg" }
+      ]
+    },
+    {
+      "id": "pirate_apm",
+      "name": "海盗 APM 连锁流",
+      "tier": "T0",
+      "difficulty": "高",
+      "required_tribes": ["Pirate"],
+      "allowed_anomalies": ["无畸变", "铸币风暴", "双倍战吼"],
+      "recommended_mode": "BOTH",
+      "overview": "以低费海盗和售卖收益打高频操作，需要手速与判断同步在线。",
+      "early_strategy": "3 本前优先拿铸币海盗与跳费件，尽量保血进 4 本。",
+      "late_strategy": "找出牌核心后开始刷店拉满身材，注意留时间锁怪。",
+      "upgrade_turns": ["3 铸币升 2", "7 铸币升 3", "8 铸币升 4", "11 铸币升 5"],
+      "positioning_hints": [
+        { "slot": 1, "label": "清盾海盗", "note": "先手打掉对面关键护盾。" },
+        { "slot": 6, "label": "船长位", "note": "中后排避免被先换，持续给全队增益。" }
+      ],
+      "key_minions": [
+        { "id": 401, "name": "甲板学徒", "star": 2, "phase": "前期跳费", "image_asset": "minions/tribes/pirate.svg" },
+        { "id": 402, "name": "金牙船长", "star": 5, "phase": "刷牌核心", "image_asset": "minions/tribes/pirate.svg" },
+        { "id": 403, "name": "无赖舰队司令", "star": 6, "phase": "终局倍率", "image_asset": "minions/tribes/pirate.svg" }
+      ]
+    },
+    {
+      "id": "beast_deathrattle",
+      "name": "野兽亡语跳蛙流",
+      "tier": "T1",
+      "difficulty": "中",
+      "required_tribes": ["Beast"],
+      "allowed_anomalies": ["无畸变", "全员复生", "双倍战吼"],
+      "recommended_mode": "DUOS",
+      "overview": "需要较完整组件，但在双打里更容易由队友补足关键亡语位。",
+      "early_strategy": "以召唤和亡语件过渡，找机会提前囤核心 buff 怪。",
+      "late_strategy": "重点保护跳蛙链条和复生位，避免核心被风怒秒掉。",
+      "upgrade_turns": ["3 铸币升 2", "6 铸币升 3", "9 铸币升 4", "12 铸币升 5"],
+      "positioning_hints": [
+        { "slot": 1, "label": "跳蛙起手位", "note": "越早送掉越容易把 buff 传满。" },
+        { "slot": 7, "label": "复生保底位", "note": "避免先死导致链条断裂。" }
+      ],
+      "key_minions": [
+        { "id": 501, "name": "跳蛙骑士", "star": 2, "phase": "核心跳板", "image_asset": "minions/tribes/beast.svg" },
+        { "id": 502, "name": "鹦鹉监督者", "star": 4, "phase": "中期复读", "image_asset": "minions/tribes/beast.svg" },
+        { "id": 503, "name": "暴怒长牙", "star": 6, "phase": "终局收尾", "image_asset": "minions/tribes/beast.svg" }
+      ]
+    },
+    {
+      "id": "dragon_battlecry",
+      "name": "战吼巨龙成长流",
+      "tier": "T1",
+      "difficulty": "中",
+      "required_tribes": ["Dragon"],
+      "allowed_anomalies": ["无畸变", "双倍战吼", "传说酒馆"],
+      "recommended_mode": "BOTH",
+      "overview": "以稳定成长和优质身材为主，适合中速运营。",
+      "early_strategy": "先抓通用战吼牌和保血龙，保证曲线平滑升本。",
+      "late_strategy": "6 本后找高阶龙和翻倍件，一回合打出巨大身材差。",
+      "upgrade_turns": ["3 铸币升 2", "7 铸币升 3", "9 铸币升 4", "12 铸币升 5"],
+      "positioning_hints": [
+        { "slot": 2, "label": "圣盾龙", "note": "放前列吃掉对方第一轮碰撞。" },
+        { "slot": 7, "label": "成长发动机", "note": "压尾位保护最终成长件。" }
+      ],
+      "key_minions": [
+        { "id": 601, "name": "旅店驯龙者", "star": 3, "phase": "中期成长", "image_asset": "minions/tribes/dragon.svg" },
+        { "id": 602, "name": "庄园驭龙者", "star": 5, "phase": "战吼翻倍", "image_asset": "minions/tribes/dragon.svg" },
+        { "id": 603, "name": "炽天巨龙", "star": 6, "phase": "终局终结者", "image_asset": "minions/tribes/dragon.svg" }
+      ]
+    },
+    {
+      "id": "demon_selfdamage",
+      "name": "恶魔自伤吸血流",
+      "tier": "T2",
+      "difficulty": "中",
+      "required_tribes": ["Demon"],
+      "allowed_anomalies": ["无畸变", "黄金竞技场", "全员复生"],
+      "recommended_mode": "BOTH",
+      "overview": "上限依赖核心 5-6 星恶魔，但成型后血线压力会明显下降。",
+      "early_strategy": "前期用自伤加成件打连胜，别过度贪经济。",
+      "late_strategy": "补吸血和护盾，避免被爆发阵容一轮直接清空。",
+      "upgrade_turns": ["3 铸币升 2", "6 铸币升 3", "8 铸币升 4", "12 铸币升 5"],
+      "positioning_hints": [
+        { "slot": 1, "label": "吸血恶魔", "note": "先手回血保证残局续航。" },
+        { "slot": 6, "label": "自伤发动机", "note": "后排保活，持续叠加攻击。" }
+      ],
+      "key_minions": [
+        { "id": 701, "name": "痛苦侍者", "star": 2, "phase": "前期启动", "image_asset": "minions/tribes/demon.svg" },
+        { "id": 702, "name": "血契领主", "star": 4, "phase": "中期撑面", "image_asset": "minions/tribes/demon.svg" },
+        { "id": 703, "name": "噬魂总管", "star": 6, "phase": "终局吸血", "image_asset": "minions/tribes/demon.svg" }
+      ]
+    },
+    {
+      "id": "naga_spellcraft",
+      "name": "娜迦法术铸造流",
+      "tier": "T1",
+      "difficulty": "高",
+      "required_tribes": ["Naga"],
+      "allowed_anomalies": ["无畸变", "双倍战吼", "传说酒馆"],
+      "recommended_mode": "SOLO",
+      "overview": "每回合都要精确分配法术和资源，吃操作但回报稳定。",
+      "early_strategy": "以法术铸造过渡并找持续成长位，4 本开始提质量。",
+      "late_strategy": "集中法术给主核娜迦，尽量在战斗前把 buff 摆满。",
+      "upgrade_turns": ["3 铸币升 2", "6 铸币升 3", "9 铸币升 4", "11 铸币升 5"],
+      "positioning_hints": [
+        { "slot": 2, "label": "主核娜迦", "note": "避免吃先手硬解，保留第二轮输出。" },
+        { "slot": 7, "label": "法术辅助位", "note": "后置保护，防止关键光环提前阵亡。" }
+      ],
+      "key_minions": [
+        { "id": 801, "name": "潮汐书写者", "star": 3, "phase": "法术循环", "image_asset": "minions/tribes/naga.svg" },
+        { "id": 802, "name": "深海歌姬", "star": 4, "phase": "中期提质", "image_asset": "minions/tribes/naga.svg" },
+        { "id": 803, "name": "海眼女王", "star": 6, "phase": "终局大核", "image_asset": "minions/tribes/naga.svg" }
+      ]
+    },
+    {
+      "id": "quilboar_bloodgem",
+      "name": "野猪人宝石灌注流",
+      "tier": "T1",
+      "difficulty": "低",
+      "required_tribes": ["Quilboar"],
+      "allowed_anomalies": ["无畸变", "黄金竞技场", "铸币风暴"],
+      "recommended_mode": "BOTH",
+      "overview": "玩法直接，宝石分配和翻倍件决定上限，是很好的原型阵容。",
+      "early_strategy": "前期优先稳定宝石来源，不急着追求金怪。",
+      "late_strategy": "找到宝石倍增器后集中投资一到两个主核，站位求稳。",
+      "upgrade_turns": ["3 铸币升 2", "7 铸币升 3", "9 铸币升 4", "12 铸币升 5"],
+      "positioning_hints": [
+        { "slot": 1, "label": "嘲讽宝石位", "note": "顶住前排并快速吃满宝石。" },
+        { "slot": 7, "label": "倍增器", "note": "尾位保命，避免被对位白解。" }
+      ],
+      "key_minions": [
+        { "id": 901, "name": "宝石切割工", "star": 2, "phase": "宝石来源", "image_asset": "minions/tribes/quilboar.svg" },
+        { "id": 902, "name": "荆棘管理者", "star": 4, "phase": "中期翻倍", "image_asset": "minions/tribes/quilboar.svg" },
+        { "id": 903, "name": "铁鬃霸主", "star": 6, "phase": "终局主核", "image_asset": "minions/tribes/quilboar.svg" }
+      ]
+    },
+    {
+      "id": "murloc_poison",
+      "name": "鱼人剧毒控制流",
+      "tier": "T2",
+      "difficulty": "高",
+      "required_tribes": ["Murloc"],
+      "allowed_anomalies": ["无畸变", "黄金竞技场", "全员复生"],
+      "recommended_mode": "DUOS",
+      "overview": "需要较多找牌时间，但在长局和双打中有很强的翻盘能力。",
+      "early_strategy": "先拿中速鱼人保血，不要太早 all in 剧毒组件。",
+      "late_strategy": "补足圣盾和嘲讽拆解对手大怪，靠控制拿下残局。",
+      "upgrade_turns": ["3 铸币升 2", "6 铸币升 3", "9 铸币升 4", "13 铸币升 5"],
+      "positioning_hints": [
+        { "slot": 1, "label": "剧毒清盾位", "note": "目标是精准换掉大核。" },
+        { "slot": 7, "label": "增益鱼人", "note": "后排留到最后持续供 buff。" }
+      ],
+      "key_minions": [
+        { "id": 1001, "name": "深鳞先知", "star": 3, "phase": "鱼人过渡", "image_asset": "minions/tribes/murloc.svg" },
+        { "id": 1002, "name": "沼泽毒使", "star": 5, "phase": "剧毒核心", "image_asset": "minions/tribes/murloc.svg" },
+        { "id": 1003, "name": "深海领主", "star": 6, "phase": "终局统治", "image_asset": "minions/tribes/murloc.svg" }
+      ]
+    },
+    {
+      "id": "mech_demon_forge",
+      "name": "机恶混编熔炉流",
+      "tier": "T2",
+      "difficulty": "中",
+      "required_tribes": ["Mech", "Demon"],
+      "allowed_anomalies": ["无畸变", "传说酒馆", "黄金竞技场"],
+      "recommended_mode": "BOTH",
+      "overview": "混编阵容，靠恶魔体质和机械护盾弥补彼此短板。",
+      "early_strategy": "用单族强牌过渡，等 4 本后再决定是否转混编。",
+      "late_strategy": "优先保留混编核心和圣盾复制位，吃对位时更灵活。",
+      "upgrade_turns": ["3 铸币升 2", "7 铸币升 3", "9 铸币升 4", "12 铸币升 5"],
+      "positioning_hints": [
+        { "slot": 1, "label": "圣盾恶魔位", "note": "前排吃换子同时触发恶魔收益。" },
+        { "slot": 6, "label": "磁力终结位", "note": "尾位保核，最后打输出。" }
+      ],
+      "key_minions": [
+        { "id": 1101, "name": "熔炉工头", "star": 3, "phase": "混编连接点", "image_asset": "minions/tribes/mech.svg" },
+        { "id": 1102, "name": "护盾吞噬者", "star": 5, "phase": "中后期主力", "image_asset": "minions/tribes/demon.svg" },
+        { "id": 1103, "name": "钢铁恶魔王", "star": 6, "phase": "终局收官", "image_asset": "minions/tribes/mech.svg" }
+      ]
+    },
+    {
+      "id": "pirate_dragon_support",
+      "name": "海龙支援双打流",
+      "tier": "T1",
+      "difficulty": "中",
+      "required_tribes": ["Pirate", "Dragon"],
+      "allowed_anomalies": ["无畸变", "双倍战吼", "铸币风暴"],
+      "recommended_mode": "DUOS",
+      "overview": "队友负责吃成长，你负责供经济和战吼，双打协作上限很高。",
+      "early_strategy": "前期用海盗赚铸币，保证自己和队友都能平滑上本。",
+      "late_strategy": "把关键战吼和经济件转给队友，自己转控制或副核。",
+      "upgrade_turns": ["3 铸币升 2", "6 铸币升 3", "8 铸币升 4", "11 铸币升 5"],
+      "positioning_hints": [
+        { "slot": 2, "label": "功能船长", "note": "避免先死，保证增益给满。" },
+        { "slot": 7, "label": "支援龙", "note": "尾位保住，给队友继续供资源。" }
+      ],
+      "key_minions": [
+        { "id": 1201, "name": "铸币大副", "star": 2, "phase": "经济支点", "image_asset": "minions/tribes/pirate.svg" },
+        { "id": 1202, "name": "援助驭龙者", "star": 4, "phase": "中期支援", "image_asset": "minions/tribes/dragon.svg" },
+        { "id": 1203, "name": "联合作战舰长", "star": 6, "phase": "双打终局", "image_asset": "minions/tribes/pirate.svg" }
+      ]
+    }
+  ]
+}

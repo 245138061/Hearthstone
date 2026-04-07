@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">酒馆战棋战术助手</string>
+    <string name="overlay_channel_name">悬浮助手</string>
+    <string name="overlay_channel_description">保持酒馆战棋推荐悬浮窗常驻显示</string>
+    <string name="overlay_notification_title">BGTactician 正在运行</string>
+    <string name="overlay_notification_text">点击悬浮球可展开当前局推荐阵容</string>
+    <string name="overlay_notification_passthrough">当前为点击穿透模式，请从通知栏恢复交互</string>
+    <string name="overlay_action_passthrough">开启穿透</string>
+    <string name="overlay_action_restore">恢复交互</string>
+    <string name="overlay_action_stop">停止助手</string>
+</resources>

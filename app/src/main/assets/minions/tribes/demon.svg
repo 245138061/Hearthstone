@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 356">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FF9A7A"/>
+      <stop offset="100%" stop-color="#59172C"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="356" rx="28" fill="#071017"/>
+  <rect x="10" y="10" width="236" height="336" rx="22" fill="url(#bg)"/>
+  <rect x="24" y="26" width="208" height="176" rx="20" fill="#2E0F1A" opacity="0.84"/>
+  <path d="M94 84l18 24M162 84l-18 24" stroke="#F7F8FB" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="128" cy="122" r="42" fill="#F7F8FB"/>
+  <circle cx="112" cy="114" r="8" fill="#2E0F1A"/>
+  <circle cx="144" cy="114" r="8" fill="#2E0F1A"/>
+  <path d="M112 142l16-12 16 12" stroke="#2E0F1A" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="54" y="228" width="148" height="16" rx="8" fill="#FFE1D9" opacity="0.55"/>
+  <rect x="70" y="254" width="116" height="12" rx="6" fill="#FFE1D9" opacity="0.35"/>
+  <text x="26" y="46" fill="#F7F8FB" font-size="20" font-family="Arial, sans-serif" font-weight="700">DEMON</text>
+  <text x="26" y="324" fill="#F7F8FB" font-size="22" font-family="Arial, sans-serif" font-weight="700">Blood Contract</text>
+</svg>

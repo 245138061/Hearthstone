@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 356">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F2C66D"/>
+      <stop offset="100%" stop-color="#6D4012"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="356" rx="28" fill="#071017"/>
+  <rect x="10" y="10" width="236" height="336" rx="22" fill="url(#bg)"/>
+  <rect x="24" y="26" width="208" height="176" rx="20" fill="#2E1C0D" opacity="0.85"/>
+  <path d="M128 66c28 0 50 22 50 50 0 10-3 20-8 28h-84c-5-8-8-18-8-28 0-28 22-50 50-50z" fill="#F7F8FB"/>
+  <rect x="84" y="90" width="88" height="12" rx="6" fill="#08111A"/>
+  <path d="M118 104h20v44h-20z" fill="#08111A"/>
+  <rect x="54" y="228" width="148" height="16" rx="8" fill="#FFF2D7" opacity="0.55"/>
+  <rect x="70" y="254" width="116" height="12" rx="6" fill="#FFF2D7" opacity="0.35"/>
+  <text x="26" y="46" fill="#F7F8FB" font-size="20" font-family="Arial, sans-serif" font-weight="700">PIRATE</text>
+  <text x="26" y="324" fill="#F7F8FB" font-size="22" font-family="Arial, sans-serif" font-weight="700">Gold Armada</text>
+</svg>

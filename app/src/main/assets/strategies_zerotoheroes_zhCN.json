@@ -1,0 +1,2389 @@
+{
+  "version": "2026.04.07-zerotoheroes-zhCN",
+  "comps": [
+    {
+      "id": "deep_blue_nagas",
+      "name": "深沉蓝调流纳迦",
+      "tier": "T2",
+      "difficulty": "低",
+      "required_tribes": [
+        "Naga"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "深沉蓝调流纳迦 | 成型信号: Deep Blue 和 Bluesy Siren | 用 Deep Blue Crooner 和 Bluesy Siren 持续放大蓝调体系。别忘了 Flaming Enforcer 也能把属性永久留下来。",
+      "early_strategy": "看到 Deep Blue 和 Bluesy Siren 再明确转型。",
+      "late_strategy": "用 Deep Blue Crooner 和 Bluesy Siren 持续放大蓝调体系。别忘了 Flaming Enforcer 也能把属性永久留下来。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Bluesy Siren",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 2,
+          "name": "Deep Blue Crooner",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 3,
+          "name": "Zesty Shaker",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 4,
+          "name": "Daggerspine Thrasher",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 5,
+          "name": "Flaming Enforcer",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 6,
+          "name": "Glowscale",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 7,
+          "name": "Lava Lurker",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 8,
+          "name": "Profound Thinker",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        }
+      ]
+    },
+    {
+      "id": "shield_mechs",
+      "name": "圣盾流机械",
+      "tier": "T2",
+      "difficulty": "低",
+      "required_tribes": [
+        "Mech"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "圣盾流机械 | 成型信号: Czarina + Lass-O-Matic | 尽量制造酒馆法术，再用 Czarina 放大你的圣盾机械体系。",
+      "early_strategy": "看到 Czarina + Lass-O-Matic 再明确转型。",
+      "late_strategy": "尽量制造酒馆法术，再用 Czarina 放大你的圣盾机械体系。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Charging Czarina",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 2,
+          "name": "Whirling Lass-o-Matic",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 3,
+          "name": "Grease Bot",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 4,
+          "name": "Humon'gozz",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 5,
+          "name": "Marquee Ticker",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 6,
+          "name": "Sin'dorei Straight Shot",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 7,
+          "name": "Power of George",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 8,
+          "name": "Timewarped B.A.N.A.N.A.S.",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": "minions/tribes/mech.svg"
+        }
+      ]
+    },
+    {
+      "id": "buff_shop_demons",
+      "name": "酒馆Buff流恶魔",
+      "tier": "T2",
+      "difficulty": "中",
+      "required_tribes": [
+        "Demon"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "酒馆Buff流恶魔 | 成型信号: Shadow Dancer + Ur'zul 或 Felboar | 先用 Shadow Dancer 或时空扭曲版 Shadow Dancer 给酒馆加属性，再用 Ur'zul 或 Felboar 吃掉酒馆。也可以用 Conjurer、Meditative 等手段放大酒馆法术收益。",
+      "early_strategy": "看到 Shadow Dancer + Ur'zul 或 Felboar 再明确转型。",
+      "late_strategy": "先用 Shadow Dancer 或时空扭曲版 Shadow Dancer 给酒馆加属性，再用 Ur'zul 或 Felboar 吃掉酒馆。也可以用 Conjurer、Meditative 等手段放大酒馆法术收益。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4",
+        "11 铸币升 5"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Felboar",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 2,
+          "name": "Insatiable Ur'zul",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 3,
+          "name": "Shadowdancer",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 4,
+          "name": "Brann Bronzebeard",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 5,
+          "name": "Famished Felbat",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 6,
+          "name": "Felfire Conjurer",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 7,
+          "name": "Flaming Enforcer",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 8,
+          "name": "Titus Rivendare",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/demon.svg"
+        }
+      ]
+    },
+    {
+      "id": "scam",
+      "name": "下毒",
+      "tier": "T1",
+      "difficulty": "中",
+      "required_tribes": [],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "下毒 | 成型信号: 只拿到下毒或一换一组件，没有更强主计划 | 把 Leeroy、Spore 这类一换一单位都买上，优先活下来。护甲也值得买，即使你已经有 5 点以上。",
+      "early_strategy": "看到 只拿到下毒或一换一组件，没有更强主计划 再明确转型。",
+      "late_strategy": "把 Leeroy、Spore 这类一换一单位都买上，优先活下来。护甲也值得买，即使你已经有 5 点以上。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4",
+        "11 铸币升 5"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "功能核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Leeroy the Reckless",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": null
+        },
+        {
+          "id": 2,
+          "name": "Apprentice of Sefin",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        },
+        {
+          "id": 3,
+          "name": "Bassgill",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        },
+        {
+          "id": 4,
+          "name": "Daggerspine Thrasher",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        },
+        {
+          "id": 5,
+          "name": "Deadly Spore",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        },
+        {
+          "id": 6,
+          "name": "Expert Aviator",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        },
+        {
+          "id": 7,
+          "name": "Heroic Underdog",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        },
+        {
+          "id": 8,
+          "name": "Psychus",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        }
+      ]
+    },
+    {
+      "id": "silithid_beasts",
+      "name": "钻地虫流野兽",
+      "tier": "T2",
+      "difficulty": "中",
+      "required_tribes": [
+        "Beast"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "钻地虫流野兽 | 成型信号: 前期拿到 Silithid Burrower | 尽量堆亡语和复生来养钻地虫，最佳搭档是 Twilight Broodmother。中期掉几波血是能接受的；快要死时就按 Goldrinn 套路来打，用 Macaw、Titus 等频繁触发 Silithid。",
+      "early_strategy": "看到 前期拿到 Silithid Burrower 再明确转型。",
+      "late_strategy": "尽量堆亡语和复生来养钻地虫，最佳搭档是 Twilight Broodmother。中期掉几波血是能接受的；快要死时就按 Goldrinn 套路来打，用 Macaw、Titus 等频繁触发 Silithid。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4",
+        "11 铸币升 5"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Monstrous Macaw",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 2,
+          "name": "Silithid Burrower",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 3,
+          "name": "Titus Rivendare",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 4,
+          "name": "Niuzao",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 5,
+          "name": "Twilight Broodmother",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 6,
+          "name": "Power of Teron",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 7,
+          "name": "Timewarped Chameleon",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 8,
+          "name": "Timewarped Hawkstrider",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": "minions/tribes/beast.svg"
+        }
+      ]
+    },
+    {
+      "id": "attack_undead",
+      "name": "攻击提升流亡灵",
+      "tier": "T1",
+      "difficulty": "中",
+      "required_tribes": [
+        "Undead"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "攻击提升流亡灵 | 成型信号: Handless Forsaken + Visionary Shipman + Brann | 用 Brann 和 Visionary Shipman 循环优质战吼，再去刷法术，用 Handless Forsaken 把这些收益转成亡灵攻击力。",
+      "early_strategy": "看到 Handless Forsaken + Visionary Shipman + Brann 再明确转型。",
+      "late_strategy": "用 Brann 和 Visionary Shipman 循环优质战吼，再去刷法术，用 Handless Forsaken 把这些收益转成亡灵攻击力。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4",
+        "11 铸币升 5"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Forsaken Weaver",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 2,
+          "name": "Deathly Striker",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 3,
+          "name": "Handless Forsaken",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 4,
+          "name": "Soulsplitter",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 5,
+          "name": "Titus Rivendare",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 6,
+          "name": "Visionary Shipman",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 7,
+          "name": "Wintergrasp Ghoul",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 8,
+          "name": "Power of Teron",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": "minions/tribes/undead.svg"
+        }
+      ]
+    },
+    {
+      "id": "refresh_elementals",
+      "name": "刷新流元素",
+      "tier": "T1",
+      "difficulty": "高",
+      "required_tribes": [
+        "Elemental"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "刷新流元素 | 成型信号: Brann + Acid Rainfall，外加 Air Revenant 或 En-Djinn Blazer 搭配 Rylak | 先把最右侧随从养大，常见方式是 Air Revenant 或 En-Djinn Blazer 配合 Rylak。随后找到 Acid Rainfall，不断刷新酒馆滚收益。",
+      "early_strategy": "看到 Brann + Acid Rainfall，外加 Air Revenant 或 En-Djinn Blazer 搭配 Rylak 再明确转型。",
+      "late_strategy": "先把最右侧随从养大，常见方式是 Air Revenant 或 En-Djinn Blazer 配合 Rylak。随后找到 Acid Rainfall，不断刷新酒馆滚收益。",
+      "upgrade_turns": [
+        "2 铸币升 2",
+        "5 铸币升 3",
+        "8 铸币升 4",
+        "10 铸币升 5",
+        "13 铸币冲 6"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Acid Rainfall",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/elemental.svg"
+        },
+        {
+          "id": 2,
+          "name": "Air Revenant",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/elemental.svg"
+        },
+        {
+          "id": 3,
+          "name": "Brann Bronzebeard",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/elemental.svg"
+        },
+        {
+          "id": 4,
+          "name": "Flaming Enforcer",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/elemental.svg"
+        },
+        {
+          "id": 5,
+          "name": "Fleet Admiral Tethys",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/elemental.svg"
+        },
+        {
+          "id": 6,
+          "name": "Rylak Metalhead",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/elemental.svg"
+        },
+        {
+          "id": 7,
+          "name": "Titus Rivendare",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/elemental.svg"
+        },
+        {
+          "id": 8,
+          "name": "Waveling",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/elemental.svg"
+        }
+      ]
+    },
+    {
+      "id": "apm_pirate",
+      "name": "倒转流海盗",
+      "tier": "T0",
+      "difficulty": "高",
+      "required_tribes": [
+        "Pirate"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "倒转流海盗 | 成型信号: Tethys + Brann | 这套要打得很快，围绕 Tethys 高频循环所有经济型随从。",
+      "early_strategy": "看到 Tethys + Brann 再明确转型。",
+      "late_strategy": "这套要打得很快，围绕 Tethys 高频循环所有经济型随从。",
+      "upgrade_turns": [
+        "2 铸币升 2",
+        "5 铸币升 3",
+        "8 铸币升 4",
+        "10 铸币升 5",
+        "13 铸币冲 6"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Cannon Corsair",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 2,
+          "name": "Fleet Admiral Tethys",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 3,
+          "name": "Shore Marauder",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 4,
+          "name": "Brann Bronzebeard",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 5,
+          "name": "Gunpowder Courier",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 6,
+          "name": "Industrious Deckhand",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 7,
+          "name": "Plankwalker",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 8,
+          "name": "Timecap'n Hooktail",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/pirate.svg"
+        }
+      ]
+    },
+    {
+      "id": "boost_shop_quilboar",
+      "name": "商店增强流野猪人",
+      "tier": "T1",
+      "difficulty": "高",
+      "required_tribes": [
+        "Quilboar"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "商店增强流野猪人 | 成型信号: 宝石或酒馆法术成长足够，能稳定产 Blood Gem Barrage，并且有 Felboar 吃店 | 先把 Blood Gem Barrage 叠大，不管是靠大宝石还是大酒馆法术，随后让 Felboar 把整间酒馆吃掉。",
+      "early_strategy": "看到 宝石或酒馆法术成长足够，能稳定产 Blood Gem Barrage，并且有 Felboar 吃店 再明确转型。",
+      "late_strategy": "先把 Blood Gem Barrage 叠大，不管是靠大宝石还是大酒馆法术，随后让 Felboar 把整间酒馆吃掉。",
+      "upgrade_turns": [
+        "2 铸币升 2",
+        "5 铸币升 3",
+        "8 铸币升 4",
+        "10 铸币升 5",
+        "13 铸币冲 6"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Brann Bronzebeard",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 2,
+          "name": "Felboar",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 3,
+          "name": "Briarback Drummer",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 4,
+          "name": "Moon-Bacon Jazzer",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 5,
+          "name": "Paint Smudger",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 6,
+          "name": "Prickly Piper",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 7,
+          "name": "Prophet of the Boar",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 8,
+          "name": "Razorfen Flapper",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/quilboar.svg"
+        }
+      ]
+    },
+    {
+      "id": "handbuff_murloc",
+      "name": "手牌流鱼人",
+      "tier": "T2",
+      "difficulty": "中",
+      "required_tribes": [
+        "Murloc"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "手牌流鱼人 | 成型信号: Brann + Bream Counter | 用 Burglar 和 Brann 给 Bream Counter 叠手牌增益，同时循环 Tad、Primalfin 这类过牌单位。",
+      "early_strategy": "看到 Brann + Bream Counter 再明确转型。",
+      "late_strategy": "用 Burglar 和 Brann 给 Bream Counter 叠手牌增益，同时循环 Tad、Primalfin 这类过牌单位。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4",
+        "11 铸币升 5"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Bassgill",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 2,
+          "name": "Brann Bronzebeard",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 3,
+          "name": "Bream Counter",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 4,
+          "name": "Apprentice of Sefin",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 5,
+          "name": "Bile Spitter",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 6,
+          "name": "Costume Enthusiast",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 7,
+          "name": "Dramaloc",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 8,
+          "name": "Magicfin Mycologist",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/murloc.svg"
+        }
+      ]
+    },
+    {
+      "id": "end_of_turn_murlocs",
+      "name": "回合结束流鱼人",
+      "tier": "T1",
+      "difficulty": "高",
+      "required_tribes": [
+        "Murloc"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "回合结束流鱼人 | 成型信号: Brann、Young Murk-Eye、Drakkari、Magicfin 和酒馆法术增益同时具备 | 场上先放 Magicfin，再买 Azerite Empowerment、Time Management 或 Shiny Ring 等法术，让 Young Murk-Eye 配合 Brann 与 Drakkari 重复触发 1/1 鱼人。最好再找办法把酒馆法术做大，比如 Felfire Conjurer。",
+      "early_strategy": "看到 Brann、Young Murk-Eye、Drakkari、Magicfin 和酒馆法术增益同时具备 再明确转型。",
+      "late_strategy": "场上先放 Magicfin，再买 Azerite Empowerment、Time Management 或 Shiny Ring 等法术，让 Young Murk-Eye 配合 Brann 与 Drakkari 重复触发 1/1 鱼人。最好再找办法把酒馆法术做大，比如 Felfire Conjurer。",
+      "upgrade_turns": [
+        "2 铸币升 2",
+        "5 铸币升 3",
+        "8 铸币升 4",
+        "10 铸币升 5",
+        "13 铸币冲 6"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Brann Bronzebeard",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 2,
+          "name": "Drakkari Enchanter",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 3,
+          "name": "Felfire Conjurer",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 4,
+          "name": "Magicfin Mycologist",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 5,
+          "name": "Young Murk-Eye",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 6,
+          "name": "Bassgill",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 7,
+          "name": "Timewarped Steamer",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 8,
+          "name": "Tranquil Meditative",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/murloc.svg"
+        }
+      ]
+    },
+    {
+      "id": "tier_2_ballers",
+      "name": "2级酒馆投球手",
+      "tier": "T2",
+      "difficulty": "中",
+      "required_tribes": [],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "2级酒馆投球手 | 成型信号: 前期拿到 Lubber 或 Snow Elemental | 尽量在元素和恶魔池里玩这套，最好第一次时空跳跃前先拿到元素标签，这样更容易找到 Lubber 或 Snow Elemental。之后就循环 Oil 和 Ballers。",
+      "early_strategy": "看到 前期拿到 Lubber 或 Snow Elemental 再明确转型。",
+      "late_strategy": "尽量在元素和恶魔池里玩这套，最好第一次时空跳跃前先拿到元素标签，这样更容易找到 Lubber 或 Snow Elemental。之后就循环 Oil 和 Ballers。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4",
+        "11 铸币升 5"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "功能核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Fire Baller",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": null
+        },
+        {
+          "id": 2,
+          "name": "Snow Baller",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": null
+        },
+        {
+          "id": 3,
+          "name": "Annoy-o-Tron",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        },
+        {
+          "id": 4,
+          "name": "Aureate Laureate",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        },
+        {
+          "id": 5,
+          "name": "Cord Puller",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        },
+        {
+          "id": 6,
+          "name": "Crackling Cyclone",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        },
+        {
+          "id": 7,
+          "name": "Soul Rewinder",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        },
+        {
+          "id": 8,
+          "name": "Power of Flurgl",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": null
+        }
+      ]
+    },
+    {
+      "id": "cycle_quilboar",
+      "name": "循环流野猪人",
+      "tier": "T2",
+      "difficulty": "高",
+      "required_tribes": [
+        "Quilboar"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "循环流野猪人 | 成型信号: Tethys + Paint Smudger + Brann | 这套很缺钱，最佳是 Tethys 加 Visionary Shipman。成型后用 Brann 循环所有经济牌，再用 Foodie 和 Moon-Bacon Jazzer 放大鲜血宝石收益。",
+      "early_strategy": "看到 Tethys + Paint Smudger + Brann 再明确转型。",
+      "late_strategy": "这套很缺钱，最佳是 Tethys 加 Visionary Shipman。成型后用 Brann 循环所有经济牌，再用 Foodie 和 Moon-Bacon Jazzer 放大鲜血宝石收益。",
+      "upgrade_turns": [
+        "2 铸币升 2",
+        "5 铸币升 3",
+        "8 铸币升 4",
+        "10 铸币升 5",
+        "13 铸币冲 6"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Brann Bronzebeard",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 2,
+          "name": "Felboar",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 3,
+          "name": "Paint Smudger",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 4,
+          "name": "Visionary Shipman",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 5,
+          "name": "Fleet Admiral Tethys",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 6,
+          "name": "Prickly Piper",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 7,
+          "name": "Sanguine Refiner",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 8,
+          "name": "Timewarped Bloodbinder",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": "minions/tribes/quilboar.svg"
+        }
+      ]
+    },
+    {
+      "id": "end_of_turn_naga",
+      "name": "回合结束流纳迦",
+      "tier": "T1",
+      "difficulty": "低",
+      "required_tribes": [
+        "Naga"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "回合结束流纳迦 | 成型信号: 酒馆法术能做大，并且拿到 Fauna Whisperer | 优先想办法放大酒馆法术，Felfire Conjurer 是最佳组件。如果条件允许，常见顺序是 Conjurer -> Amalgam（Atrocity 或 Par-Tea Guest）-> Fauna Whisperer -> Amalgam -> Felbat。",
+      "early_strategy": "看到 酒馆法术能做大，并且拿到 Fauna Whisperer 再明确转型。",
+      "late_strategy": "优先想办法放大酒馆法术，Felfire Conjurer 是最佳组件。如果条件允许，常见顺序是 Conjurer -> Amalgam（Atrocity 或 Par-Tea Guest）-> Fauna Whisperer -> Amalgam -> Felbat。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Drakkari Enchanter",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 2,
+          "name": "Fauna Whisperer",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 3,
+          "name": "Felfire Conjurer",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 4,
+          "name": "Arid Atrocity",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 5,
+          "name": "Famished Felbat",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 6,
+          "name": "Firescale Hoarder",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 7,
+          "name": "Nightmare Par-tea Guest",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 8,
+          "name": "Tranquil Meditative",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        }
+      ]
+    },
+    {
+      "id": "carapace_undead",
+      "name": "龟甲流亡灵",
+      "tier": "T1",
+      "difficulty": "中",
+      "required_tribes": [
+        "Undead"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "龟甲流亡灵 | 成型信号: Carapace Raiser + Friendly Geist + Titus | 尽可能用 Macaw、Titus 和 Hand of Deios 反复触发 Carapace Raiser 与 Friendly Geist。有 Twilight Broodmother 时强度更高。",
+      "early_strategy": "看到 Carapace Raiser + Friendly Geist + Titus 再明确转型。",
+      "late_strategy": "尽可能用 Macaw、Titus 和 Hand of Deios 反复触发 Carapace Raiser 与 Friendly Geist。有 Twilight Broodmother 时强度更高。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4",
+        "11 铸币升 5"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Carapace Raiser",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 2,
+          "name": "Friendly Geist",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 3,
+          "name": "Titus Rivendare",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 4,
+          "name": "Cadaver Caretaker",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 5,
+          "name": "Handless Forsaken",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 6,
+          "name": "Monstrous Macaw",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 7,
+          "name": "Twilight Broodmother",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 8,
+          "name": "Twilight Hatchling",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        }
+      ]
+    },
+    {
+      "id": "beasts_beetles",
+      "name": "甲虫流野兽",
+      "tier": "T1",
+      "difficulty": "中",
+      "required_tribes": [
+        "Beast"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "甲虫流野兽 | 成型信号: Felhorn + Rylak + Silky Shimmermoth | 用 Rylak 搭配 Brann 或 Titus，能带 Deios 更好，反复触发 Felhorn 来养大 Silky Shimmermoth。整套最好都尽量拿复生。",
+      "early_strategy": "看到 Felhorn + Rylak + Silky Shimmermoth 再明确转型。",
+      "late_strategy": "用 Rylak 搭配 Brann 或 Titus，能带 Deios 更好，反复触发 Felhorn 来养大 Silky Shimmermoth。整套最好都尽量拿复生。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4",
+        "11 铸币升 5"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Felhorn",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 2,
+          "name": "Rylak Metalhead",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 3,
+          "name": "Silky Shimmermoth",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 4,
+          "name": "Brann Bronzebeard",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 5,
+          "name": "Monstrous Macaw",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 6,
+          "name": "Titus Rivendare",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 7,
+          "name": "Power of Teron",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 8,
+          "name": "Timewarped Chameleon",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": "minions/tribes/beast.svg"
+        }
+      ]
+    },
+    {
+      "id": "spell_cycle",
+      "name": "法术循环流",
+      "tier": "T2",
+      "difficulty": "中",
+      "required_tribes": [],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "法术循环流 | 成型信号: Visionary Shipman + Nalaa 或 Plankwalker | 用 Visionary Shipman 和 Brann 循环法术，再靠 Nalaa 或 Plankwalker 给全场上强度。优先把 Niuzao 这类优质单位养大。",
+      "early_strategy": "看到 Visionary Shipman + Nalaa 或 Plankwalker 再明确转型。",
+      "late_strategy": "用 Visionary Shipman 和 Brann 循环法术，再靠 Nalaa 或 Plankwalker 给全场上强度。优先把 Niuzao 这类优质单位养大。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4",
+        "11 铸币升 5"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "功能核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Brann Bronzebeard",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": null
+        },
+        {
+          "id": 2,
+          "name": "Nalaa the Redeemer",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": null
+        },
+        {
+          "id": 3,
+          "name": "Plankwalker",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": null
+        },
+        {
+          "id": 4,
+          "name": "Visionary Shipman",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": null
+        },
+        {
+          "id": 5,
+          "name": "Air Revenant",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        },
+        {
+          "id": 6,
+          "name": "Fleet Admiral Tethys",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        },
+        {
+          "id": 7,
+          "name": "Monstrous Macaw",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        },
+        {
+          "id": 8,
+          "name": "Niuzao",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": null
+        }
+      ]
+    },
+    {
+      "id": "stuntdrake_dragons",
+      "name": "迷雾幼龙流龙族",
+      "tier": "T0",
+      "difficulty": "高",
+      "required_tribes": [
+        "Dragon"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "迷雾幼龙流龙族 | 成型信号: Stuntdrake + Twilight Broodmother + Titus | 先想办法把 Stuntdrake 做大，比如 Nalaa、Evoker、Mutanus 法术等。之后围绕 Twilight Broodmother、Twilight Hatching 和 Titus 完成终局。",
+      "early_strategy": "看到 Stuntdrake + Twilight Broodmother + Titus 再明确转型。",
+      "late_strategy": "先想办法把 Stuntdrake 做大，比如 Nalaa、Evoker、Mutanus 法术等。之后围绕 Twilight Broodmother、Twilight Hatching 和 Titus 完成终局。",
+      "upgrade_turns": [
+        "2 铸币升 2",
+        "5 铸币升 3",
+        "8 铸币升 4",
+        "10 铸币升 5",
+        "13 铸币冲 6"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Stuntdrake",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 2,
+          "name": "Titus Rivendare",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 3,
+          "name": "Twilight Broodmother",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 4,
+          "name": "Amber Guardian",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 5,
+          "name": "Fire-forged Evoker",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 6,
+          "name": "Persistent Poet",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 7,
+          "name": "Stellar Freebooter",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 8,
+          "name": "Twilight Hatchling",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/dragon.svg"
+        }
+      ]
+    },
+    {
+      "id": "bomber_mechs",
+      "name": "炸弹流机械",
+      "tier": "T1",
+      "difficulty": "中",
+      "required_tribes": [
+        "Mech"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "炸弹流机械 | 成型信号: Visionary Shipman + Brann + Photobomb | 用 Visionary Shipman 搭配 Brann 或 Tethys 循环酒馆法术，再用 Macaw、Titus、Deios 等去反复触发 Photobomb。",
+      "early_strategy": "看到 Visionary Shipman + Brann + Photobomb 再明确转型。",
+      "late_strategy": "用 Visionary Shipman 搭配 Brann 或 Tethys 循环酒馆法术，再用 Macaw、Titus、Deios 等去反复触发 Photobomb。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4",
+        "11 铸币升 5"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Photobomber",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 2,
+          "name": "Titus Rivendare",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 3,
+          "name": "Visionary Shipman",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 4,
+          "name": "Brann Bronzebeard",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 5,
+          "name": "Monstrous Macaw",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 6,
+          "name": "Stitched Salvager",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 7,
+          "name": "Power of Teron",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 8,
+          "name": "Timewarped Chameleon",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": "minions/tribes/mech.svg"
+        }
+      ]
+    },
+    {
+      "id": "apexis_mechs",
+      "name": "埃匹希斯流机械",
+      "tier": "T2",
+      "difficulty": "低",
+      "required_tribes": [
+        "Mech"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "埃匹希斯流机械 | 成型信号: Apexis + Titus | 这套不需要满机械，只要 Apexis 和 Junk Jouster 作为核心即可，其余位置可以补 Macaw、Titus 等触发组件。",
+      "early_strategy": "看到 Apexis + Titus 再明确转型。",
+      "late_strategy": "这套不需要满机械，只要 Apexis 和 Junk Jouster 作为核心即可，其余位置可以补 Macaw、Titus 等触发组件。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Apexis Guardian",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 2,
+          "name": "Titus Rivendare",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 3,
+          "name": "Arid Atrocity",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 4,
+          "name": "Junk Jouster",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 5,
+          "name": "Monstrous Macaw",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 6,
+          "name": "Nightmare Par-tea Guest",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 7,
+          "name": "Persistent Poet",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 8,
+          "name": "Photobomber",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/mech.svg"
+        }
+      ]
+    },
+    {
+      "id": "self_damage_beasts",
+      "name": "自伤流野兽",
+      "tier": "T2",
+      "difficulty": "中",
+      "required_tribes": [
+        "Beast"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "自伤流野兽 | 成型信号: 前期拿到 Trigore 或 Skyblazer，再配 Spiked Savior | 如果你有 Rabid Panther，尽量把 Hunting Tiger Shark 留在场上，再用 Rylak 配合 Titus 或 Brann 去触发它，然后补一些循环野兽。",
+      "early_strategy": "看到 前期拿到 Trigore 或 Skyblazer，再配 Spiked Savior 再明确转型。",
+      "late_strategy": "如果你有 Rabid Panther，尽量把 Hunting Tiger Shark 留在场上，再用 Rylak 配合 Titus 或 Brann 去触发它，然后补一些循环野兽。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4",
+        "11 铸币升 5"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Rabid Panther",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 2,
+          "name": "Silky Shimmermoth",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 3,
+          "name": "Trigore the Lasher",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 4,
+          "name": "Brann Bronzebeard",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 5,
+          "name": "Hunting Tiger Shark",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 6,
+          "name": "Iridescent Skyblazer",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 7,
+          "name": "Monstrous Macaw",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 8,
+          "name": "Niuzao",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/beast.svg"
+        }
+      ]
+    },
+    {
+      "id": "overflow_undead",
+      "name": "挤爆流亡灵",
+      "tier": "T2",
+      "difficulty": "低",
+      "required_tribes": [
+        "Undead"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "挤爆流亡灵 | 成型信号: Cadaver Caretaker + Titus + Catacomb Crasher | 尽量用 Macaw 和 Titus 高频触发 Cadaver Caretaker。",
+      "early_strategy": "看到 Cadaver Caretaker + Titus + Catacomb Crasher 再明确转型。",
+      "late_strategy": "尽量用 Macaw 和 Titus 高频触发 Cadaver Caretaker。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Catacomb Crasher",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 2,
+          "name": "Titus Rivendare",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 3,
+          "name": "Cadaver Caretaker",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 4,
+          "name": "Lava Lurker",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 5,
+          "name": "Monstrous Macaw",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 6,
+          "name": "Surf n' Surf",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 7,
+          "name": "Power of Teron",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 8,
+          "name": "Timewarped Caretaker",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": "minions/tribes/undead.svg"
+        }
+      ]
+    },
+    {
+      "id": "deathrattle_quilboar",
+      "name": "亡语流野猪人",
+      "tier": "T2",
+      "difficulty": "低",
+      "required_tribes": [
+        "Quilboar"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "亡语流野猪人 | 成型信号: 鲜血宝石成长足够，且拿到 Three Lil' Quilboar 与 Titus | 尽可能多次触发 Three Lil' Quilboar。",
+      "early_strategy": "看到 鲜血宝石成长足够，且拿到 Three Lil' Quilboar 与 Titus 再明确转型。",
+      "late_strategy": "尽可能多次触发 Three Lil' Quilboar。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Needling Crone",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 2,
+          "name": "Three Lil' Quilboar",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 3,
+          "name": "Titus Rivendare",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 4,
+          "name": "Monstrous Macaw",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 5,
+          "name": "Moon-Bacon Jazzer",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 6,
+          "name": "Prickly Piper",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 7,
+          "name": "Rylak Metalhead",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 8,
+          "name": "Sanguine Refiner",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/quilboar.svg"
+        }
+      ]
+    },
+    {
+      "id": "lord_of_ruins_demons",
+      "name": "废墟领主流恶魔",
+      "tier": "T1",
+      "difficulty": "低",
+      "required_tribes": [
+        "Demon"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "废墟领主流恶魔 | 成型信号: Lord of Ruins + Silent Enforcer，或 Rylak + Felhorn + Titus | Lord of Ruins 有两种构筑，但核心思路差不多：要么尽量多触发 Rylak + Felhorn，要么把 Silent Enforcer 触发做满；如果走 Rylak 线，也可以补 Titus、Macaw、Brann。",
+      "early_strategy": "看到 Lord of Ruins + Silent Enforcer，或 Rylak + Felhorn + Titus 再明确转型。",
+      "late_strategy": "Lord of Ruins 有两种构筑，但核心思路差不多：要么尽量多触发 Rylak + Felhorn，要么把 Silent Enforcer 触发做满；如果走 Rylak 线，也可以补 Titus、Macaw、Brann。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Lord of the Ruins",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 2,
+          "name": "Titus Rivendare",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 3,
+          "name": "Brann Bronzebeard",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 4,
+          "name": "Devout Hellcaller",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 5,
+          "name": "Felhorn",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 6,
+          "name": "Monstrous Macaw",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 7,
+          "name": "Rylak Metalhead",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 8,
+          "name": "Silent Enforcer",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/demon.svg"
+        }
+      ]
+    },
+    {
+      "id": "whelp_dragon",
+      "name": "雏龙流龙族",
+      "tier": "T2",
+      "difficulty": "低",
+      "required_tribes": [
+        "Dragon"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "雏龙流龙族 | 成型信号: Burgeoning Whelp + Titus + Twilight Broodmother | 核心是先把 Whelp 养大，所以要用 Rylak、Brann、Macaw、Titus 去频繁触发 Burgeoning Whelp，再用 Twilight Broodmother 稳定召龙。",
+      "early_strategy": "看到 Burgeoning Whelp + Titus + Twilight Broodmother 再明确转型。",
+      "late_strategy": "核心是先把 Whelp 养大，所以要用 Rylak、Brann、Macaw、Titus 去频繁触发 Burgeoning Whelp，再用 Twilight Broodmother 稳定召龙。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Brann Bronzebeard",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 2,
+          "name": "Burgeoning Whelp",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 3,
+          "name": "Rylak Metalhead",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 4,
+          "name": "Titus Rivendare",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 5,
+          "name": "Twilight Broodmother",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 6,
+          "name": "Monstrous Macaw",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 7,
+          "name": "Twilight Hatchling",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 8,
+          "name": "Power of Teron",
+          "star": 3,
+          "phase": "过渡",
+          "image_asset": "minions/tribes/dragon.svg"
+        }
+      ]
+    },
+    {
+      "id": "deathrattle_naga",
+      "name": "亡语流纳迦",
+      "tier": "T1",
+      "difficulty": "中",
+      "required_tribes": [
+        "Naga"
+      ],
+      "allowed_anomalies": [
+        "无畸变"
+      ],
+      "recommended_mode": "BOTH",
+      "overview": "亡语流纳迦 | 成型信号: 拿到纳迦主核并且能稳定触发亡语 | 围绕亡语触发链和关键纳迦站住场面，优先保护主核和后排功能位。",
+      "early_strategy": "看到 拿到纳迦主核并且能稳定触发亡语 再明确转型。",
+      "late_strategy": "围绕亡语触发链和关键纳迦站住场面，优先保护主核和后排功能位。",
+      "upgrade_turns": [
+        "3 铸币升 2",
+        "7 铸币升 3",
+        "9 铸币升 4",
+        "11 铸币升 5"
+      ],
+      "positioning_hints": [
+        {
+          "slot": 1,
+          "label": "先手位",
+          "note": "优先放清盾、送头或开场功能单位。"
+        },
+        {
+          "slot": 7,
+          "label": "成长核心",
+          "note": "尾位保护主核，避免被先手直接换掉。"
+        }
+      ],
+      "key_minions": [
+        {
+          "id": 1,
+          "name": "Showy Cyclist",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 2,
+          "name": "Timewarped Sapper",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 3,
+          "name": "Titus Rivendare",
+          "star": 5,
+          "phase": "主核",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 4,
+          "name": "Arid Atrocity",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 5,
+          "name": "Monstrous Macaw",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 6,
+          "name": "Nightmare Par-tea Guest",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 7,
+          "name": "Persistent Poet",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 8,
+          "name": "Stitched Salvager",
+          "star": 4,
+          "phase": "补强",
+          "image_asset": "minions/tribes/naga.svg"
+        }
+      ]
+    }
+  ]
+}

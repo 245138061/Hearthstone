@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 356">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7AE0D6"/>
+      <stop offset="100%" stop-color="#0D4A70"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="356" rx="28" fill="#071017"/>
+  <rect x="10" y="10" width="236" height="336" rx="22" fill="url(#bg)"/>
+  <rect x="24" y="26" width="208" height="176" rx="20" fill="#08253A" opacity="0.84"/>
+  <circle cx="128" cy="96" r="26" fill="#F7F8FB"/>
+  <path d="M128 122c30 0 54 24 54 54 0 10-2 18-6 26H80c-4-8-6-16-6-26 0-30 24-54 54-54z" fill="#F7F8FB"/>
+  <path d="M128 152c-16 14-24 28-24 42 0 8 4 18 24 18s24-10 24-18c0-14-8-28-24-42z" fill="#0C3550"/>
+  <rect x="54" y="228" width="148" height="16" rx="8" fill="#DCF9F4" opacity="0.55"/>
+  <rect x="70" y="254" width="116" height="12" rx="6" fill="#DCF9F4" opacity="0.35"/>
+  <text x="26" y="46" fill="#F7F8FB" font-size="20" font-family="Arial, sans-serif" font-weight="700">NAGA</text>
+  <text x="26" y="324" fill="#F7F8FB" font-size="22" font-family="Arial, sans-serif" font-weight="700">Spellcraft Tide</text>
+</svg>
