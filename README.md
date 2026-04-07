@@ -1,5 +1,7 @@
 # BGTactician
 
+[中文说明](./README_CN.md)
+
 BGTactician is an Android floating companion for Hearthstone Battlegrounds. This scaffold includes:
 
 - A foreground overlay service based on `WindowManager` and `TYPE_APPLICATION_OVERLAY`
