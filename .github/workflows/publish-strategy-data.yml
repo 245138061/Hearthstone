@@ -33,6 +33,19 @@ jobs:
       - name: Build static data bundle
         run: python tools/build_pages_bundle.py --output-dir site
 
+      - name: Inspect generated site
+        run: |
+          pwd
+          ls -lah
+          ls -lah site
+          find site -maxdepth 2 -type f | sort
+
+      - name: Upload debug site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-site
+          path: site
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
