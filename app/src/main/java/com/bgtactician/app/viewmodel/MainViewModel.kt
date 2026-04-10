@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.bgtactician.app.BuildConfig
 import com.bgtactician.app.data.local.AppPreferences
 import com.bgtactician.app.data.local.OverlaySettings
-import com.bgtactician.app.data.model.AnomalyPreset
+import com.bgtactician.app.data.model.CardRulesCatalog
 import com.bgtactician.app.data.model.CatalogSnapshot
 import com.bgtactician.app.data.model.StrategyComp
 import com.bgtactician.app.data.model.StrategyDataSource
@@ -28,8 +28,6 @@ data class DashboardUiState(
     val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
     val selectedTribes: Set<Tribe> = emptySet(),
-    val selectedAnomaly: String = AnomalyPreset.NONE,
-    val isDuos: Boolean = false,
     val manifestUrlOverride: String = "",
     val effectiveManifestUrl: String = "",
     val dataSource: StrategyDataSource = StrategyDataSource.ASSET,
@@ -38,6 +36,8 @@ data class DashboardUiState(
     val syncMessage: String? = null,
     val overlayInteractionEnabled: Boolean = true,
     val bubbleOpacityPercent: Int = 72,
+    val cardRules: CardRulesCatalog = emptyMap(),
+    val allStrategies: List<StrategyComp> = emptyList(),
     val strategies: List<StrategyComp> = emptyList(),
     val selectedStrategyId: String? = null
 ) {
@@ -52,62 +52,68 @@ class MainViewModel(
     private data class FilterInputs(
         val snapshot: CatalogSnapshot?,
         val selectedTribes: Set<Tribe>,
-        val selectedAnomaly: String,
-        val isDuos: Boolean,
         val manifestUrlOverride: String
     )
 
     private data class UiMetaInputs(
         val selectedStrategyId: String?,
+        val awaitingManualStrategySelection: Boolean,
         val isRefreshing: Boolean,
         val syncMessage: String?,
         val overlaySettings: OverlaySettings,
-        val manifestVersion: String?
+        val manifestVersion: String?,
+        val cardRules: CardRulesCatalog
     )
 
     private val catalogFlow = MutableStateFlow<CatalogSnapshot?>(null)
     private val selectedTribesFlow = MutableStateFlow(
         setOf(Tribe.MECH, Tribe.DEMON, Tribe.UNDEAD, Tribe.PIRATE, Tribe.ELEMENTAL)
     )
-    private val selectedAnomalyFlow = MutableStateFlow(AnomalyPreset.NONE)
-    private val duosModeFlow = MutableStateFlow(false)
     private val manifestUrlOverrideFlow = MutableStateFlow("")
     private val selectedStrategyFlow = MutableStateFlow<String?>(null)
+    private val awaitingManualStrategySelectionFlow = MutableStateFlow(false)
     private val isRefreshingFlow = MutableStateFlow(false)
     private val syncMessageFlow = MutableStateFlow<String?>(null)
     private val overlaySettingsFlow = MutableStateFlow(OverlaySettings())
     private val manifestVersionFlow = MutableStateFlow<String?>(null)
+    private val cardRulesFlow = MutableStateFlow<CardRulesCatalog>(emptyMap())
     private var appContext: Context? = null
 
     private val filterInputsFlow = combine(
         catalogFlow,
         selectedTribesFlow,
-        selectedAnomalyFlow,
-        duosModeFlow,
         manifestUrlOverrideFlow
-    ) { snapshot, tribes, anomaly, duos, manifestUrlOverride ->
+    ) { snapshot, tribes, manifestUrlOverride ->
         FilterInputs(
             snapshot = snapshot,
             selectedTribes = tribes,
-            selectedAnomaly = anomaly,
-            isDuos = duos,
             manifestUrlOverride = manifestUrlOverride
         )
     }
 
-    private val uiMetaFlow = combine(
+    private val uiSelectionFlow = combine(
         selectedStrategyFlow,
-        isRefreshingFlow,
+        awaitingManualStrategySelectionFlow,
+        isRefreshingFlow
+    ) { selectedId, awaitingManualSelection, isRefreshing ->
+        Triple(selectedId, awaitingManualSelection, isRefreshing)
+    }
+
+    private val uiMetaFlow = combine(
+        uiSelectionFlow,
         syncMessageFlow,
         overlaySettingsFlow,
-        manifestVersionFlow
-    ) { selectedId, isRefreshing, syncMessage, overlaySettings, manifestVersion ->
+        manifestVersionFlow,
+        cardRulesFlow
+    ) { selection, syncMessage, overlaySettings, manifestVersion, cardRules ->
         UiMetaInputs(
-            selectedStrategyId = selectedId,
-            isRefreshing = isRefreshing,
+            selectedStrategyId = selection.first,
+            awaitingManualStrategySelection = selection.second,
+            isRefreshing = selection.third,
             syncMessage = syncMessage,
             overlaySettings = overlaySettings,
-            manifestVersion = manifestVersion
+            manifestVersion = manifestVersion,
+            cardRules = cardRules
         )
     }
 
@@ -115,20 +121,16 @@ class MainViewModel(
         val snapshot = filterInputs.snapshot
         val filtered = StrategyEngine.filter(
             allStrategies = snapshot?.catalog?.comps.orEmpty(),
-            selectedTribes = filterInputs.selectedTribes,
-            selectedAnomaly = filterInputs.selectedAnomaly,
-            isDuos = filterInputs.isDuos
-        )
+            selectedTribes = filterInputs.selectedTribes
+        ).sortedWith(compareBy<StrategyComp> { strategyTierRank(it.tier) }.thenBy { it.name })
         val resolvedId = uiMeta.selectedStrategyId?.takeIf { id -> filtered.any { it.id == id } }
-            ?: filtered.firstOrNull()?.id
+            ?: if (uiMeta.awaitingManualStrategySelection) null else filtered.firstOrNull()?.id
 
         DashboardUiState(
             catalogVersion = snapshot?.catalog?.version.orEmpty(),
             isLoading = snapshot == null,
             isRefreshing = uiMeta.isRefreshing,
             selectedTribes = filterInputs.selectedTribes,
-            selectedAnomaly = filterInputs.selectedAnomaly,
-            isDuos = filterInputs.isDuos,
             manifestUrlOverride = filterInputs.manifestUrlOverride,
             effectiveManifestUrl = resolveEffectiveManifestUrl(filterInputs.manifestUrlOverride),
             dataSource = snapshot?.source ?: StrategyDataSource.ASSET,
@@ -137,6 +139,8 @@ class MainViewModel(
             syncMessage = uiMeta.syncMessage,
             overlayInteractionEnabled = uiMeta.overlaySettings.interactionEnabled,
             bubbleOpacityPercent = uiMeta.overlaySettings.bubbleOpacityPercent,
+            cardRules = uiMeta.cardRules,
+            allStrategies = snapshot?.catalog?.comps.orEmpty(),
             strategies = filtered,
             selectedStrategyId = resolvedId
         )
@@ -152,8 +156,6 @@ class MainViewModel(
         val preferences = AppPreferences(context.applicationContext)
         val dashboardPreferences = preferences.loadDashboardPreferences()
         selectedTribesFlow.value = dashboardPreferences.selectedTribes
-        selectedAnomalyFlow.value = dashboardPreferences.selectedAnomaly
-        duosModeFlow.value = dashboardPreferences.isDuos
         manifestUrlOverrideFlow.value = dashboardPreferences.manifestUrlOverride
         overlaySettingsFlow.value = preferences.loadOverlaySettings()
         manifestVersionFlow.value = preferences.loadLastManifestVersion()
@@ -162,8 +164,8 @@ class MainViewModel(
 
         viewModelScope.launch {
             val snapshot = repository.loadCatalog(context.applicationContext)
+            cardRulesFlow.value = repository.loadCardRules(context.applicationContext)
             catalogFlow.value = snapshot
-            selectedStrategyFlow.value = snapshot.catalog.comps.firstOrNull()?.id
             if (hasConfiguredManifestSource()) {
                 refreshCatalog(silent = true)
             }
@@ -171,23 +173,24 @@ class MainViewModel(
     }
 
     fun toggleTribe(tribe: Tribe) {
+        var changed = false
         selectedTribesFlow.update { current ->
             when {
-                current.contains(tribe) -> current - tribe
+                current.contains(tribe) -> {
+                    changed = true
+                    current - tribe
+                }
                 current.size >= 5 -> current
-                else -> current + tribe
+                else -> {
+                    changed = true
+                    current + tribe
+                }
             }
         }
-        persistDashboardPreferences()
-    }
-
-    fun selectAnomaly(anomaly: String) {
-        selectedAnomalyFlow.value = anomaly
-        persistDashboardPreferences()
-    }
-
-    fun setDuosMode(enabled: Boolean) {
-        duosModeFlow.value = enabled
+        if (changed) {
+            selectedStrategyFlow.value = null
+            awaitingManualStrategySelectionFlow.value = true
+        }
         persistDashboardPreferences()
     }
 
@@ -224,7 +227,7 @@ class MainViewModel(
                 repository.refreshCatalog(context, manifestUrlOverrideFlow.value.trim())
             }.onSuccess { result ->
                 catalogFlow.value = result.snapshot
-                selectedStrategyFlow.value = result.snapshot.catalog.comps.firstOrNull()?.id
+                cardRulesFlow.value = repository.loadCardRules(context, ignoreMemoryCache = true)
                 manifestVersionFlow.value = result.manifestVersion
                 syncMessageFlow.value = when {
                     result.wasUpdated -> "已同步到 ${result.snapshot.catalog.version}"
@@ -242,20 +245,27 @@ class MainViewModel(
 
     fun selectStrategy(strategyId: String) {
         selectedStrategyFlow.value = strategyId
+        awaitingManualStrategySelectionFlow.value = false
     }
 
     private fun persistDashboardPreferences() {
         val context = appContext ?: return
         AppPreferences(context).saveDashboardPreferences(
             selectedTribes = selectedTribesFlow.value,
-            selectedAnomaly = selectedAnomalyFlow.value,
-            isDuos = duosModeFlow.value,
             manifestUrlOverride = manifestUrlOverrideFlow.value
         )
     }
 
     private fun hasConfiguredManifestSource(): Boolean {
         return manifestUrlOverrideFlow.value.isNotBlank() || BuildConfig.DEFAULT_MANIFEST_URL.isNotBlank()
+    }
+
+    private fun strategyTierRank(tier: String): Int = when (tier.uppercase(Locale.US)) {
+        "T0", "S" -> 0
+        "T1", "A" -> 1
+        "T2", "B" -> 2
+        "T3", "C" -> 3
+        else -> 4
     }
 
     private fun resolveEffectiveManifestUrl(override: String): String {

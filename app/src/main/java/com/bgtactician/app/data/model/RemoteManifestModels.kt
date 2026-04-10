@@ -15,7 +15,9 @@ data class RemoteManifest(
     val updatedAt: String,
     @SerialName("default_locale")
     val defaultLocale: String = "zhCN",
-    val files: Map<String, RemoteCatalogFile>
+    val files: Map<String, RemoteCatalogFile>,
+    @SerialName("support_files")
+    val supportFiles: Map<String, RemoteCatalogFile> = emptyMap()
 )
 
 @Serializable

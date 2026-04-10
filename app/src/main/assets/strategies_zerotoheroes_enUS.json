@@ -1,11 +1,12 @@
 {
-  "version": "2026.04.07-zerotoheroes-enUS",
+  "version": "2026.04.09-zerotoheroes-enUS",
   "comps": [
     {
       "id": "deep_blue_nagas",
       "name": "Deep Blue Nagas",
       "tier": "T2",
       "difficulty": "低",
+      "power_level": "C",
       "required_tribes": [
         "Naga"
       ],
@@ -13,6 +14,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "deep blue + Bluesy Siren",
+      "source_patch_number": 231720,
       "overview": "Deep Blue Nagas | Commit signal: deep blue + Bluesy Siren | Scale your deep blues with crooner & Bluesy Siren. Remember you can have perma stat with Flaming enforcer !",
       "early_strategy": "Commit when you see deep blue + Bluesy Siren.",
       "late_strategy": "Scale your deep blues with crooner & Bluesy Siren. Remember you can have perma stat with Flaming enforcer !",
@@ -39,6 +42,10 @@
           "name": "Bluesy Siren",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_931",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_931.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -46,6 +53,10 @@
           "name": "Deep Blue Crooner",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG26_502",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_502.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -53,6 +64,10 @@
           "name": "Zesty Shaker",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG26_505",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_505.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -60,6 +75,10 @@
           "name": "Daggerspine Thrasher",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG27_024",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG27_024.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -67,6 +86,10 @@
           "name": "Flaming Enforcer",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_500",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_500.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -74,6 +97,10 @@
           "name": "Glowscale",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG23_008",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG23_008.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -81,6 +108,10 @@
           "name": "Lava Lurker",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG23_009",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG23_009.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -88,6 +119,10 @@
           "name": "Profound Thinker",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_929",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_929.png",
           "image_asset": "minions/tribes/naga.svg"
         }
       ]
@@ -97,6 +132,7 @@
       "name": "Shield Mechs",
       "tier": "T2",
       "difficulty": "低",
+      "power_level": "B",
       "required_tribes": [
         "Mech"
       ],
@@ -104,6 +140,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Czarina + Lass-O-Matic",
+      "source_patch_number": 231720,
       "overview": "Shield Mechs | Commit signal: Czarina + Lass-O-Matic | Try to generate some tavern spells then boost your divine shield with Czarina",
       "early_strategy": "Commit when you see Czarina + Lass-O-Matic.",
       "late_strategy": "Try to generate some tavern spells then boost your divine shield with Czarina",
@@ -130,6 +168,10 @@
           "name": "Charging Czarina",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG28_741",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG28_741.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -137,6 +179,10 @@
           "name": "Whirling Lass-o-Matic",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG28_635",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG28_635.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -144,6 +190,10 @@
           "name": "Grease Bot",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG21_024",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG21_024.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -151,6 +201,10 @@
           "name": "Humon'gozz",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG32_341",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_341.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -158,6 +212,10 @@
           "name": "Marquee Ticker",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG31_178",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG31_178.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -165,6 +223,10 @@
           "name": "Sin'dorei Straight Shot",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG25_016",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_016.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -172,6 +234,10 @@
           "name": "Power of George",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_006",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_HeroPowerSpell_006.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -179,6 +245,10 @@
           "name": "Timewarped B.A.N.A.N.A.S.",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_912",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_Treasure_912.png",
           "image_asset": "minions/tribes/mech.svg"
         }
       ]
@@ -188,6 +258,7 @@
       "name": "Buff Shop Demons",
       "tier": "T2",
       "difficulty": "中",
+      "power_level": "C",
       "required_tribes": [
         "Demon"
       ],
@@ -195,6 +266,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Shadow Dancer + Ur'zul/felboar",
+      "source_patch_number": 231720,
       "overview": "Buff Shop Demons | Commit signal: Shadow Dancer + Ur'zul/felboar | Buff shop with Shadow Dancer or Timewarped Shadow dancer, then consume the shop with ur'zul/felboar. Try to boost tavern spell with conjurer or meditative for ex",
       "early_strategy": "Commit when you see Shadow Dancer + Ur'zul/felboar.",
       "late_strategy": "Buff shop with Shadow Dancer or Timewarped Shadow dancer, then consume the shop with ur'zul/felboar. Try to boost tavern spell with conjurer or meditative for ex",
@@ -222,6 +295,10 @@
           "name": "Felboar",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG28_633",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG28_633.png",
           "image_asset": "minions/tribes/demon.svg"
         },
         {
@@ -229,6 +306,10 @@
           "name": "Insatiable Ur'zul",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG21_004",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG21_004.png",
           "image_asset": "minions/tribes/demon.svg"
         },
         {
@@ -236,6 +317,10 @@
           "name": "Shadowdancer",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG32_891",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_891.png",
           "image_asset": "minions/tribes/demon.svg"
         },
         {
@@ -243,6 +328,10 @@
           "name": "Brann Bronzebeard",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG_LOE_077",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG_LOE_077.png",
           "image_asset": "minions/tribes/demon.svg"
         },
         {
@@ -250,6 +339,10 @@
           "name": "Famished Felbat",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG21_005",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG21_005.png",
           "image_asset": "minions/tribes/demon.svg"
         },
         {
@@ -257,6 +350,10 @@
           "name": "Felfire Conjurer",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG32_821",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_821.png",
           "image_asset": "minions/tribes/demon.svg"
         },
         {
@@ -264,6 +361,10 @@
           "name": "Flaming Enforcer",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_500",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_500.png",
           "image_asset": "minions/tribes/demon.svg"
         },
         {
@@ -271,6 +372,10 @@
           "name": "Titus Rivendare",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_354.png",
           "image_asset": "minions/tribes/demon.svg"
         }
       ]
@@ -280,11 +385,14 @@
       "name": "Scam",
       "tier": "T1",
       "difficulty": "中",
+      "power_level": "A",
       "required_tribes": [],
       "allowed_anomalies": [
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Scam unit and no other game plans",
+      "source_patch_number": 231720,
       "overview": "Scam | Commit signal: Scam unit and no other game plans | Buy every \"one for one\" unit like leeroy, spore etc. and try to stay alive (buy some armor even if you allready have 5 or more)",
       "early_strategy": "Commit when you see Scam unit and no other game plans.",
       "late_strategy": "Buy every \"one for one\" unit like leeroy, spore etc. and try to stay alive (buy some armor even if you allready have 5 or more)",
@@ -312,6 +420,10 @@
           "name": "Leeroy the Reckless",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG23_318",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG23_318.png",
           "image_asset": null
         },
         {
@@ -319,6 +431,10 @@
           "name": "Apprentice of Sefin",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG32_332",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_332.png",
           "image_asset": null
         },
         {
@@ -326,6 +442,10 @@
           "name": "Bassgill",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_350",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_350.png",
           "image_asset": null
         },
         {
@@ -333,6 +453,10 @@
           "name": "Daggerspine Thrasher",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG27_024",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG27_024.png",
           "image_asset": null
         },
         {
@@ -340,6 +464,10 @@
           "name": "Deadly Spore",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BGS_131",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BGS_131.png",
           "image_asset": null
         },
         {
@@ -347,6 +475,10 @@
           "name": "Expert Aviator",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_140",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_140.png",
           "image_asset": null
         },
         {
@@ -354,6 +486,10 @@
           "name": "Heroic Underdog",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_604",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_604.png",
           "image_asset": null
         },
         {
@@ -361,6 +497,10 @@
           "name": "Psychus",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_318",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_318.png",
           "image_asset": null
         }
       ]
@@ -370,6 +510,7 @@
       "name": "Silithid Beasts",
       "tier": "T2",
       "difficulty": "中",
+      "power_level": "B",
       "required_tribes": [
         "Beast"
       ],
@@ -377,6 +518,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Early Silithid burrower",
+      "source_patch_number": 231720,
       "overview": "Silithid Beasts | Commit signal: Early Silithid burrower | Play with a lot of deathrattle & reborn to boost your Silithid (best is twilight Broodmother), it's ok to lose some fight. When you can die, play it like a Goldrinn comp, so trigger Silithid with macaw, titus etc.",
       "early_strategy": "Commit when you see Early Silithid burrower.",
       "late_strategy": "Play with a lot of deathrattle & reborn to boost your Silithid (best is twilight Broodmother), it's ok to lose some fight. When you can die, play it like a Goldrinn comp, so trigger Silithid with macaw, titus etc.",
@@ -404,6 +547,10 @@
           "name": "Monstrous Macaw",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BGS_078",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BGS_078.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -411,6 +558,10 @@
           "name": "Silithid Burrower",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG29_871",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG29_871.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -418,6 +569,10 @@
           "name": "Titus Rivendare",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_354.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -425,6 +580,10 @@
           "name": "Niuzao",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG27_822",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG27_822.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -432,6 +591,10 @@
           "name": "Twilight Broodmother",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_731",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_731.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -439,6 +602,10 @@
           "name": "Power of Teron",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_009",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_HeroPowerSpell_009.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -446,6 +613,10 @@
           "name": "Timewarped Chameleon",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_042",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_Giant_042.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -453,6 +624,10 @@
           "name": "Timewarped Hawkstrider",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_370",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_Giant_370.png",
           "image_asset": "minions/tribes/beast.svg"
         }
       ]
@@ -462,6 +637,7 @@
       "name": "Attack Undead",
       "tier": "T1",
       "difficulty": "中",
+      "power_level": "A",
       "required_tribes": [
         "Undead"
       ],
@@ -469,6 +645,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Handless forsaken + Visionary + Brann",
+      "source_patch_number": 231720,
       "overview": "Attack Undead | Commit signal: Handless forsaken + Visionary + Brann | Cycle all good battlecry with brann + visionary shipman, then cycle spell and boost your undead with Handless forsaken",
       "early_strategy": "Commit when you see Handless forsaken + Visionary + Brann.",
       "late_strategy": "Cycle all good battlecry with brann + visionary shipman, then cycle spell and boost your undead with Handless forsaken",
@@ -496,6 +674,10 @@
           "name": "Forsaken Weaver",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_692",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_692.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -503,6 +685,10 @@
           "name": "Deathly Striker",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG31_835",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG31_835.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -510,6 +696,10 @@
           "name": "Handless Forsaken",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG25_010",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_010.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -517,6 +707,10 @@
           "name": "Soulsplitter",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG25_023",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_023.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -524,6 +718,10 @@
           "name": "Titus Rivendare",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_354.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -531,6 +729,10 @@
           "name": "Visionary Shipman",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_235",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_235.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -538,6 +740,10 @@
           "name": "Wintergrasp Ghoul",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_694",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_694.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -545,6 +751,10 @@
           "name": "Power of Teron",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_009",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_HeroPowerSpell_009.png",
           "image_asset": "minions/tribes/undead.svg"
         }
       ]
@@ -554,6 +764,7 @@
       "name": "Refresh Elementals",
       "tier": "T1",
       "difficulty": "高",
+      "power_level": "A",
       "required_tribes": [
         "Elemental"
       ],
@@ -561,6 +772,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Brann + Acid rainfall + air revenant/En-Djinn Blazer + rylak",
+      "source_patch_number": 231720,
       "overview": "Refresh Elementals | Commit signal: Brann + Acid rainfall + air revenant/En-Djinn Blazer + rylak | You need to boost your right-most card (with Air revenant or En-Djinn Blazer + rylak) after that, get Acid Rainfall, then roll again and again.",
       "early_strategy": "Commit when you see Brann + Acid rainfall + air revenant/En-Djinn Blazer + rylak.",
       "late_strategy": "You need to boost your right-most card (with Air revenant or En-Djinn Blazer + rylak) after that, get Acid Rainfall, then roll again and again.",
@@ -589,6 +802,10 @@
           "name": "Acid Rainfall",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_857",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_857.png",
           "image_asset": "minions/tribes/elemental.svg"
         },
         {
@@ -596,6 +813,10 @@
           "name": "Air Revenant",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_858",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_858.png",
           "image_asset": "minions/tribes/elemental.svg"
         },
         {
@@ -603,6 +824,10 @@
           "name": "Brann Bronzebeard",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG_LOE_077",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG_LOE_077.png",
           "image_asset": "minions/tribes/elemental.svg"
         },
         {
@@ -610,6 +835,10 @@
           "name": "Flaming Enforcer",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_500",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_500.png",
           "image_asset": "minions/tribes/elemental.svg"
         },
         {
@@ -617,6 +846,10 @@
           "name": "Fleet Admiral Tethys",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_766",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_766.png",
           "image_asset": "minions/tribes/elemental.svg"
         },
         {
@@ -624,6 +857,10 @@
           "name": "Rylak Metalhead",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_801",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_801.png",
           "image_asset": "minions/tribes/elemental.svg"
         },
         {
@@ -631,6 +868,10 @@
           "name": "Titus Rivendare",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_354.png",
           "image_asset": "minions/tribes/elemental.svg"
         },
         {
@@ -638,6 +879,10 @@
           "name": "Waveling",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_856",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_856.png",
           "image_asset": "minions/tribes/elemental.svg"
         }
       ]
@@ -647,6 +892,7 @@
       "name": "APM Pirates",
       "tier": "T0",
       "difficulty": "高",
+      "power_level": "S",
       "required_tribes": [
         "Pirate"
       ],
@@ -654,6 +900,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "tethys + Brann",
+      "source_patch_number": 231720,
       "overview": "APM Pirates | Commit signal: tethys + Brann | Play fast, cycle all economic minions with tethys ",
       "early_strategy": "Commit when you see tethys + Brann.",
       "late_strategy": "Play fast, cycle all economic minions with tethys ",
@@ -682,6 +930,10 @@
           "name": "Cannon Corsair",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_236",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_236.png",
           "image_asset": "minions/tribes/pirate.svg"
         },
         {
@@ -689,6 +941,10 @@
           "name": "Fleet Admiral Tethys",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG26_766",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_766.png",
           "image_asset": "minions/tribes/pirate.svg"
         },
         {
@@ -696,6 +952,10 @@
           "name": "Shore Marauder",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_502",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_502.png",
           "image_asset": "minions/tribes/pirate.svg"
         },
         {
@@ -703,6 +963,10 @@
           "name": "Brann Bronzebeard",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG_LOE_077",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG_LOE_077.png",
           "image_asset": "minions/tribes/pirate.svg"
         },
         {
@@ -710,6 +974,10 @@
           "name": "Gunpowder Courier",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_810",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_810.png",
           "image_asset": "minions/tribes/pirate.svg"
         },
         {
@@ -717,6 +985,10 @@
           "name": "Industrious Deckhand",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_234",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_234.png",
           "image_asset": "minions/tribes/pirate.svg"
         },
         {
@@ -724,6 +996,10 @@
           "name": "Plankwalker",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_521",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_521.png",
           "image_asset": "minions/tribes/pirate.svg"
         },
         {
@@ -731,6 +1007,10 @@
           "name": "Timecap'n Hooktail",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG27_005",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG27_005.png",
           "image_asset": "minions/tribes/pirate.svg"
         }
       ]
@@ -740,6 +1020,7 @@
       "name": "Boost Shop Quilboar",
       "tier": "T1",
       "difficulty": "高",
+      "power_level": "A",
       "required_tribes": [
         "Quilboar"
       ],
@@ -747,6 +1028,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Gem or Tavern spell scaling + Blood gem barrage generation + Felboar",
+      "source_patch_number": 231720,
       "overview": "Boost Shop Quilboar | Commit signal: Gem or Tavern spell scaling + Blood gem barrage generation + Felboar | Find a way to boost your shop with Blood gem barrage (with big gems or big tavern spell) then consume it with Felboar",
       "early_strategy": "Commit when you see Gem or Tavern spell scaling + Blood gem barrage generation + Felboar.",
       "late_strategy": "Find a way to boost your shop with Blood gem barrage (with big gems or big tavern spell) then consume it with Felboar",
@@ -775,6 +1058,10 @@
           "name": "Brann Bronzebeard",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG_LOE_077",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG_LOE_077.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -782,6 +1069,10 @@
           "name": "Felboar",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG28_633",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG28_633.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -789,6 +1080,10 @@
           "name": "Briarback Drummer",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_683",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_683.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -796,6 +1091,10 @@
           "name": "Moon-Bacon Jazzer",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_159",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_159.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -803,6 +1102,10 @@
           "name": "Paint Smudger",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG28_584",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG28_584.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -810,6 +1113,10 @@
           "name": "Prickly Piper",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_160",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_160.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -817,6 +1124,10 @@
           "name": "Prophet of the Boar",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG20_203",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG20_203.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -824,6 +1135,10 @@
           "name": "Razorfen Flapper",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_682",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_682.png",
           "image_asset": "minions/tribes/quilboar.svg"
         }
       ]
@@ -833,6 +1148,7 @@
       "name": "Handbuff Murlocs",
       "tier": "T2",
       "difficulty": "中",
+      "power_level": "C",
       "required_tribes": [
         "Murloc"
       ],
@@ -840,6 +1156,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Brann + Bream counter",
+      "source_patch_number": 231720,
       "overview": "Handbuff Murlocs | Commit signal: Brann + Bream counter | Boost Bream Counter with Burglar & Brann, cycle card like tad or primalfin.",
       "early_strategy": "Commit when you see Brann + Bream counter.",
       "late_strategy": "Boost Bream Counter with Burglar & Brann, cycle card like tad or primalfin.",
@@ -867,6 +1185,10 @@
           "name": "Bassgill",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG26_350",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_350.png",
           "image_asset": "minions/tribes/murloc.svg"
         },
         {
@@ -874,6 +1196,10 @@
           "name": "Brann Bronzebeard",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG_LOE_077",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG_LOE_077.png",
           "image_asset": "minions/tribes/murloc.svg"
         },
         {
@@ -881,6 +1207,10 @@
           "name": "Bream Counter",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG26_137",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_137.png",
           "image_asset": "minions/tribes/murloc.svg"
         },
         {
@@ -888,6 +1218,10 @@
           "name": "Apprentice of Sefin",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG32_332",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_332.png",
           "image_asset": "minions/tribes/murloc.svg"
         },
         {
@@ -895,6 +1229,10 @@
           "name": "Bile Spitter",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG33_318",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG33_318.png",
           "image_asset": "minions/tribes/murloc.svg"
         },
         {
@@ -902,6 +1240,10 @@
           "name": "Costume Enthusiast",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_142",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_142.png",
           "image_asset": "minions/tribes/murloc.svg"
         },
         {
@@ -909,6 +1251,10 @@
           "name": "Dramaloc",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_143",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_143.png",
           "image_asset": "minions/tribes/murloc.svg"
         },
         {
@@ -916,6 +1262,10 @@
           "name": "Magicfin Mycologist",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG33_891",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG33_891.png",
           "image_asset": "minions/tribes/murloc.svg"
         }
       ]
@@ -925,6 +1275,7 @@
       "name": "End of Turn Murlocs",
       "tier": "T1",
       "difficulty": "高",
+      "power_level": "A",
       "required_tribes": [
         "Murloc"
       ],
@@ -932,6 +1283,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "brann + young murkeye + drakkari + magicfin + Tavern boost spell",
+      "source_patch_number": 231720,
       "overview": "End of Turn Murlocs | Commit signal: brann + young murkeye + drakkari + magicfin + Tavern boost spell | Buy Azerite Empowerment, Time management or shiny ring with magicfin on board, then trigger the 1/1 with young murk eye + brann & drakkari. Find a way to boost your tavern spell (Felfire conjurer for ex)",
       "early_strategy": "Commit when you see brann + young murkeye + drakkari + magicfin + Tavern boost spell.",
       "late_strategy": "Buy Azerite Empowerment, Time management or shiny ring with magicfin on board, then trigger the 1/1 with young murk eye + brann & drakkari. Find a way to boost your tavern spell (Felfire conjurer for ex)",
@@ -960,6 +1313,10 @@
           "name": "Brann Bronzebeard",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG_LOE_077",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG_LOE_077.png",
           "image_asset": "minions/tribes/murloc.svg"
         },
         {
@@ -967,6 +1324,10 @@
           "name": "Drakkari Enchanter",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG26_ICC_901",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_ICC_901.png",
           "image_asset": "minions/tribes/murloc.svg"
         },
         {
@@ -974,6 +1335,10 @@
           "name": "Felfire Conjurer",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG32_821",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_821.png",
           "image_asset": "minions/tribes/murloc.svg"
         },
         {
@@ -981,6 +1346,10 @@
           "name": "Magicfin Mycologist",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG33_891",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG33_891.png",
           "image_asset": "minions/tribes/murloc.svg"
         },
         {
@@ -988,6 +1357,10 @@
           "name": "Young Murk-Eye",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG22_403",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG22_403.png",
           "image_asset": "minions/tribes/murloc.svg"
         },
         {
@@ -995,6 +1368,10 @@
           "name": "Bassgill",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_350",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_350.png",
           "image_asset": "minions/tribes/murloc.svg"
         },
         {
@@ -1002,6 +1379,10 @@
           "name": "Timewarped Steamer",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_PreMadeChamp_038",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_PreMadeChamp_038.png",
           "image_asset": "minions/tribes/murloc.svg"
         },
         {
@@ -1009,6 +1390,10 @@
           "name": "Tranquil Meditative",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG32_835",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_835.png",
           "image_asset": "minions/tribes/murloc.svg"
         }
       ]
@@ -1018,11 +1403,14 @@
       "name": "Tier 2 Ballers",
       "tier": "T2",
       "difficulty": "中",
+      "power_level": "C",
       "required_tribes": [],
       "allowed_anomalies": [
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Lubber/Snow elemental",
+      "source_patch_number": 231720,
       "overview": "Tier 2 Ballers | Commit signal: Lubber/Snow elemental | Play this comp with Elem and demon if possible, try to get an \"elemental\" tag before the 1st timewarp so you can get Lubber or snow elemental. Then cycle oil and ballers",
       "early_strategy": "Commit when you see Lubber/Snow elemental.",
       "late_strategy": "Play this comp with Elem and demon if possible, try to get an \"elemental\" tag before the 1st timewarp so you can get Lubber or snow elemental. Then cycle oil and ballers",
@@ -1050,6 +1438,10 @@
           "name": "Fire Baller",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG31_816",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG31_816.png",
           "image_asset": null
         },
         {
@@ -1057,6 +1449,10 @@
           "name": "Snow Baller",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG31_818",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG31_818.png",
           "image_asset": null
         },
         {
@@ -1064,6 +1460,10 @@
           "name": "Annoy-o-Tron",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG_GVG_085",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG_GVG_085.png",
           "image_asset": null
         },
         {
@@ -1071,6 +1471,10 @@
           "name": "Aureate Laureate",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG32_236",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_236.png",
           "image_asset": null
         },
         {
@@ -1078,6 +1482,10 @@
           "name": "Cord Puller",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG29_611",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG29_611.png",
           "image_asset": null
         },
         {
@@ -1085,6 +1493,10 @@
           "name": "Crackling Cyclone",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BGS_119",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BGS_119.png",
           "image_asset": null
         },
         {
@@ -1092,6 +1504,10 @@
           "name": "Soul Rewinder",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_174",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_174.png",
           "image_asset": null
         },
         {
@@ -1099,6 +1515,10 @@
           "name": "Power of Flurgl",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_016",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_HeroPowerSpell_016.png",
           "image_asset": null
         }
       ]
@@ -1108,6 +1528,7 @@
       "name": "Cycle Quilboar",
       "tier": "T2",
       "difficulty": "高",
+      "power_level": "B",
       "required_tribes": [
         "Quilboar"
       ],
@@ -1115,6 +1536,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Tethys + paint Smudger + brann",
+      "source_patch_number": 231720,
       "overview": "Cycle Quilboar | Commit signal: Tethys + paint Smudger + brann | You need a lot of money for this comp (best is Tethys + Visionary Shipman). Then cycle all eco card with brann + gem boost (Foodie & Moon-Bacon Jazzer)",
       "early_strategy": "Commit when you see Tethys + paint Smudger + brann.",
       "late_strategy": "You need a lot of money for this comp (best is Tethys + Visionary Shipman). Then cycle all eco card with brann + gem boost (Foodie & Moon-Bacon Jazzer)",
@@ -1143,6 +1566,10 @@
           "name": "Brann Bronzebeard",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG_LOE_077",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG_LOE_077.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -1150,6 +1577,10 @@
           "name": "Felboar",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG28_633",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG28_633.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -1157,6 +1588,10 @@
           "name": "Paint Smudger",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG28_584",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG28_584.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -1164,6 +1599,10 @@
           "name": "Visionary Shipman",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_235",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_235.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -1171,6 +1610,10 @@
           "name": "Fleet Admiral Tethys",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_766",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_766.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -1178,6 +1621,10 @@
           "name": "Prickly Piper",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_160",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_160.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -1185,6 +1632,10 @@
           "name": "Sanguine Refiner",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG33_885",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG33_885.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -1192,6 +1643,10 @@
           "name": "Timewarped Bloodbinder",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_PreMadeChamp_076",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_PreMadeChamp_076.png",
           "image_asset": "minions/tribes/quilboar.svg"
         }
       ]
@@ -1201,6 +1656,7 @@
       "name": "End of Turn Nagas",
       "tier": "T1",
       "difficulty": "低",
+      "power_level": "A",
       "required_tribes": [
         "Naga"
       ],
@@ -1208,6 +1664,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Tavern spell boost + Fauna Whisperer",
+      "source_patch_number": 231720,
       "overview": "End of Turn Nagas | Commit signal: Tavern spell boost + Fauna Whisperer | Find a way to boost your tavern spells, Felfire conjurer is the best. If it possible try to do this order : Conjurer -> Amalgam (atrocity or par-tea Guest) -> Fauna Whisperer -> Amalgam -> Felbat",
       "early_strategy": "Commit when you see Tavern spell boost + Fauna Whisperer.",
       "late_strategy": "Find a way to boost your tavern spells, Felfire conjurer is the best. If it possible try to do this order : Conjurer -> Amalgam (atrocity or par-tea Guest) -> Fauna Whisperer -> Amalgam -> Felbat",
@@ -1234,6 +1692,10 @@
           "name": "Drakkari Enchanter",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG26_ICC_901",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_ICC_901.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -1241,6 +1703,10 @@
           "name": "Fauna Whisperer",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG32_837",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_837.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -1248,6 +1714,10 @@
           "name": "Felfire Conjurer",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG32_821",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_821.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -1255,6 +1725,10 @@
           "name": "Arid Atrocity",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG29_864",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG29_864.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -1262,6 +1736,10 @@
           "name": "Famished Felbat",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG21_005",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG21_005.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -1269,6 +1747,10 @@
           "name": "Firescale Hoarder",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG32_820",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_820.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -1276,6 +1758,10 @@
           "name": "Nightmare Par-tea Guest",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG32_111",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_111.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -1283,6 +1769,10 @@
           "name": "Tranquil Meditative",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG32_835",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_835.png",
           "image_asset": "minions/tribes/naga.svg"
         }
       ]
@@ -1292,6 +1782,7 @@
       "name": "Carapace Undead",
       "tier": "T1",
       "difficulty": "中",
+      "power_level": "A",
       "required_tribes": [
         "Undead"
       ],
@@ -1299,6 +1790,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Carapace Raiser + Friendly Geist + titus",
+      "source_patch_number": 231720,
       "overview": "Carapace Undead | Commit signal: Carapace Raiser + Friendly Geist + titus | Trigger Carapace Raiser & Friendly Geist as much as possible with Macaw, Titus and Hand of deios. Play this comp with Twilight Broodmother if possible",
       "early_strategy": "Commit when you see Carapace Raiser + Friendly Geist + titus.",
       "late_strategy": "Trigger Carapace Raiser & Friendly Geist as much as possible with Macaw, Titus and Hand of deios. Play this comp with Twilight Broodmother if possible",
@@ -1326,6 +1819,10 @@
           "name": "Carapace Raiser",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG33_111",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG33_111.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -1333,6 +1830,10 @@
           "name": "Friendly Geist",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG32_880",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_880.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -1340,6 +1841,10 @@
           "name": "Titus Rivendare",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_354.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -1347,6 +1852,10 @@
           "name": "Cadaver Caretaker",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG30_125",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG30_125.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -1354,6 +1863,10 @@
           "name": "Handless Forsaken",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG25_010",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_010.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -1361,6 +1874,10 @@
           "name": "Monstrous Macaw",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BGS_078",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BGS_078.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -1368,6 +1885,10 @@
           "name": "Twilight Broodmother",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_731",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_731.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -1375,6 +1896,10 @@
           "name": "Twilight Hatchling",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_630",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_630.png",
           "image_asset": "minions/tribes/undead.svg"
         }
       ]
@@ -1384,6 +1909,7 @@
       "name": "Beasts Beetles",
       "tier": "T1",
       "difficulty": "中",
+      "power_level": "A",
       "required_tribes": [
         "Beast"
       ],
@@ -1391,6 +1917,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Felhorn + Rylak + Silky Shimmermoth",
+      "source_patch_number": 231720,
       "overview": "Beasts Beetles | Commit signal: Felhorn + Rylak + Silky Shimmermoth | Trigger Felhorn with rylak + Brann/titus and Deios if you can to scale Silky Shimmermoth. Reborn everything ",
       "early_strategy": "Commit when you see Felhorn + Rylak + Silky Shimmermoth.",
       "late_strategy": "Trigger Felhorn with rylak + Brann/titus and Deios if you can to scale Silky Shimmermoth. Reborn everything ",
@@ -1418,6 +1946,10 @@
           "name": "Felhorn",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_781",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_781.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -1425,6 +1957,10 @@
           "name": "Rylak Metalhead",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG26_801",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_801.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -1432,6 +1968,10 @@
           "name": "Silky Shimmermoth",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG32_204",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_204.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -1439,6 +1979,10 @@
           "name": "Brann Bronzebeard",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG_LOE_077",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG_LOE_077.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -1446,6 +1990,10 @@
           "name": "Monstrous Macaw",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BGS_078",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BGS_078.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -1453,6 +2001,10 @@
           "name": "Titus Rivendare",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_354.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -1460,6 +2012,10 @@
           "name": "Power of Teron",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_009",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_HeroPowerSpell_009.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -1467,6 +2023,10 @@
           "name": "Timewarped Chameleon",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_042",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_Giant_042.png",
           "image_asset": "minions/tribes/beast.svg"
         }
       ]
@@ -1476,11 +2036,14 @@
       "name": "Spell Cycle",
       "tier": "T2",
       "difficulty": "中",
+      "power_level": "C",
       "required_tribes": [],
       "allowed_anomalies": [
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Visionary + Nalaa/Plankwalker",
+      "source_patch_number": 231720,
       "overview": "Spell Cycle | Commit signal: Visionary + Nalaa/Plankwalker | Cycle Spell with visionary shipman and brann and boost your board with Nalaa/Plankwalker. Try to boost good unit like Niuzao ",
       "early_strategy": "Commit when you see Visionary + Nalaa/Plankwalker.",
       "late_strategy": "Cycle Spell with visionary shipman and brann and boost your board with Nalaa/Plankwalker. Try to boost good unit like Niuzao ",
@@ -1508,6 +2071,10 @@
           "name": "Brann Bronzebeard",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG_LOE_077",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG_LOE_077.png",
           "image_asset": null
         },
         {
@@ -1515,6 +2082,10 @@
           "name": "Nalaa the Redeemer",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG28_551",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG28_551.png",
           "image_asset": null
         },
         {
@@ -1522,6 +2093,10 @@
           "name": "Plankwalker",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_521",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_521.png",
           "image_asset": null
         },
         {
@@ -1529,6 +2104,10 @@
           "name": "Visionary Shipman",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_235",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_235.png",
           "image_asset": null
         },
         {
@@ -1536,6 +2115,10 @@
           "name": "Air Revenant",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_858",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_858.png",
           "image_asset": null
         },
         {
@@ -1543,6 +2126,10 @@
           "name": "Fleet Admiral Tethys",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_766",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_766.png",
           "image_asset": null
         },
         {
@@ -1550,6 +2137,10 @@
           "name": "Monstrous Macaw",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BGS_078",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BGS_078.png",
           "image_asset": null
         },
         {
@@ -1557,6 +2148,10 @@
           "name": "Niuzao",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG27_822",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG27_822.png",
           "image_asset": null
         }
       ]
@@ -1566,6 +2161,7 @@
       "name": "Stuntdrake Dragons",
       "tier": "T0",
       "difficulty": "高",
+      "power_level": "S",
       "required_tribes": [
         "Dragon"
       ],
@@ -1573,6 +2169,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Stuntdrake + Twilight Broodmother and titus",
+      "source_patch_number": 231720,
       "overview": "Stuntdrake Dragons | Commit signal: Stuntdrake + Twilight Broodmother and titus | Find a way to boost Stundrake (Nalaa, Evoker, Mutanus Spell etc.) Then play With twilight Broodmother, Twilight Hatching and titus",
       "early_strategy": "Commit when you see Stuntdrake + Twilight Broodmother and titus.",
       "late_strategy": "Find a way to boost Stundrake (Nalaa, Evoker, Mutanus Spell etc.) Then play With twilight Broodmother, Twilight Hatching and titus",
@@ -1601,6 +2199,10 @@
           "name": "Stuntdrake",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_732",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_732.png",
           "image_asset": "minions/tribes/dragon.svg"
         },
         {
@@ -1608,6 +2210,10 @@
           "name": "Titus Rivendare",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_354.png",
           "image_asset": "minions/tribes/dragon.svg"
         },
         {
@@ -1615,6 +2221,10 @@
           "name": "Twilight Broodmother",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_731",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_731.png",
           "image_asset": "minions/tribes/dragon.svg"
         },
         {
@@ -1622,6 +2232,10 @@
           "name": "Amber Guardian",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG24_500",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG24_500.png",
           "image_asset": "minions/tribes/dragon.svg"
         },
         {
@@ -1629,6 +2243,10 @@
           "name": "Fire-forged Evoker",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG32_822",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_822.png",
           "image_asset": "minions/tribes/dragon.svg"
         },
         {
@@ -1636,6 +2254,10 @@
           "name": "Persistent Poet",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG29_813",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG29_813.png",
           "image_asset": "minions/tribes/dragon.svg"
         },
         {
@@ -1643,6 +2265,10 @@
           "name": "Stellar Freebooter",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG29_866",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG29_866.png",
           "image_asset": "minions/tribes/dragon.svg"
         },
         {
@@ -1650,6 +2276,10 @@
           "name": "Twilight Hatchling",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_630",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_630.png",
           "image_asset": "minions/tribes/dragon.svg"
         }
       ]
@@ -1659,6 +2289,7 @@
       "name": "Bomber Mechs",
       "tier": "T1",
       "difficulty": "中",
+      "power_level": "A",
       "required_tribes": [
         "Mech"
       ],
@@ -1666,6 +2297,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Visionary + Brann + Photobomb",
+      "source_patch_number": 231720,
       "overview": "Bomber Mechs | Commit signal: Visionary + Brann + Photobomb | Cycle tavern spell with Visionary shipman + Brann/Tethys. Then trigger Photobomb with macaw, titus, deios etc.",
       "early_strategy": "Commit when you see Visionary + Brann + Photobomb.",
       "late_strategy": "Cycle tavern spell with Visionary shipman + Brann/Tethys. Then trigger Photobomb with macaw, titus, deios etc.",
@@ -1693,6 +2326,10 @@
           "name": "Photobomber",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_780",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_780.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -1700,6 +2337,10 @@
           "name": "Titus Rivendare",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_354.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -1707,6 +2348,10 @@
           "name": "Visionary Shipman",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_235",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_235.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -1714,6 +2359,10 @@
           "name": "Brann Bronzebeard",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG_LOE_077",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG_LOE_077.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -1721,6 +2370,10 @@
           "name": "Monstrous Macaw",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BGS_078",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BGS_078.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -1728,6 +2381,10 @@
           "name": "Stitched Salvager",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG31_999",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG31_999.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -1735,6 +2392,10 @@
           "name": "Power of Teron",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_009",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_HeroPowerSpell_009.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -1742,6 +2403,10 @@
           "name": "Timewarped Chameleon",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_042",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_Giant_042.png",
           "image_asset": "minions/tribes/mech.svg"
         }
       ]
@@ -1751,6 +2416,7 @@
       "name": "Apexis Mechs",
       "tier": "T2",
       "difficulty": "低",
+      "power_level": "B",
       "required_tribes": [
         "Mech"
       ],
@@ -1758,6 +2424,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Apexis + Titus",
+      "source_patch_number": 231720,
       "overview": "Apexis Mechs | Commit signal: Apexis + Titus | You don't need to have a lot of mech, play with just apexis and Junk Jouster. Fill with macaw, titus",
       "early_strategy": "Commit when you see Apexis + Titus.",
       "late_strategy": "You don't need to have a lot of mech, play with just apexis and Junk Jouster. Fill with macaw, titus",
@@ -1784,6 +2452,10 @@
           "name": "Apexis Guardian",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_173",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_173.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -1791,6 +2463,10 @@
           "name": "Titus Rivendare",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_354.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -1798,6 +2474,10 @@
           "name": "Arid Atrocity",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG29_864",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG29_864.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -1805,6 +2485,10 @@
           "name": "Junk Jouster",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_175",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_175.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -1812,6 +2496,10 @@
           "name": "Monstrous Macaw",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BGS_078",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BGS_078.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -1819,6 +2507,10 @@
           "name": "Nightmare Par-tea Guest",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG32_111",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_111.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -1826,6 +2518,10 @@
           "name": "Persistent Poet",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG29_813",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG29_813.png",
           "image_asset": "minions/tribes/mech.svg"
         },
         {
@@ -1833,6 +2529,10 @@
           "name": "Photobomber",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_780",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_780.png",
           "image_asset": "minions/tribes/mech.svg"
         }
       ]
@@ -1842,6 +2542,7 @@
       "name": "Self Damage Beasts",
       "tier": "T2",
       "difficulty": "中",
+      "power_level": "B",
       "required_tribes": [
         "Beast"
       ],
@@ -1849,6 +2550,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Early trigore/skyblazer and spiked savior",
+      "source_patch_number": 231720,
       "overview": "Self Damage Beasts | Commit signal: Early trigore/skyblazer and spiked savior | If you have Rabid Panther, try to keep Hunting Tiger Shark on board and trigger him with rylak + titus/brann. then cycle some beast",
       "early_strategy": "Commit when you see Early trigore/skyblazer and spiked savior.",
       "late_strategy": "If you have Rabid Panther, try to keep Hunting Tiger Shark on board and trigger him with rylak + titus/brann. then cycle some beast",
@@ -1876,6 +2579,10 @@
           "name": "Rabid Panther",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_321",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_321.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -1883,6 +2590,10 @@
           "name": "Silky Shimmermoth",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG32_204",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_204.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -1890,6 +2601,10 @@
           "name": "Trigore the Lasher",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG29_807",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG29_807.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -1897,6 +2612,10 @@
           "name": "Brann Bronzebeard",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG_LOE_077",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG_LOE_077.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -1904,6 +2623,10 @@
           "name": "Hunting Tiger Shark",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_523",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_523.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -1911,6 +2634,10 @@
           "name": "Iridescent Skyblazer",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG29_806",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG29_806.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -1918,6 +2645,10 @@
           "name": "Monstrous Macaw",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BGS_078",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BGS_078.png",
           "image_asset": "minions/tribes/beast.svg"
         },
         {
@@ -1925,6 +2656,10 @@
           "name": "Niuzao",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG27_822",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG27_822.png",
           "image_asset": "minions/tribes/beast.svg"
         }
       ]
@@ -1934,6 +2669,7 @@
       "name": "Overflow Undead",
       "tier": "T2",
       "difficulty": "低",
+      "power_level": "B",
       "required_tribes": [
         "Undead"
       ],
@@ -1941,6 +2677,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Cadaver Caretaker + titus + Catacomb Crasher",
+      "source_patch_number": 231720,
       "overview": "Overflow Undead | Commit signal: Cadaver Caretaker + titus + Catacomb Crasher | Trigger Cadaver Caretaker as much as possible with Macaw and titus",
       "early_strategy": "Commit when you see Cadaver Caretaker + titus + Catacomb Crasher.",
       "late_strategy": "Trigger Cadaver Caretaker as much as possible with Macaw and titus",
@@ -1967,6 +2705,10 @@
           "name": "Catacomb Crasher",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG30_129",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG30_129.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -1974,6 +2716,10 @@
           "name": "Titus Rivendare",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_354.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -1981,6 +2727,10 @@
           "name": "Cadaver Caretaker",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG30_125",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG30_125.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -1988,6 +2738,10 @@
           "name": "Lava Lurker",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG23_009",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG23_009.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -1995,6 +2749,10 @@
           "name": "Monstrous Macaw",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BGS_078",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BGS_078.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -2002,6 +2760,10 @@
           "name": "Surf n' Surf",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG27_004",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG27_004.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -2009,6 +2771,10 @@
           "name": "Power of Teron",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_009",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_HeroPowerSpell_009.png",
           "image_asset": "minions/tribes/undead.svg"
         },
         {
@@ -2016,6 +2782,10 @@
           "name": "Timewarped Caretaker",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_618",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_Giant_618.png",
           "image_asset": "minions/tribes/undead.svg"
         }
       ]
@@ -2025,6 +2795,7 @@
       "name": "Deathrattle Quilboar",
       "tier": "T2",
       "difficulty": "低",
+      "power_level": "B",
       "required_tribes": [
         "Quilboar"
       ],
@@ -2032,6 +2803,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Gem scaling + three lil quilboar + titus",
+      "source_patch_number": 231720,
       "overview": "Deathrattle Quilboar | Commit signal: Gem scaling + three lil quilboar + titus | Trigger Three lil' Quilboar as much as possible",
       "early_strategy": "Commit when you see Gem scaling + three lil quilboar + titus.",
       "late_strategy": "Trigger Three lil' Quilboar as much as possible",
@@ -2058,6 +2831,10 @@
           "name": "Needling Crone",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG32_432",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_432.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -2065,6 +2842,10 @@
           "name": "Three Lil' Quilboar",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG26_867",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_867.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -2072,6 +2853,10 @@
           "name": "Titus Rivendare",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_354.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -2079,6 +2864,10 @@
           "name": "Monstrous Macaw",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BGS_078",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BGS_078.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -2086,6 +2875,10 @@
           "name": "Moon-Bacon Jazzer",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_159",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_159.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -2093,6 +2886,10 @@
           "name": "Prickly Piper",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_160",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_160.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -2100,6 +2897,10 @@
           "name": "Rylak Metalhead",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_801",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_801.png",
           "image_asset": "minions/tribes/quilboar.svg"
         },
         {
@@ -2107,6 +2908,10 @@
           "name": "Sanguine Refiner",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG33_885",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG33_885.png",
           "image_asset": "minions/tribes/quilboar.svg"
         }
       ]
@@ -2116,6 +2921,7 @@
       "name": "Lord of Ruins Demons",
       "tier": "T1",
       "difficulty": "低",
+      "power_level": "A",
       "required_tribes": [
         "Demon"
       ],
@@ -2123,6 +2929,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Lord of ruins + Silent Enforcer or Rylak + felhorn + Titus",
+      "source_patch_number": 231720,
       "overview": "Lord of Ruins Demons | Commit signal: Lord of ruins + Silent Enforcer or Rylak + felhorn + Titus | There is 2 Lord of ruins comp but this is almost the same gameplan, trigger rylak + felhorn as much as possible, or trigger Silent enforcer (with titus, macaw, brann if you play rylak)",
       "early_strategy": "Commit when you see Lord of ruins + Silent Enforcer or Rylak + felhorn + Titus.",
       "late_strategy": "There is 2 Lord of ruins comp but this is almost the same gameplan, trigger rylak + felhorn as much as possible, or trigger Silent enforcer (with titus, macaw, brann if you play rylak)",
@@ -2149,6 +2957,10 @@
           "name": "Lord of the Ruins",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG33_154",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG33_154.png",
           "image_asset": "minions/tribes/demon.svg"
         },
         {
@@ -2156,6 +2968,10 @@
           "name": "Titus Rivendare",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_354.png",
           "image_asset": "minions/tribes/demon.svg"
         },
         {
@@ -2163,6 +2979,10 @@
           "name": "Brann Bronzebeard",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG_LOE_077",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG_LOE_077.png",
           "image_asset": "minions/tribes/demon.svg"
         },
         {
@@ -2170,6 +2990,10 @@
           "name": "Devout Hellcaller",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG33_155",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG33_155.png",
           "image_asset": "minions/tribes/demon.svg"
         },
         {
@@ -2177,6 +3001,10 @@
           "name": "Felhorn",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_781",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_781.png",
           "image_asset": "minions/tribes/demon.svg"
         },
         {
@@ -2184,6 +3012,10 @@
           "name": "Monstrous Macaw",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BGS_078",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BGS_078.png",
           "image_asset": "minions/tribes/demon.svg"
         },
         {
@@ -2191,6 +3023,10 @@
           "name": "Rylak Metalhead",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_801",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_801.png",
           "image_asset": "minions/tribes/demon.svg"
         },
         {
@@ -2198,6 +3034,10 @@
           "name": "Silent Enforcer",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG33_156",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG33_156.png",
           "image_asset": "minions/tribes/demon.svg"
         }
       ]
@@ -2207,6 +3047,7 @@
       "name": "Whelp Dragons",
       "tier": "T2",
       "difficulty": "低",
+      "power_level": "B",
       "required_tribes": [
         "Dragon"
       ],
@@ -2214,6 +3055,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": "Burgeoning Whelp + Titus + Twilight Broodmother",
+      "source_patch_number": 231720,
       "overview": "Whelp Dragons | Commit signal: Burgeoning Whelp + Titus + Twilight Broodmother | You have to boost your whelp with Burgeoning Whelp, so Trigger it with rylak, brann, macaw and titus. summon Whelp with Twilight Broodmother",
       "early_strategy": "Commit when you see Burgeoning Whelp + Titus + Twilight Broodmother.",
       "late_strategy": "You have to boost your whelp with Burgeoning Whelp, so Trigger it with rylak, brann, macaw and titus. summon Whelp with Twilight Broodmother",
@@ -2240,6 +3083,10 @@
           "name": "Brann Bronzebeard",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG_LOE_077",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG_LOE_077.png",
           "image_asset": "minions/tribes/dragon.svg"
         },
         {
@@ -2247,6 +3094,10 @@
           "name": "Burgeoning Whelp",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_402",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_402.png",
           "image_asset": "minions/tribes/dragon.svg"
         },
         {
@@ -2254,6 +3105,10 @@
           "name": "Rylak Metalhead",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG26_801",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG26_801.png",
           "image_asset": "minions/tribes/dragon.svg"
         },
         {
@@ -2261,6 +3116,10 @@
           "name": "Titus Rivendare",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_354.png",
           "image_asset": "minions/tribes/dragon.svg"
         },
         {
@@ -2268,6 +3127,10 @@
           "name": "Twilight Broodmother",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_731",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_731.png",
           "image_asset": "minions/tribes/dragon.svg"
         },
         {
@@ -2275,6 +3138,10 @@
           "name": "Monstrous Macaw",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BGS_078",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BGS_078.png",
           "image_asset": "minions/tribes/dragon.svg"
         },
         {
@@ -2282,6 +3149,10 @@
           "name": "Twilight Hatchling",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_630",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_630.png",
           "image_asset": "minions/tribes/dragon.svg"
         },
         {
@@ -2289,6 +3160,10 @@
           "name": "Power of Teron",
           "star": 3,
           "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_009",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_HeroPowerSpell_009.png",
           "image_asset": "minions/tribes/dragon.svg"
         }
       ]
@@ -2298,6 +3173,7 @@
       "name": "Deathrattle Naga",
       "tier": "T1",
       "difficulty": "中",
+      "power_level": "A",
       "required_tribes": [
         "Naga"
       ],
@@ -2305,6 +3181,8 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
+      "when_to_commit": null,
+      "source_patch_number": 235290,
       "overview": "Deathrattle Naga",
       "early_strategy": "Scout for economy and the first real payoff card before fully pivoting.",
       "late_strategy": "Complete the final board around your key scaling engine and protect the carry slot.",
@@ -2332,6 +3210,10 @@
           "name": "Showy Cyclist",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG31_925",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG31_925.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -2339,6 +3221,10 @@
           "name": "Timewarped Sapper",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_304",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG34_Giant_304.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -2346,6 +3232,10 @@
           "name": "Titus Rivendare",
           "star": 5,
           "phase": "主核",
+          "status_raw": "CORE",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG25_354.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -2353,6 +3243,10 @@
           "name": "Arid Atrocity",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG29_864",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG29_864.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -2360,6 +3254,10 @@
           "name": "Monstrous Macaw",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BGS_078",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BGS_078.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -2367,6 +3265,10 @@
           "name": "Nightmare Par-tea Guest",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG32_111",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG32_111.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -2374,6 +3276,10 @@
           "name": "Persistent Poet",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG29_813",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG29_813.png",
           "image_asset": "minions/tribes/naga.svg"
         },
         {
@@ -2381,6 +3287,10 @@
           "name": "Stitched Salvager",
           "star": 4,
           "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG31_999",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/enUS/256x/BG31_999.png",
           "image_asset": "minions/tribes/naga.svg"
         }
       ]

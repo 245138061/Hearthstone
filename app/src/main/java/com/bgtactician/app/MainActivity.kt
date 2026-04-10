@@ -102,18 +102,6 @@ private fun MainRoute(viewModel: MainViewModel) {
                 OverlayService.start(context)
             }
         },
-        onToggleTribe = viewModel::toggleTribe,
-        onSelectAnomaly = viewModel::selectAnomaly,
-        onSetDuos = viewModel::setDuosMode,
-        onSelectStrategy = viewModel::selectStrategy,
-        onManifestUrlOverrideChange = viewModel::updateManifestUrlOverride,
-        onRefreshCatalog = { viewModel.refreshCatalog() },
-        onSetOverlayInteractionEnabled = { enabled ->
-            viewModel.setOverlayInteractionEnabled(enabled)
-            if (overlayRunning) {
-                OverlayService.refreshSettings(context)
-            }
-        },
         onSetBubbleOpacityPercent = { value ->
             viewModel.setBubbleOpacityPercent(value)
             if (overlayRunning) {

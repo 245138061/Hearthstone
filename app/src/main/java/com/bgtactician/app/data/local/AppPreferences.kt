@@ -1,13 +1,10 @@
 package com.bgtactician.app.data.local
 
 import android.content.Context
-import com.bgtactician.app.data.model.AnomalyPreset
 import com.bgtactician.app.data.model.Tribe
 
 data class DashboardPreferences(
     val selectedTribes: Set<Tribe>,
-    val selectedAnomaly: String,
-    val isDuos: Boolean,
     val manifestUrlOverride: String
 )
 
@@ -32,27 +29,18 @@ class AppPreferences(context: Context) {
             ?.takeIf { it.isNotEmpty() }
             ?: DEFAULT_TRIBES
 
-        val anomaly = prefs.getString(KEY_SELECTED_ANOMALY, AnomalyPreset.NONE)
-            ?: AnomalyPreset.NONE
-
         return DashboardPreferences(
             selectedTribes = tribeSet,
-            selectedAnomaly = anomaly,
-            isDuos = prefs.getBoolean(KEY_DUOS_MODE, false),
             manifestUrlOverride = prefs.getString(KEY_MANIFEST_URL_OVERRIDE, "")?.trim().orEmpty()
         )
     }
 
     fun saveDashboardPreferences(
         selectedTribes: Set<Tribe>,
-        selectedAnomaly: String,
-        isDuos: Boolean,
         manifestUrlOverride: String
     ) {
         prefs.edit()
             .putStringSet(KEY_SELECTED_TRIBES, selectedTribes.map(Tribe::wireName).toSet())
-            .putString(KEY_SELECTED_ANOMALY, selectedAnomaly)
-            .putBoolean(KEY_DUOS_MODE, isDuos)
             .putString(KEY_MANIFEST_URL_OVERRIDE, manifestUrlOverride.trim())
             .apply()
     }
@@ -123,8 +111,6 @@ class AppPreferences(context: Context) {
         )
 
         private const val KEY_SELECTED_TRIBES = "selected_tribes"
-        private const val KEY_SELECTED_ANOMALY = "selected_anomaly"
-        private const val KEY_DUOS_MODE = "duos_mode"
         private const val KEY_MANIFEST_URL_OVERRIDE = "manifest_url_override"
         private const val KEY_OVERLAY_X = "overlay_x"
         private const val KEY_OVERLAY_Y = "overlay_y"

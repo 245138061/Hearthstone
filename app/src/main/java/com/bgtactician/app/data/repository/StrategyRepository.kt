@@ -3,6 +3,8 @@ package com.bgtactician.app.data.repository
 import android.content.Context
 import com.bgtactician.app.BuildConfig
 import com.bgtactician.app.data.local.AppPreferences
+import com.bgtactician.app.data.model.CardRuleEntry
+import com.bgtactician.app.data.model.CardRulesCatalog
 import com.bgtactician.app.data.model.CatalogRefreshResult
 import com.bgtactician.app.data.model.CatalogSnapshot
 import com.bgtactician.app.data.model.RemoteCatalogFile
@@ -26,6 +28,7 @@ class StrategyRepository {
     }
 
     private var cachedSnapshot: CatalogSnapshot? = null
+    private var cachedCardRules: CardRulesCatalog? = null
 
     suspend fun loadCatalog(context: Context, ignoreMemoryCache: Boolean = false): CatalogSnapshot {
         if (!ignoreMemoryCache) {
@@ -35,27 +38,45 @@ class StrategyRepository {
         return withContext(Dispatchers.IO) {
             val preferences = AppPreferences(context)
             val cacheFile = cacheFile(context)
+            val assetSnapshot = bundledSnapshot(context)
 
             val cached = if (cacheFile.exists()) {
                 runCatching {
-                    CatalogSnapshot(
-                        catalog = decode(cacheFile.readText()),
-                        source = StrategyDataSource.CACHE,
-                        lastSyncAt = preferences.loadLastSync() ?: cacheFile.lastModified().takeIf { it > 0L }
-                    )
+                    val catalog = decode(cacheFile.readText())
+                    catalog.takeIf(::hasRenderableMinionMetadata)?.let {
+                        CatalogSnapshot(
+                            catalog = it,
+                            source = StrategyDataSource.CACHE,
+                            lastSyncAt = preferences.loadLastSync() ?: cacheFile.lastModified().takeIf { it > 0L }
+                        )
+                    }
                 }.getOrNull()
             } else {
                 null
             }
 
-            val snapshot = cached ?: run {
-                CatalogSnapshot(
-                    catalog = decode(context.assets.open(ASSET_FILE).bufferedReader().use { it.readText() }),
-                    source = StrategyDataSource.ASSET
-                )
-            }
+            val snapshot = cached ?: assetSnapshot
 
+            MinionImageCache.schedulePrefetch(context, snapshot.catalog)
             snapshot.also { cachedSnapshot = it }
+        }
+    }
+
+    suspend fun loadCardRules(context: Context, ignoreMemoryCache: Boolean = false): CardRulesCatalog {
+        if (!ignoreMemoryCache) {
+            cachedCardRules?.let { return it }
+        }
+
+        return withContext(Dispatchers.IO) {
+            val cacheFile = cardRulesCacheFile(context)
+            val snapshot = if (cacheFile.exists()) {
+                runCatching {
+                    decodeCardRules(cacheFile.readText())
+                }.getOrDefault(emptyMap())
+            } else {
+                emptyMap()
+            }
+            snapshot.also { cachedCardRules = it }
         }
     }
 
@@ -91,13 +112,19 @@ class StrategyRepository {
                 else -> preferences.loadLastCatalogHash()
             }
             val syncedAt = System.currentTimeMillis()
+            val catalogUpdated = existingHash != selectedFile.sha256
 
             val snapshot = if (cacheText != null && existingHash == selectedFile.sha256) {
-                CatalogSnapshot(
-                    catalog = decode(cacheText),
-                    source = StrategyDataSource.CACHE,
-                    lastSyncAt = syncedAt
-                )
+                val catalog = decode(cacheText)
+                if (hasRenderableMinionMetadata(catalog)) {
+                    CatalogSnapshot(
+                        catalog = catalog,
+                        source = StrategyDataSource.CACHE,
+                        lastSyncAt = syncedAt
+                    )
+                } else {
+                    bundledSnapshot(context)
+                }
             } else {
                 val raw = downloadText(catalogUrl)
                 val actualHash = sha256(raw)
@@ -105,22 +132,32 @@ class StrategyRepository {
                     "远程数据校验失败，哈希不匹配"
                 }
                 val catalog = decode(raw)
-                writeAtomically(cacheFile, raw)
-                preferences.saveLastCatalogHash(actualHash)
-                CatalogSnapshot(
-                    catalog = catalog,
-                    source = StrategyDataSource.REMOTE,
-                    lastSyncAt = syncedAt
-                )
+                if (hasRenderableMinionMetadata(catalog)) {
+                    writeAtomically(cacheFile, raw)
+                    preferences.saveLastCatalogHash(actualHash)
+                    CatalogSnapshot(
+                        catalog = catalog,
+                        source = StrategyDataSource.REMOTE,
+                        lastSyncAt = syncedAt
+                    )
+                } else {
+                    bundledSnapshot(context)
+                }
             }
+            val supportUpdated = syncSupportFiles(
+                context = context,
+                manifest = manifest,
+                manifestUrl = manifestUrl
+            )
 
             preferences.saveLastSync(syncedAt)
             preferences.saveLastManifestVersion(manifest.version)
             preferences.saveLastManifestUpdatedAt(manifest.updatedAt)
+            MinionImageCache.schedulePrefetch(context, snapshot.catalog)
 
             CatalogRefreshResult(
                 snapshot = snapshot.also { cachedSnapshot = it },
-                wasUpdated = existingHash != selectedFile.sha256,
+                wasUpdated = catalogUpdated || supportUpdated,
                 manifestVersion = manifest.version,
                 manifestUpdatedAt = manifest.updatedAt,
                 sourceUrl = catalogUrl
@@ -130,7 +167,18 @@ class StrategyRepository {
 
     private fun cacheFile(context: Context): File = File(context.filesDir, CACHE_FILE)
 
+    private fun cardRulesCacheFile(context: Context): File = File(context.filesDir, CARD_RULES_CACHE_FILE)
+
+    private fun bundledSnapshot(context: Context): CatalogSnapshot {
+        return CatalogSnapshot(
+            catalog = decode(context.assets.open(ASSET_FILE).bufferedReader().use { it.readText() }),
+            source = StrategyDataSource.ASSET
+        )
+    }
+
     private fun decode(raw: String): StrategyCatalog = json.decodeFromString<StrategyCatalog>(raw)
+
+    private fun decodeCardRules(raw: String): CardRulesCatalog = json.decodeFromString<Map<String, CardRuleEntry>>(raw)
 
     private fun decodeManifest(raw: String): RemoteManifest = json.decodeFromString<RemoteManifest>(raw)
 
@@ -174,6 +222,33 @@ class StrategyRepository {
         }
     }
 
+    private fun syncSupportFiles(
+        context: Context,
+        manifest: RemoteManifest,
+        manifestUrl: String
+    ): Boolean {
+        val supportFile = manifest.supportFiles[CARD_RULES_RESOURCE_KEY] ?: return false
+        val cacheFile = cardRulesCacheFile(context)
+        val cacheText = cacheFile.takeIf(File::exists)?.readText()
+        val existingHash = cacheText?.let(::sha256)
+
+        if (existingHash == supportFile.sha256) {
+            if (cachedCardRules == null) {
+                cachedCardRules = runCatching { decodeCardRules(cacheText) }.getOrDefault(emptyMap())
+            }
+            return false
+        }
+
+        val raw = downloadText(resolveCatalogUrl(manifestUrl, supportFile))
+        val actualHash = sha256(raw)
+        require(actualHash == supportFile.sha256) {
+            "远程 card rules 校验失败，哈希不匹配"
+        }
+        writeAtomically(cacheFile, raw)
+        cachedCardRules = decodeCardRules(raw)
+        return true
+    }
+
     private fun downloadText(url: String): String {
         val connection = (URL(url).openConnection() as HttpURLConnection).apply {
             connectTimeout = 15_000
@@ -212,8 +287,22 @@ class StrategyRepository {
         return digest.joinToString(separator = "") { byte -> "%02x".format(byte) }
     }
 
+    private fun hasRenderableMinionMetadata(catalog: StrategyCatalog): Boolean {
+        val minions = catalog.comps.flatMap { it.keyMinions }
+        if (minions.isEmpty()) return false
+
+        val withImageMetadata = minions.count {
+            !it.cardId.isNullOrBlank() || !it.imageUrl.isNullOrBlank()
+        }
+        val withStatusMetadata = minions.count { !it.statusRaw.isNullOrBlank() }
+
+        return withImageMetadata > 0 && withStatusMetadata > 0
+    }
+
     companion object {
         private const val ASSET_FILE = "strategies_zerotoheroes_zhCN.json"
         private const val CACHE_FILE = "strategies_cache.json"
+        private const val CARD_RULES_CACHE_FILE = "card_rules_cache.json"
+        private const val CARD_RULES_RESOURCE_KEY = "cardRules"
     }
 }

@@ -14,6 +14,7 @@ from import_external_strategies import SourceUrls, convert, load_json
 DEFAULT_STRATEGIES_URL = "https://static.zerotoheroes.com/hearthstone/data/battlegrounds-strategies/bgs-comps-strategies.gz.json"
 DEFAULT_LOCALE_EN_URL = "https://static.firestoneapp.com/data/i18n/enUS.json?v=1196-main"
 DEFAULT_LOCALE_ZH_URL = "https://static.firestoneapp.com/data/i18n/zhCN.json?v=1196-main"
+DEFAULT_CARD_RULES_URL = "https://static.firestoneapp.com/data/cards/card-rules.gz.json"
 DEFAULT_TRANSLATIONS_ZH = Path(__file__).with_name("strategy_translations_zhCN.json")
 
 REQUIRED_COMP_FIELDS = {
@@ -63,6 +64,7 @@ def build_bundle(
     strategies_source: str,
     locale_en_source: str,
     locale_zh_source: str,
+    card_rules_source: str,
     translations_zh_source: str,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -86,6 +88,10 @@ def build_bundle(
 
     zh_size, zh_sha = write_json(output_dir / "strategies.json", zh_catalog)
     en_size, en_sha = write_json(output_dir / "strategies.enUS.json", en_catalog)
+    card_rules = load_json(card_rules_source)
+    if not isinstance(card_rules, dict) or not card_rules:
+        raise ValueError("card rules payload is empty")
+    card_rules_size, card_rules_sha = write_json(output_dir / "card-rules.json", card_rules)
 
     manifest = {
         "manifest_format": "bgtactician.pages.v1",
@@ -110,8 +116,18 @@ def build_bundle(
                 "size_bytes": en_size,
             },
         },
+        "support_files": {
+            "cardRules": {
+                "path": "card-rules.json",
+                "url": "./card-rules.json",
+                "catalog_version": f"{base_version}-firestone-card-rules",
+                "sha256": card_rules_sha,
+                "size_bytes": card_rules_size,
+            }
+        },
         "sources": {
             "strategies": strategies_source,
+            "card_rules": card_rules_source,
             "locales": {
                 "zhCN": locale_zh_source,
                 "enUS": locale_en_source,
@@ -175,6 +191,7 @@ def build_bundle(
         <p><strong>Manifest</strong>: <a href="./manifest.json">manifest.json</a></p>
         <p><strong>Default zhCN catalog</strong>: <a href="./strategies.json">strategies.json</a></p>
         <p><strong>Fallback enUS catalog</strong>: <a href="./strategies.enUS.json">strategies.enUS.json</a></p>
+        <p><strong>Card rules</strong>: <a href="./card-rules.json">card-rules.json</a></p>
         <p><strong>Version</strong>: <code>{manifest["version"]}</code></p>
         <p><strong>Schema</strong>: <code>{manifest["schema_version"]}</code></p>
       </div>
@@ -191,6 +208,7 @@ def main() -> None:
     parser.add_argument("--strategies", default=DEFAULT_STRATEGIES_URL, help="Strategies JSON URL or local file.")
     parser.add_argument("--locale-en", default=DEFAULT_LOCALE_EN_URL, help="English locale JSON URL or local file.")
     parser.add_argument("--locale-zh", default=DEFAULT_LOCALE_ZH_URL, help="Chinese locale JSON URL or local file.")
+    parser.add_argument("--card-rules", default=DEFAULT_CARD_RULES_URL, help="Firestone card rules URL or local file.")
     parser.add_argument(
         "--translations-zh",
         default=str(DEFAULT_TRANSLATIONS_ZH),
@@ -203,6 +221,7 @@ def main() -> None:
         strategies_source=args.strategies,
         locale_en_source=args.locale_en,
         locale_zh_source=args.locale_zh,
+        card_rules_source=args.card_rules,
         translations_zh_source=args.translations_zh,
     )
 

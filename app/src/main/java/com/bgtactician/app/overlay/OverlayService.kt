@@ -19,22 +19,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
@@ -46,7 +38,7 @@ import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.bgtactician.app.R
 import com.bgtactician.app.data.local.AppPreferences
 import com.bgtactician.app.data.local.OverlaySettings
-import com.bgtactician.app.data.model.AnomalyPreset
+import com.bgtactician.app.data.model.CardRulesCatalog
 import com.bgtactician.app.data.model.Tribe
 import com.bgtactician.app.data.repository.StrategyEngine
 import com.bgtactician.app.data.repository.StrategyRepository
@@ -70,6 +62,7 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
         private const val ACTION_TOGGLE_INTERACTION = "com.bgtactician.app.overlay.TOGGLE_INTERACTION"
         private const val CHANNEL_ID = "bgtactician_overlay"
         private const val NOTIFICATION_ID = 1001
+        private const val BUBBLE_EDGE_MARGIN_DP = 6
 
         private val _isRunning = MutableStateFlow(false)
         val isRunning = _isRunning.asStateFlow()
@@ -110,14 +103,13 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
     private var catalogVersion by mutableStateOf("")
     private var hasLoadedCatalog by mutableStateOf(false)
     private var strategies by mutableStateOf(emptyList<com.bgtactician.app.data.model.StrategyComp>())
+    private var cardRules by mutableStateOf<CardRulesCatalog>(emptyMap())
     private var selectedTribes by mutableStateOf(
         setOf(Tribe.MECH, Tribe.DEMON, Tribe.UNDEAD, Tribe.PIRATE, Tribe.ELEMENTAL)
     )
-    private var selectedAnomaly by mutableStateOf(AnomalyPreset.NONE)
-    private var duosMode by mutableStateOf(false)
     private var selectedStrategyId by mutableStateOf<String?>(null)
+    private var awaitingManualStrategySelection by mutableStateOf(false)
     private var overlaySettings by mutableStateOf(OverlaySettings())
-
     override fun onCreate() {
         savedStateController.performRestore(null)
         super.onCreate()
@@ -162,26 +154,25 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
                 context = applicationContext,
                 ignoreMemoryCache = forceFresh
             )
+            cardRules = repository.loadCardRules(
+                context = applicationContext,
+                ignoreMemoryCache = forceFresh
+            )
             catalogVersion = snapshot.catalog.version
             strategies = snapshot.catalog.comps
             hasLoadedCatalog = true
-            val filtered = filteredStrategies()
-            selectedStrategyId = filtered.firstOrNull()?.id
+            selectedStrategyId = resolveSelectedStrategyId(filteredStrategies())
         }
     }
 
     private fun filteredStrategies() = StrategyEngine.filter(
         allStrategies = strategies,
-        selectedTribes = selectedTribes,
-        selectedAnomaly = selectedAnomaly,
-        isDuos = duosMode
+        selectedTribes = selectedTribes
     )
 
     private fun loadPreferences() {
         val dashboardPreferences = preferences.loadDashboardPreferences()
         selectedTribes = dashboardPreferences.selectedTribes
-        selectedAnomaly = dashboardPreferences.selectedAnomaly
-        duosMode = dashboardPreferences.isDuos
         overlaySettings = preferences.loadOverlaySettings()
     }
 
@@ -224,6 +215,7 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
 
         windowManager.addView(bubbleView, bubbleLayoutParams)
         applyBubblePresentation()
+        bubbleView?.post { snapBubbleToRightEdge(savePosition = false) }
     }
 
     private fun removeBubble() {
@@ -235,7 +227,11 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
         if (panelView != null) return
 
         loadPreferences()
-        loadCatalog(forceFresh = true)
+        if (!hasLoadedCatalog) {
+            loadCatalog(forceFresh = true)
+        } else {
+            reconcileSelection()
+        }
 
         panelView = ComposeView(this).apply {
             attachOwners(this)
@@ -248,36 +244,26 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(Color(0xA608111A))
+                                .background(Color.Transparent)
                                 .clickable(
                                     interactionSource = remember { MutableInteractionSource() },
                                     indication = null,
                                     onClick = ::removePanel
                                 )
                         )
-                        Surface(
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                                .padding(16.dp)
-                                .widthIn(max = 420.dp),
-                            shape = RoundedCornerShape(28.dp),
-                            color = Color(0xFF0D1722),
-                            tonalElevation = 10.dp,
-                            shadowElevation = 20.dp
-                        ) {
-                            TacticianDashboard(
-                                modifier = Modifier
-                                    .verticalScroll(rememberScrollState())
-                                    .padding(20.dp),
-                                uiState = buildDashboardState(),
-                                overlayMode = true,
-                                onToggleTribe = ::toggleTribe,
-                                onSelectAnomaly = ::selectAnomaly,
-                                onSetDuos = ::updateDuosMode,
-                                onSelectStrategy = { selectedStrategyId = it },
-                                onClose = ::removePanel
-                            )
-                        }
+                        TacticianDashboard(
+                            modifier = Modifier.fillMaxSize(),
+                            uiState = buildDashboardState(),
+                            overlayMode = true,
+                            onToggleTribe = ::toggleTribe,
+                            onSelectStrategy = {
+                                selectedStrategyId = it
+                                awaitingManualStrategySelection = false
+                            },
+                            onSetOverlayInteractionEnabled = ::updateOverlayInteractionEnabled,
+                            onSetBubbleOpacityPercent = ::updateBubbleOpacityPercent,
+                            onClose = ::removePanel
+                        )
                     }
                 }
             }
@@ -305,49 +291,54 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
     }
 
     private fun toggleTribe(tribe: Tribe) {
-        selectedTribes = when {
+        val nextTribes = when {
             selectedTribes.contains(tribe) -> selectedTribes - tribe
             selectedTribes.size >= 5 -> selectedTribes
             else -> selectedTribes + tribe
         }
-        persistDashboardPreferences()
-        reconcileSelection()
-    }
-
-    private fun selectAnomaly(anomaly: String) {
-        selectedAnomaly = anomaly
-        persistDashboardPreferences()
-        reconcileSelection()
-    }
-
-    private fun updateDuosMode(enabled: Boolean) {
-        duosMode = enabled
+        val changed = nextTribes != selectedTribes
+        selectedTribes = nextTribes
+        if (changed) {
+            selectedStrategyId = null
+            awaitingManualStrategySelection = true
+        }
         persistDashboardPreferences()
         reconcileSelection()
     }
 
     private fun reconcileSelection() {
-        val next = filteredStrategies()
-        if (next.none { it.id == selectedStrategyId }) {
-            selectedStrategyId = next.firstOrNull()?.id
-        }
+        selectedStrategyId = resolveSelectedStrategyId(filteredStrategies())
+    }
+
+    private fun resolveSelectedStrategyId(filtered: List<com.bgtactician.app.data.model.StrategyComp>): String? {
+        return selectedStrategyId?.takeIf { id -> filtered.any { it.id == id } }
+            ?: if (awaitingManualStrategySelection) null else filtered.firstOrNull()?.id
     }
 
     private fun buildDashboardState() = com.bgtactician.app.viewmodel.DashboardUiState(
         catalogVersion = catalogVersion,
         isLoading = !hasLoadedCatalog,
         selectedTribes = selectedTribes,
-        selectedAnomaly = selectedAnomaly,
-        isDuos = duosMode,
+        overlayInteractionEnabled = overlaySettings.interactionEnabled,
+        bubbleOpacityPercent = overlaySettings.bubbleOpacityPercent,
+        cardRules = cardRules,
         strategies = filteredStrategies(),
         selectedStrategyId = selectedStrategyId
     )
 
+    private fun updateOverlayInteractionEnabled(enabled: Boolean) {
+        preferences.saveOverlaySettings(enabled, overlaySettings.bubbleOpacityPercent)
+        syncOverlaySettings()
+    }
+
+    private fun updateBubbleOpacityPercent(value: Int) {
+        preferences.saveOverlaySettings(overlaySettings.interactionEnabled, value.coerceIn(35, 100))
+        syncOverlaySettings()
+    }
+
     private fun persistDashboardPreferences() {
         preferences.saveDashboardPreferences(
             selectedTribes = selectedTribes,
-            selectedAnomaly = selectedAnomaly,
-            isDuos = duosMode,
             manifestUrlOverride = preferences.loadDashboardPreferences().manifestUrlOverride
         )
     }
@@ -429,10 +420,32 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
         windowManager.updateViewLayout(view, params)
     }
 
+    private fun bubbleEdgeMarginPx(): Int {
+        return (resources.displayMetrics.density * BUBBLE_EDGE_MARGIN_DP).toInt()
+    }
+
+    private fun bubbleDockX(view: View): Int {
+        val screenWidth = resources.displayMetrics.widthPixels
+        return (screenWidth - view.width - bubbleEdgeMarginPx()).coerceAtLeast(0)
+    }
+
+    private fun bubbleMaxY(view: View): Int {
+        return (resources.displayMetrics.heightPixels - view.height).coerceAtLeast(0)
+    }
+
+    private fun snapBubbleToRightEdge(savePosition: Boolean) {
+        val view = bubbleView ?: return
+        val params = bubbleLayoutParams ?: return
+        params.x = bubbleDockX(view)
+        params.y = params.y.coerceIn(0, bubbleMaxY(view))
+        windowManager.updateViewLayout(view, params)
+        if (savePosition) {
+            preferences.saveOverlayPosition(params.x, params.y)
+        }
+    }
+
     private inner class BubbleTouchListener : View.OnTouchListener {
-        private var startX = 0
         private var startY = 0
-        private var touchX = 0f
         private var touchY = 0f
         private var dragging = false
 
@@ -440,28 +453,25 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
             val params = bubbleLayoutParams ?: return false
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
-                    startX = params.x
                     startY = params.y
-                    touchX = event.rawX
                     touchY = event.rawY
                     dragging = false
                     return true
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    val deltaX = (event.rawX - touchX).toInt()
                     val deltaY = (event.rawY - touchY).toInt()
-                    if (kotlin.math.abs(deltaX) > 8 || kotlin.math.abs(deltaY) > 8) {
+                    if (kotlin.math.abs(deltaY) > 8) {
                         dragging = true
                     }
-                    params.x = startX + deltaX
-                    params.y = startY + deltaY
+                    params.x = bubbleDockX(view)
+                    params.y = (startY + deltaY).coerceIn(0, bubbleMaxY(view))
                     windowManager.updateViewLayout(view, params)
                     return true
                 }
 
                 MotionEvent.ACTION_UP -> {
-                    preferences.saveOverlayPosition(params.x, params.y)
+                    snapBubbleToRightEdge(savePosition = true)
                     if (!dragging) {
                         if (panelView == null) showPanel() else removePanel()
                     }

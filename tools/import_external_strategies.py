@@ -102,6 +102,8 @@ TRIBE_ASSET_MAP = {
     "Undead": "minions/tribes/undead.svg",
 }
 
+RENDER_BASE_URL = "https://art.hearthstonejson.com/v1/render/latest"
+
 
 @dataclass
 class SourceUrls:
@@ -145,7 +147,26 @@ def infer_required_tribes(comp_id: str, cards: list[dict[str, Any]]) -> list[str
     return tribes[:2]
 
 
-def normalize_cards(cards: list[dict[str, Any]], primary_tribe: str | None) -> list[dict[str, Any]]:
+def build_render_url(card_id: str | None, language: str) -> str | None:
+    if not card_id:
+        return None
+    return f"{RENDER_BASE_URL}/{language}/256x/{card_id}.png"
+
+
+def to_int(value: Any) -> int | None:
+    if value in (None, ""):
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def normalize_cards(
+    cards: list[dict[str, Any]],
+    primary_tribe: str | None,
+    language: str,
+) -> list[dict[str, Any]]:
     prioritized = sorted(
         cards,
         key=lambda card: (
@@ -155,15 +176,21 @@ def normalize_cards(cards: list[dict[str, Any]], primary_tribe: str | None) -> l
         ),
     )
     normalized: list[dict[str, Any]] = []
-    for index, card in enumerate(prioritized[:8], start=1):
+    for index, card in enumerate(prioritized, start=1):
         status = card.get("status", "")
+        final_board_weight = to_int(card.get("finalBoardWeight"))
         phase, star = STATUS_PHASE_MAP.get(status, ("补位", min(6, 2 + index // 2)))
+        card_id = card.get("cardId")
         normalized.append(
             {
                 "id": index,
                 "name": card.get("name", card.get("cardId", "Unknown Card")),
                 "star": star,
                 "phase": phase,
+                "status_raw": status or None,
+                "final_board_weight": final_board_weight,
+                "card_id": card_id,
+                "image_url": build_render_url(card_id, language),
                 "image_asset": TRIBE_ASSET_MAP.get(primary_tribe or "", None),
             }
         )
@@ -229,6 +256,8 @@ def convert(
         tip_text = translation.get("tip") or first_tip.get("tip")
         when_to_commit = translation.get("whenToCommit") or first_tip.get("whenToCommit")
         difficulty = raw.get("difficulty", "")
+        source_patch_number = to_int(raw.get("patchNumber"))
+        power_level = (raw.get("powerLevel") or "").strip() or None
         required_tribes = infer_required_tribes(comp_id, raw.get("cards", []))
         primary_tribe = required_tribes[0] if required_tribes else None
         overview = to_overview(name, tip_text, when_to_commit, language)
@@ -241,15 +270,18 @@ def convert(
                 "name": name,
                 "tier": POWER_TO_TIER.get(raw.get("powerLevel", ""), "T2"),
                 "difficulty": DIFFICULTY_TO_LABEL.get(difficulty, "中"),
+                "power_level": power_level,
                 "required_tribes": required_tribes,
                 "allowed_anomalies": ["无畸变"],
                 "recommended_mode": "BOTH",
+                "when_to_commit": when_to_commit,
+                "source_patch_number": source_patch_number,
                 "overview": overview,
                 "early_strategy": early_strategy,
                 "late_strategy": late_strategy,
                 "upgrade_turns": DIFFICULTY_TO_TURNS.get(difficulty, DIFFICULTY_TO_TURNS[""]),
                 "positioning_hints": build_positioning_hints(required_tribes),
-                "key_minions": normalize_cards(raw.get("cards", []), primary_tribe),
+                "key_minions": normalize_cards(raw.get("cards", []), primary_tribe, language),
             }
         )
 

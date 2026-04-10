@@ -15,12 +15,18 @@ data class StrategyComp(
     val name: String,
     val tier: String,
     val difficulty: String,
+    @SerialName("power_level")
+    val powerLevel: String? = null,
     @SerialName("required_tribes")
     val requiredTribes: List<String>,
     @SerialName("allowed_anomalies")
     val allowedAnomalies: List<String> = emptyList(),
     @SerialName("recommended_mode")
     val recommendedMode: String = "BOTH",
+    @SerialName("when_to_commit")
+    val whenToCommit: String? = null,
+    @SerialName("source_patch_number")
+    val sourcePatchNumber: Int? = null,
     val overview: String,
     @SerialName("early_strategy")
     val earlyStrategy: String,
@@ -40,6 +46,14 @@ data class KeyMinion(
     val name: String,
     val star: Int,
     val phase: String,
+    @SerialName("status_raw")
+    val statusRaw: String? = null,
+    @SerialName("final_board_weight")
+    val finalBoardWeight: Int? = null,
+    @SerialName("card_id")
+    val cardId: String? = null,
+    @SerialName("image_url")
+    val imageUrl: String? = null,
     @SerialName("image_asset")
     val imageAsset: String? = null
 )
@@ -66,17 +80,4 @@ enum class Tribe(val wireName: String, val label: String, val shortLabel: String
     companion object {
         fun fromWireName(value: String): Tribe? = entries.firstOrNull { it.wireName == value }
     }
-}
-
-object AnomalyPreset {
-    const val NONE = "无畸变"
-
-    val all = listOf(
-        NONE,
-        "黄金竞技场",
-        "双倍战吼",
-        "传说酒馆",
-        "铸币风暴",
-        "全员复生"
-    )
 }
