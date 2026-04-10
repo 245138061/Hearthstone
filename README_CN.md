@@ -76,6 +76,12 @@ echo 'BGT_REMOTE_MANIFEST_URL=https://<your-pages-host>/manifest.json' >> ~/.gra
 
 如果没有配置这个地址，应用仍可运行，只是默认使用内置数据；调试时也可以在 UI 中手动填写 `manifest` 覆盖地址。
 
+当前已经跑通的示例地址：
+
+```text
+https://245138061.github.io/Hearthstone/manifest.json
+```
+
 ## GitHub Actions 数据发布
 
 项目已经提供定时发布工作流：

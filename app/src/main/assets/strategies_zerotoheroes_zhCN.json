@@ -1,5 +1,5 @@
 {
-  "version": "2026.04.09-zerotoheroes-zhCN",
+  "version": "2026.04.10-firestone-zhCN",
   "comps": [
     {
       "id": "deep_blue_nagas",
@@ -14,11 +14,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Deep Blue 和 Bluesy Siren",
+      "when_to_commit": "深沉蓝调歌手 和 蓝调海妖",
       "source_patch_number": 231720,
-      "overview": "深沉蓝调流纳迦 | 成型信号: Deep Blue 和 Bluesy Siren | 用 Deep Blue Crooner 和 Bluesy Siren 持续放大蓝调体系。别忘了 Flaming Enforcer 也能把属性永久留下来。",
-      "early_strategy": "看到 Deep Blue 和 Bluesy Siren 再明确转型。",
-      "late_strategy": "用 Deep Blue Crooner 和 Bluesy Siren 持续放大蓝调体系。别忘了 Flaming Enforcer 也能把属性永久留下来。",
+      "overview": "深沉蓝调流纳迦 | 成型信号: 深沉蓝调歌手 和 蓝调海妖 | 用 深沉蓝调歌手 和 蓝调海妖 持续放大蓝调体系。别忘了 魔焰执行者 也能把属性永久留下来。",
+      "early_strategy": "看到 深沉蓝调歌手 和 蓝调海妖 再明确转型。",
+      "late_strategy": "用 深沉蓝调歌手 和 蓝调海妖 持续放大蓝调体系。别忘了 魔焰执行者 也能把属性永久留下来。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -39,7 +39,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Bluesy Siren",
+          "name": "蓝调海妖",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -50,7 +50,7 @@
         },
         {
           "id": 2,
-          "name": "Deep Blue Crooner",
+          "name": "深沉蓝调歌手",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -61,7 +61,7 @@
         },
         {
           "id": 3,
-          "name": "Zesty Shaker",
+          "name": "热情沙锤手",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -72,7 +72,7 @@
         },
         {
           "id": 4,
-          "name": "Daggerspine Thrasher",
+          "name": "刺脊刺击者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -83,7 +83,7 @@
         },
         {
           "id": 5,
-          "name": "Flaming Enforcer",
+          "name": "魔焰执行者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -94,7 +94,7 @@
         },
         {
           "id": 6,
-          "name": "Glowscale",
+          "name": "闪鳞纳迦",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -105,7 +105,7 @@
         },
         {
           "id": 7,
-          "name": "Lava Lurker",
+          "name": "熔岩潜伏者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -116,13 +116,134 @@
         },
         {
           "id": 8,
-          "name": "Profound Thinker",
+          "name": "深沉的思想者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG34_929",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_929.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 9,
+          "name": "破碎主母",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG33_923",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG33_923.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 10,
+          "name": "乘波骑士",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG23_007",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG23_007.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 11,
+          "name": "希尔瓦娜斯之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_017",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_017.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲闪鳞纳迦",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_035",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_035.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲卡拉瑟雷斯",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_PreMadeChamp_056",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_PreMadeChamp_056.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 14,
+          "name": "时空扭曲熔岩潜伏者",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_678",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_678.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 15,
+          "name": "时空扭曲工兵",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_304",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_304.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 16,
+          "name": "时空扭曲秘书",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_323",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_323.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 17,
+          "name": "时空扭曲套餐",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_950",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_950.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 18,
+          "name": "时空扭曲召唤师",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_324",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_324.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 19,
+          "name": "大地母亲之眼",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "EBG_Spell_017",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/EBG_Spell_017.png",
           "image_asset": "minions/tribes/naga.svg"
         }
       ]
@@ -140,11 +261,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Czarina + Lass-O-Matic",
+      "when_to_commit": "蓄能女沙皇 + 自动漩涡套索装置",
       "source_patch_number": 231720,
-      "overview": "圣盾流机械 | 成型信号: Czarina + Lass-O-Matic | 尽量制造酒馆法术，再用 Czarina 放大你的圣盾机械体系。",
-      "early_strategy": "看到 Czarina + Lass-O-Matic 再明确转型。",
-      "late_strategy": "尽量制造酒馆法术，再用 Czarina 放大你的圣盾机械体系。",
+      "overview": "圣盾流机械 | 成型信号: 蓄能女沙皇 + 自动漩涡套索装置 | 尽量制造酒馆法术，再用 蓄能女沙皇 放大你的圣盾机械体系。",
+      "early_strategy": "看到 蓄能女沙皇 + 自动漩涡套索装置 再明确转型。",
+      "late_strategy": "尽量制造酒馆法术，再用 蓄能女沙皇 放大你的圣盾机械体系。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -165,7 +286,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Charging Czarina",
+          "name": "蓄能女沙皇",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -176,7 +297,7 @@
         },
         {
           "id": 2,
-          "name": "Whirling Lass-o-Matic",
+          "name": "自动漩涡套索装置",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -187,7 +308,7 @@
         },
         {
           "id": 3,
-          "name": "Grease Bot",
+          "name": "滑油机器人",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -198,7 +319,7 @@
         },
         {
           "id": 4,
-          "name": "Humon'gozz",
+          "name": "胡蒙格斯",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -209,7 +330,7 @@
         },
         {
           "id": 5,
-          "name": "Marquee Ticker",
+          "name": "招牌计时机",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -220,7 +341,7 @@
         },
         {
           "id": 6,
-          "name": "Sin'dorei Straight Shot",
+          "name": "辛多雷直射手",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -231,7 +352,7 @@
         },
         {
           "id": 7,
-          "name": "Power of George",
+          "name": "乔治之力",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
@@ -242,7 +363,7 @@
         },
         {
           "id": 8,
-          "name": "Timewarped B.A.N.A.N.A.S.",
+          "name": "时空扭曲香蕉满手",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
@@ -250,12 +371,67 @@
           "card_id": "BG34_Treasure_912",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_912.png",
           "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 9,
+          "name": "时空扭曲电荷金刚",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_610",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_610.png",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲滑油机器人",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_656",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_656.png",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲猎人",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_588",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_588.png",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲链索",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_609",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_609.png",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲戒指",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_608",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_608.png",
+          "image_asset": "minions/tribes/mech.svg"
         }
       ]
     },
     {
       "id": "buff_shop_demons",
-      "name": "酒馆Buff流恶魔",
+      "name": "酒馆增益流恶魔",
       "tier": "T2",
       "difficulty": "中",
       "power_level": "C",
@@ -266,11 +442,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Shadow Dancer + Ur'zul 或 Felboar",
+      "when_to_commit": "影舞者 + 贪食的乌祖尔 或 邪能野猪人",
       "source_patch_number": 231720,
-      "overview": "酒馆Buff流恶魔 | 成型信号: Shadow Dancer + Ur'zul 或 Felboar | 先用 Shadow Dancer 或时空扭曲版 Shadow Dancer 给酒馆加属性，再用 Ur'zul 或 Felboar 吃掉酒馆。也可以用 Conjurer、Meditative 等手段放大酒馆法术收益。",
-      "early_strategy": "看到 Shadow Dancer + Ur'zul 或 Felboar 再明确转型。",
-      "late_strategy": "先用 Shadow Dancer 或时空扭曲版 Shadow Dancer 给酒馆加属性，再用 Ur'zul 或 Felboar 吃掉酒馆。也可以用 Conjurer、Meditative 等手段放大酒馆法术收益。",
+      "overview": "酒馆增益流恶魔 | 成型信号: 影舞者 + 贪食的乌祖尔 或 邪能野猪人 | 先用 影舞者 或时空扭曲版 影舞者 给酒馆加属性，再用 贪食的乌祖尔 或 邪能野猪人 吃掉酒馆。也可以用 邪火咒龙、宁静的冥想者 等手段放大酒馆法术收益。",
+      "early_strategy": "看到 影舞者 + 贪食的乌祖尔 或 邪能野猪人 再明确转型。",
+      "late_strategy": "先用 影舞者 或时空扭曲版 影舞者 给酒馆加属性，再用 贪食的乌祖尔 或 邪能野猪人 吃掉酒馆。也可以用 邪火咒龙、宁静的冥想者 等手段放大酒馆法术收益。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -292,7 +468,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Felboar",
+          "name": "邪能野猪人",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -303,7 +479,7 @@
         },
         {
           "id": 2,
-          "name": "Insatiable Ur'zul",
+          "name": "贪食的乌祖尔",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -314,7 +490,7 @@
         },
         {
           "id": 3,
-          "name": "Shadowdancer",
+          "name": "影舞者",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -325,7 +501,7 @@
         },
         {
           "id": 4,
-          "name": "Brann Bronzebeard",
+          "name": "布莱恩·铜须",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -336,7 +512,7 @@
         },
         {
           "id": 5,
-          "name": "Famished Felbat",
+          "name": "饥饿的魔蝠",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -347,7 +523,7 @@
         },
         {
           "id": 6,
-          "name": "Felfire Conjurer",
+          "name": "邪火咒龙",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -358,7 +534,7 @@
         },
         {
           "id": 7,
-          "name": "Flaming Enforcer",
+          "name": "魔焰执行者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -369,13 +545,90 @@
         },
         {
           "id": 8,
-          "name": "Titus Rivendare",
+          "name": "提图斯·瑞文戴尔",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG25_354",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG25_354.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 9,
+          "name": "宁静的冥想者",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG32_835",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG32_835.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲基尔加丹",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_313",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_313.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲基尔里克",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_584",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_584.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲影舞者",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_360",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_360.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲破坏魔",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_311",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_311.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 14,
+          "name": "狂怒的骑手",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG31_874",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG31_874.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 15,
+          "name": "奇瑰打击乐手",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG26_525",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG26_525.png",
           "image_asset": "minions/tribes/demon.svg"
         }
       ]
@@ -393,9 +646,9 @@
       "recommended_mode": "BOTH",
       "when_to_commit": "只拿到下毒或一换一组件，没有更强主计划",
       "source_patch_number": 231720,
-      "overview": "下毒 | 成型信号: 只拿到下毒或一换一组件，没有更强主计划 | 把 Leeroy、Spore 这类一换一单位都买上，优先活下来。护甲也值得买，即使你已经有 5 点以上。",
+      "overview": "下毒 | 成型信号: 只拿到下毒或一换一组件，没有更强主计划 | 把 莽神火车王、致命的孢子 这类一换一单位都买上，优先活下来。护甲也值得买，即使你已经有 5 点以上。",
       "early_strategy": "看到 只拿到下毒或一换一组件，没有更强主计划 再明确转型。",
-      "late_strategy": "把 Leeroy、Spore 这类一换一单位都买上，优先活下来。护甲也值得买，即使你已经有 5 点以上。",
+      "late_strategy": "把 莽神火车王、致命的孢子 这类一换一单位都买上，优先活下来。护甲也值得买，即使你已经有 5 点以上。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -417,7 +670,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Leeroy the Reckless",
+          "name": "莽神火车王",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -428,7 +681,7 @@
         },
         {
           "id": 2,
-          "name": "Apprentice of Sefin",
+          "name": "鳛芙的学徒",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -439,7 +692,7 @@
         },
         {
           "id": 3,
-          "name": "Bassgill",
+          "name": "低音提琴鱼人",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -450,7 +703,7 @@
         },
         {
           "id": 4,
-          "name": "Daggerspine Thrasher",
+          "name": "刺脊刺击者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -461,7 +714,7 @@
         },
         {
           "id": 5,
-          "name": "Deadly Spore",
+          "name": "致命的孢子",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -472,7 +725,7 @@
         },
         {
           "id": 6,
-          "name": "Expert Aviator",
+          "name": "飞行专家",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -483,7 +736,7 @@
         },
         {
           "id": 7,
-          "name": "Heroic Underdog",
+          "name": "英勇的逆袭者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -494,13 +747,156 @@
         },
         {
           "id": 8,
-          "name": "Psychus",
+          "name": "赛古斯",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG34_318",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_318.png",
+          "image_asset": null
+        },
+        {
+          "id": 9,
+          "name": "缝合回收者",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG31_999",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG31_999.png",
+          "image_asset": null
+        },
+        {
+          "id": 10,
+          "name": "提图斯·瑞文戴尔",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG25_354.png",
+          "image_asset": null
+        },
+        {
+          "id": 11,
+          "name": "乔治之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_006",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_006.png",
+          "image_asset": null
+        },
+        {
+          "id": 12,
+          "name": "希尔瓦娜斯之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_017",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_017.png",
+          "image_asset": null
+        },
+        {
+          "id": 13,
+          "name": "塔隆之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_009",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_009.png",
+          "image_asset": null
+        },
+        {
+          "id": 14,
+          "name": "巫妖王之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_010",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_010.png",
+          "image_asset": null
+        },
+        {
+          "id": 15,
+          "name": "时空扭曲护甲储备",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_934",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_934.png",
+          "image_asset": null
+        },
+        {
+          "id": 16,
+          "name": "时空扭曲变色龙",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_042",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_042.png",
+          "image_asset": null
+        },
+        {
+          "id": 17,
+          "name": "时空扭曲预订遗体",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_937",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_937.png",
+          "image_asset": null
+        },
+        {
+          "id": 18,
+          "name": "时空扭曲入殓师",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_332",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_332.png",
+          "image_asset": null
+        },
+        {
+          "id": 19,
+          "name": "时空扭曲寻宝鱼人",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_017",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_017.png",
+          "image_asset": null
+        },
+        {
+          "id": 20,
+          "name": "时空扭曲飓风机甲",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_599",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_599.png",
+          "image_asset": null
+        },
+        {
+          "id": 21,
+          "name": "护甲储备",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG28_500",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG28_500.png",
           "image_asset": null
         }
       ]
@@ -518,11 +914,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "前期拿到 Silithid Burrower",
+      "when_to_commit": "前期拿到 异种钻地虫",
       "source_patch_number": 231720,
-      "overview": "钻地虫流野兽 | 成型信号: 前期拿到 Silithid Burrower | 尽量堆亡语和复生来养钻地虫，最佳搭档是 Twilight Broodmother。中期掉几波血是能接受的；快要死时就按 Goldrinn 套路来打，用 Macaw、Titus 等频繁触发 Silithid。",
-      "early_strategy": "看到 前期拿到 Silithid Burrower 再明确转型。",
-      "late_strategy": "尽量堆亡语和复生来养钻地虫，最佳搭档是 Twilight Broodmother。中期掉几波血是能接受的；快要死时就按 Goldrinn 套路来打，用 Macaw、Titus 等频繁触发 Silithid。",
+      "overview": "钻地虫流野兽 | 成型信号: 前期拿到 异种钻地虫 | 尽量堆亡语和复生来养钻地虫，最佳搭档是 暮光巢母。中期掉几波血是能接受的；快要死时就按 戈德林 套路来打，用 巨大的金刚鹦鹉、提图斯·瑞文戴尔 等频繁触发 异种钻地虫。",
+      "early_strategy": "看到 前期拿到 异种钻地虫 再明确转型。",
+      "late_strategy": "尽量堆亡语和复生来养钻地虫，最佳搭档是 暮光巢母。中期掉几波血是能接受的；快要死时就按 戈德林 套路来打，用 巨大的金刚鹦鹉、提图斯·瑞文戴尔 等频繁触发 异种钻地虫。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -544,7 +940,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Monstrous Macaw",
+          "name": "巨大的金刚鹦鹉",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -555,7 +951,7 @@
         },
         {
           "id": 2,
-          "name": "Silithid Burrower",
+          "name": "异种钻地虫",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -566,7 +962,7 @@
         },
         {
           "id": 3,
-          "name": "Titus Rivendare",
+          "name": "提图斯·瑞文戴尔",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -577,7 +973,7 @@
         },
         {
           "id": 4,
-          "name": "Niuzao",
+          "name": "砮皂",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -588,7 +984,7 @@
         },
         {
           "id": 5,
-          "name": "Twilight Broodmother",
+          "name": "暮光巢母",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -599,7 +995,7 @@
         },
         {
           "id": 6,
-          "name": "Power of Teron",
+          "name": "塔隆之力",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
@@ -610,7 +1006,7 @@
         },
         {
           "id": 7,
-          "name": "Timewarped Chameleon",
+          "name": "时空扭曲变色龙",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
@@ -621,13 +1017,35 @@
         },
         {
           "id": 8,
-          "name": "Timewarped Hawkstrider",
+          "name": "时空扭曲陆行鸟",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
           "final_board_weight": 1,
           "card_id": "BG34_Giant_370",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_370.png",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 9,
+          "name": "时空扭曲飓风机甲",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_599",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_599.png",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 10,
+          "name": "机变甲虫",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG27_084",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG27_084.png",
           "image_asset": "minions/tribes/beast.svg"
         }
       ]
@@ -645,11 +1063,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Handless Forsaken + Visionary Shipman + Brann",
+      "when_to_commit": "断手被遗忘者 + 远望船夫 + 布莱恩·铜须",
       "source_patch_number": 231720,
-      "overview": "攻击提升流亡灵 | 成型信号: Handless Forsaken + Visionary Shipman + Brann | 用 Brann 和 Visionary Shipman 循环优质战吼，再去刷法术，用 Handless Forsaken 把这些收益转成亡灵攻击力。",
-      "early_strategy": "看到 Handless Forsaken + Visionary Shipman + Brann 再明确转型。",
-      "late_strategy": "用 Brann 和 Visionary Shipman 循环优质战吼，再去刷法术，用 Handless Forsaken 把这些收益转成亡灵攻击力。",
+      "overview": "攻击提升流亡灵 | 成型信号: 断手被遗忘者 + 远望船夫 + 布莱恩·铜须 | 用 布莱恩·铜须 和 远望船夫 循环优质战吼，再去刷法术，用 断手被遗忘者 把这些收益转成亡灵攻击力。",
+      "early_strategy": "看到 断手被遗忘者 + 远望船夫 + 布莱恩·铜须 再明确转型。",
+      "late_strategy": "用 布莱恩·铜须 和 远望船夫 循环优质战吼，再去刷法术，用 断手被遗忘者 把这些收益转成亡灵攻击力。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -671,7 +1089,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Forsaken Weaver",
+          "name": "被遗忘者纺织工",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -682,7 +1100,7 @@
         },
         {
           "id": 2,
-          "name": "Deathly Striker",
+          "name": "致命打击者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -693,7 +1111,7 @@
         },
         {
           "id": 3,
-          "name": "Handless Forsaken",
+          "name": "断手被遗忘者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -704,7 +1122,7 @@
         },
         {
           "id": 4,
-          "name": "Soulsplitter",
+          "name": "灵魂切分者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -715,7 +1133,7 @@
         },
         {
           "id": 5,
-          "name": "Titus Rivendare",
+          "name": "提图斯·瑞文戴尔",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -726,7 +1144,7 @@
         },
         {
           "id": 6,
-          "name": "Visionary Shipman",
+          "name": "远望船夫",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -737,7 +1155,7 @@
         },
         {
           "id": 7,
-          "name": "Wintergrasp Ghoul",
+          "name": "冬拥食尸鬼",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -748,13 +1166,68 @@
         },
         {
           "id": 8,
-          "name": "Power of Teron",
+          "name": "塔隆之力",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
           "final_board_weight": 1,
           "card_id": "BG34_HeroPowerSpell_009",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_009.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 9,
+          "name": "时空扭曲看管者",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_618",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_618.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲入殓师",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_332",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_332.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲烂肠",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_590",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_590.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲匪贼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_204",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_204.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 13,
+          "name": "义肢假手",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG_DEEP_015",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG_DEEP_015.png",
           "image_asset": "minions/tribes/undead.svg"
         }
       ]
@@ -772,11 +1245,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Brann + Acid Rainfall，外加 Air Revenant 或 En-Djinn Blazer 搭配 Rylak",
+      "when_to_commit": "布莱恩·铜须 + 酸雨元素，外加 空气亡魂 或 爆焰灯神 搭配 重金属双头飞龙",
       "source_patch_number": 231720,
-      "overview": "刷新流元素 | 成型信号: Brann + Acid Rainfall，外加 Air Revenant 或 En-Djinn Blazer 搭配 Rylak | 先把最右侧随从养大，常见方式是 Air Revenant 或 En-Djinn Blazer 配合 Rylak。随后找到 Acid Rainfall，不断刷新酒馆滚收益。",
-      "early_strategy": "看到 Brann + Acid Rainfall，外加 Air Revenant 或 En-Djinn Blazer 搭配 Rylak 再明确转型。",
-      "late_strategy": "先把最右侧随从养大，常见方式是 Air Revenant 或 En-Djinn Blazer 配合 Rylak。随后找到 Acid Rainfall，不断刷新酒馆滚收益。",
+      "overview": "刷新流元素 | 成型信号: 布莱恩·铜须 + 酸雨元素，外加 空气亡魂 或 爆焰灯神 搭配 重金属双头飞龙 | 先把最右侧随从养大，常见方式是 空气亡魂 或 爆焰灯神 配合 重金属双头飞龙。随后找到 酸雨元素，不断刷新酒馆滚收益。",
+      "early_strategy": "看到 布莱恩·铜须 + 酸雨元素，外加 空气亡魂 或 爆焰灯神 搭配 重金属双头飞龙 再明确转型。",
+      "late_strategy": "先把最右侧随从养大，常见方式是 空气亡魂 或 爆焰灯神 配合 重金属双头飞龙。随后找到 酸雨元素，不断刷新酒馆滚收益。",
       "upgrade_turns": [
         "2 铸币升 2",
         "5 铸币升 3",
@@ -799,7 +1272,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Acid Rainfall",
+          "name": "酸雨元素",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -810,7 +1283,7 @@
         },
         {
           "id": 2,
-          "name": "Air Revenant",
+          "name": "空气亡魂",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -821,7 +1294,7 @@
         },
         {
           "id": 3,
-          "name": "Brann Bronzebeard",
+          "name": "布莱恩·铜须",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -832,7 +1305,7 @@
         },
         {
           "id": 4,
-          "name": "Flaming Enforcer",
+          "name": "魔焰执行者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -843,7 +1316,7 @@
         },
         {
           "id": 5,
-          "name": "Fleet Admiral Tethys",
+          "name": "舰队上将特塞斯",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -854,7 +1327,7 @@
         },
         {
           "id": 6,
-          "name": "Rylak Metalhead",
+          "name": "重金属双头飞龙",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -865,7 +1338,7 @@
         },
         {
           "id": 7,
-          "name": "Titus Rivendare",
+          "name": "提图斯·瑞文戴尔",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -876,13 +1349,68 @@
         },
         {
           "id": 8,
-          "name": "Waveling",
+          "name": "幼体水波",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG34_856",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_856.png",
+          "image_asset": "minions/tribes/elemental.svg"
+        },
+        {
+          "id": 9,
+          "name": "时空扭曲不朽者",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_597",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_597.png",
+          "image_asset": "minions/tribes/elemental.svg"
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲新秀",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_361",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_361.png",
+          "image_asset": "minions/tribes/elemental.svg"
+        },
+        {
+          "id": 11,
+          "name": "爆焰灯神",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG34_865",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_865.png",
+          "image_asset": "minions/tribes/elemental.svg"
+        },
+        {
+          "id": 12,
+          "name": "刷新畸体",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BGS_116",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BGS_116.png",
+          "image_asset": "minions/tribes/elemental.svg"
+        },
+        {
+          "id": 13,
+          "name": "酒馆旋风",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BGS_123",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BGS_123.png",
           "image_asset": "minions/tribes/elemental.svg"
         }
       ]
@@ -900,11 +1428,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Tethys + Brann",
+      "when_to_commit": "舰队上将特塞斯 + 布莱恩·铜须",
       "source_patch_number": 231720,
-      "overview": "倒转流海盗 | 成型信号: Tethys + Brann | 这套要打得很快，围绕 Tethys 高频循环所有经济型随从。",
-      "early_strategy": "看到 Tethys + Brann 再明确转型。",
-      "late_strategy": "这套要打得很快，围绕 Tethys 高频循环所有经济型随从。",
+      "overview": "倒转流海盗 | 成型信号: 舰队上将特塞斯 + 布莱恩·铜须 | 这套要打得很快，围绕 舰队上将特塞斯 高频循环所有经济型随从。",
+      "early_strategy": "看到 舰队上将特塞斯 + 布莱恩·铜须 再明确转型。",
+      "late_strategy": "这套要打得很快，围绕 舰队上将特塞斯 高频循环所有经济型随从。",
       "upgrade_turns": [
         "2 铸币升 2",
         "5 铸币升 3",
@@ -927,7 +1455,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Cannon Corsair",
+          "name": "火炮海盗",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -938,7 +1466,7 @@
         },
         {
           "id": 2,
-          "name": "Fleet Admiral Tethys",
+          "name": "舰队上将特塞斯",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -949,7 +1477,7 @@
         },
         {
           "id": 3,
-          "name": "Shore Marauder",
+          "name": "海滨掠夺者",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -960,7 +1488,7 @@
         },
         {
           "id": 4,
-          "name": "Brann Bronzebeard",
+          "name": "布莱恩·铜须",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -971,7 +1499,7 @@
         },
         {
           "id": 5,
-          "name": "Gunpowder Courier",
+          "name": "火药运输工",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -982,7 +1510,7 @@
         },
         {
           "id": 6,
-          "name": "Industrious Deckhand",
+          "name": "勤劳的水手",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -993,7 +1521,7 @@
         },
         {
           "id": 7,
-          "name": "Plankwalker",
+          "name": "走跳板的海盗",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1004,13 +1532,145 @@
         },
         {
           "id": 8,
-          "name": "Timecap'n Hooktail",
+          "name": "时空船长钩尾",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG27_005",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG27_005.png",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 9,
+          "name": "开挂荷官",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_815",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG26_815.png",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 10,
+          "name": "远望船夫",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_235",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_235.png",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 11,
+          "name": "弗洛格尔之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_016",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_016.png",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 12,
+          "name": "古夫之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_015",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_015.png",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲卖艺者",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_001",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_001.png",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 14,
+          "name": "时空扭曲酒馆异变",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_900",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_900.png",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 15,
+          "name": "时空扭曲帕格",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_208",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_208.png",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 16,
+          "name": "时空扭曲佩吉",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_327",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_327.png",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 17,
+          "name": "时空扭曲掠夺者",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_PreMadeChamp_067",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_PreMadeChamp_067.png",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 18,
+          "name": "时空扭曲劫掠者",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_PreMadeChamp_065",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_PreMadeChamp_065.png",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 19,
+          "name": "时空扭曲钻探原油",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_932",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_932.png",
+          "image_asset": "minions/tribes/pirate.svg"
+        },
+        {
+          "id": 20,
+          "name": "时空扭曲海浪剃刀号",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_328",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_328.png",
           "image_asset": "minions/tribes/pirate.svg"
         }
       ]
@@ -1028,11 +1688,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "宝石或酒馆法术成长足够，能稳定产 Blood Gem Barrage，并且有 Felboar 吃店",
+      "when_to_commit": "宝石或酒馆法术成长足够，能稳定产 鲜血宝石弹幕，并且有 邪能野猪人 吃店",
       "source_patch_number": 231720,
-      "overview": "商店增强流野猪人 | 成型信号: 宝石或酒馆法术成长足够，能稳定产 Blood Gem Barrage，并且有 Felboar 吃店 | 先把 Blood Gem Barrage 叠大，不管是靠大宝石还是大酒馆法术，随后让 Felboar 把整间酒馆吃掉。",
-      "early_strategy": "看到 宝石或酒馆法术成长足够，能稳定产 Blood Gem Barrage，并且有 Felboar 吃店 再明确转型。",
-      "late_strategy": "先把 Blood Gem Barrage 叠大，不管是靠大宝石还是大酒馆法术，随后让 Felboar 把整间酒馆吃掉。",
+      "overview": "商店增强流野猪人 | 成型信号: 宝石或酒馆法术成长足够，能稳定产 鲜血宝石弹幕，并且有 邪能野猪人 吃店 | 先把 鲜血宝石弹幕 叠大，不管是靠大宝石还是大酒馆法术，随后让 邪能野猪人 把整间酒馆吃掉。",
+      "early_strategy": "看到 宝石或酒馆法术成长足够，能稳定产 鲜血宝石弹幕，并且有 邪能野猪人 吃店 再明确转型。",
+      "late_strategy": "先把 鲜血宝石弹幕 叠大，不管是靠大宝石还是大酒馆法术，随后让 邪能野猪人 把整间酒馆吃掉。",
       "upgrade_turns": [
         "2 铸币升 2",
         "5 铸币升 3",
@@ -1055,7 +1715,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Brann Bronzebeard",
+          "name": "布莱恩·铜须",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1066,7 +1726,7 @@
         },
         {
           "id": 2,
-          "name": "Felboar",
+          "name": "邪能野猪人",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1077,7 +1737,7 @@
         },
         {
           "id": 3,
-          "name": "Briarback Drummer",
+          "name": "棘背鼓手",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1088,7 +1748,7 @@
         },
         {
           "id": 4,
-          "name": "Moon-Bacon Jazzer",
+          "name": "暗膘爵士乐手",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1099,7 +1759,7 @@
         },
         {
           "id": 5,
-          "name": "Paint Smudger",
+          "name": "油彩画家",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1110,7 +1770,7 @@
         },
         {
           "id": 6,
-          "name": "Prickly Piper",
+          "name": "刺头吹笛人",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1121,7 +1781,7 @@
         },
         {
           "id": 7,
-          "name": "Prophet of the Boar",
+          "name": "野猪预言者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1132,13 +1792,123 @@
         },
         {
           "id": 8,
-          "name": "Razorfen Flapper",
+          "name": "剃刀沼泽舞扇者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG34_682",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_682.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 9,
+          "name": "提图斯·瑞文戴尔",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG25_354.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 10,
+          "name": "宁静的冥想者",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG32_835",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG32_835.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲血缚野猪人",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_PreMadeChamp_076",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_PreMadeChamp_076.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲狂棍野猪人",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_102",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_102.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲爵士乐手",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_306",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_306.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 14,
+          "name": "时空扭曲吹笛人",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_069",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_069.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 15,
+          "name": "时空扭曲荆棘召唤者",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_078",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_078.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 16,
+          "name": "时空扭曲套索牛仔",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_105",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_105.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 17,
+          "name": "鲜血宝石弹幕",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG34_689",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_689.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 18,
+          "name": "无畏的食客",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG30_123",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG30_123.png",
           "image_asset": "minions/tribes/quilboar.svg"
         }
       ]
@@ -1156,11 +1926,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Brann + Bream Counter",
+      "when_to_commit": "布莱恩·铜须 + 裁脍鱼人",
       "source_patch_number": 231720,
-      "overview": "手牌流鱼人 | 成型信号: Brann + Bream Counter | 用 Burglar 和 Brann 给 Bream Counter 叠手牌增益，同时循环 Tad、Primalfin 这类过牌单位。",
-      "early_strategy": "看到 Brann + Bream Counter 再明确转型。",
-      "late_strategy": "用 Burglar 和 Brann 给 Bream Counter 叠手牌增益，同时循环 Tad、Primalfin 这类过牌单位。",
+      "overview": "手牌流鱼人 | 成型信号: 布莱恩·铜须 + 裁脍鱼人 | 用 鱼人蟊贼 和 布莱恩·铜须 给 裁脍鱼人 叠手牌增益，同时循环 塔德、蛮鱼斥候 这类过牌单位。",
+      "early_strategy": "看到 布莱恩·铜须 + 裁脍鱼人 再明确转型。",
+      "late_strategy": "用 鱼人蟊贼 和 布莱恩·铜须 给 裁脍鱼人 叠手牌增益，同时循环 塔德、蛮鱼斥候 这类过牌单位。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -1182,7 +1952,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Bassgill",
+          "name": "低音提琴鱼人",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1193,7 +1963,7 @@
         },
         {
           "id": 2,
-          "name": "Brann Bronzebeard",
+          "name": "布莱恩·铜须",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1204,7 +1974,7 @@
         },
         {
           "id": 3,
-          "name": "Bream Counter",
+          "name": "裁脍鱼人",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1215,7 +1985,7 @@
         },
         {
           "id": 4,
-          "name": "Apprentice of Sefin",
+          "name": "鳛芙的学徒",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1226,7 +1996,7 @@
         },
         {
           "id": 5,
-          "name": "Bile Spitter",
+          "name": "怒胆喷毒鱼人",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1237,7 +2007,7 @@
         },
         {
           "id": 6,
-          "name": "Costume Enthusiast",
+          "name": "狂热变装鱼人",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1248,7 +2018,7 @@
         },
         {
           "id": 7,
-          "name": "Dramaloc",
+          "name": "戏剧鱼人",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1259,13 +2029,68 @@
         },
         {
           "id": 8,
-          "name": "Magicfin Mycologist",
+          "name": "魔鳍真菌学家",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG33_891",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG33_891.png",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 9,
+          "name": "鱼人蟊贼",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG30_122",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG30_122.png",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲合唱鱼人",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_321",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_321.png",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲鱼人画家",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_319",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_319.png",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲古鳍鱼人",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_PreMadeChamp_047",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_PreMadeChamp_047.png",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲弹跳鱼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_072",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_072.png",
           "image_asset": "minions/tribes/murloc.svg"
         }
       ]
@@ -1283,11 +2108,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Brann、Young Murk-Eye、Drakkari、Magicfin 和酒馆法术增益同时具备",
+      "when_to_commit": "布莱恩·铜须、小瞎眼、达卡莱附魔师、魔鳍真菌学家 和酒馆法术增益同时具备",
       "source_patch_number": 231720,
-      "overview": "回合结束流鱼人 | 成型信号: Brann、Young Murk-Eye、Drakkari、Magicfin 和酒馆法术增益同时具备 | 场上先放 Magicfin，再买 Azerite Empowerment、Time Management 或 Shiny Ring 等法术，让 Young Murk-Eye 配合 Brann 与 Drakkari 重复触发 1/1 鱼人。最好再找办法把酒馆法术做大，比如 Felfire Conjurer。",
-      "early_strategy": "看到 Brann、Young Murk-Eye、Drakkari、Magicfin 和酒馆法术增益同时具备 再明确转型。",
-      "late_strategy": "场上先放 Magicfin，再买 Azerite Empowerment、Time Management 或 Shiny Ring 等法术，让 Young Murk-Eye 配合 Brann 与 Drakkari 重复触发 1/1 鱼人。最好再找办法把酒馆法术做大，比如 Felfire Conjurer。",
+      "overview": "回合结束流鱼人 | 成型信号: 布莱恩·铜须、小瞎眼、达卡莱附魔师、魔鳍真菌学家 和酒馆法术增益同时具备 | 场上先放 魔鳍真菌学家，再买 艾泽里特强化、时间管理 或 闪亮的戒指 等法术，让 小瞎眼 配合 布莱恩·铜须 与 达卡莱附魔师 重复触发 1/1 鱼人。最好再找办法把酒馆法术做大，比如 邪火咒龙。",
+      "early_strategy": "看到 布莱恩·铜须、小瞎眼、达卡莱附魔师、魔鳍真菌学家 和酒馆法术增益同时具备 再明确转型。",
+      "late_strategy": "场上先放 魔鳍真菌学家，再买 艾泽里特强化、时间管理 或 闪亮的戒指 等法术，让 小瞎眼 配合 布莱恩·铜须 与 达卡莱附魔师 重复触发 1/1 鱼人。最好再找办法把酒馆法术做大，比如 邪火咒龙。",
       "upgrade_turns": [
         "2 铸币升 2",
         "5 铸币升 3",
@@ -1310,7 +2135,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Brann Bronzebeard",
+          "name": "布莱恩·铜须",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1321,7 +2146,7 @@
         },
         {
           "id": 2,
-          "name": "Drakkari Enchanter",
+          "name": "达卡莱附魔师",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1332,7 +2157,7 @@
         },
         {
           "id": 3,
-          "name": "Felfire Conjurer",
+          "name": "邪火咒龙",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1343,7 +2168,7 @@
         },
         {
           "id": 4,
-          "name": "Magicfin Mycologist",
+          "name": "魔鳍真菌学家",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1354,7 +2179,7 @@
         },
         {
           "id": 5,
-          "name": "Young Murk-Eye",
+          "name": "小瞎眼",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1365,7 +2190,7 @@
         },
         {
           "id": 6,
-          "name": "Bassgill",
+          "name": "低音提琴鱼人",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1376,7 +2201,7 @@
         },
         {
           "id": 7,
-          "name": "Timewarped Steamer",
+          "name": "时空扭曲蒸汽机",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1387,13 +2212,101 @@
         },
         {
           "id": 8,
-          "name": "Tranquil Meditative",
+          "name": "宁静的冥想者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG32_835",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG32_835.png",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 9,
+          "name": "弗洛格尔之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_016",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_016.png",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 10,
+          "name": "沙德沃克之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_008",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_008.png",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲螺号",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_951",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_951.png",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲酒馆异变",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_900",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_900.png",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲小瞎眼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_318",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_318.png",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 14,
+          "name": "时空扭曲奔波尔霸",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_206",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_206.png",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 15,
+          "name": "时空扭曲秘法师",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_320",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_320.png",
+          "image_asset": "minions/tribes/murloc.svg"
+        },
+        {
+          "id": 16,
+          "name": "蛮鱼斥候",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BGS_020",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BGS_020.png",
           "image_asset": "minions/tribes/murloc.svg"
         }
       ]
@@ -1409,11 +2322,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "前期拿到 Lubber 或 Snow Elemental",
+      "when_to_commit": "前期拿到 旱地元素 或 冰雪元素",
       "source_patch_number": 231720,
-      "overview": "2级酒馆投球手 | 成型信号: 前期拿到 Lubber 或 Snow Elemental | 尽量在元素和恶魔池里玩这套，最好第一次时空跳跃前先拿到元素标签，这样更容易找到 Lubber 或 Snow Elemental。之后就循环 Oil 和 Ballers。",
-      "early_strategy": "看到 前期拿到 Lubber 或 Snow Elemental 再明确转型。",
-      "late_strategy": "尽量在元素和恶魔池里玩这套，最好第一次时空跳跃前先拿到元素标签，这样更容易找到 Lubber 或 Snow Elemental。之后就循环 Oil 和 Ballers。",
+      "overview": "2级酒馆投球手 | 成型信号: 前期拿到 旱地元素 或 冰雪元素 | 尽量在元素和恶魔池里玩这套，最好第一次时空跳跃前先拿到元素标签，这样更容易找到 旱地元素 或 冰雪元素。之后就循环 钻探原油 和 投球手。",
+      "early_strategy": "看到 前期拿到 旱地元素 或 冰雪元素 再明确转型。",
+      "late_strategy": "尽量在元素和恶魔池里玩这套，最好第一次时空跳跃前先拿到元素标签，这样更容易找到 旱地元素 或 冰雪元素。之后就循环 钻探原油 和 投球手。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -1435,7 +2348,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Fire Baller",
+          "name": "火焰投球手",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1446,7 +2359,7 @@
         },
         {
           "id": 2,
-          "name": "Snow Baller",
+          "name": "冰雪投球手",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1457,7 +2370,7 @@
         },
         {
           "id": 3,
-          "name": "Annoy-o-Tron",
+          "name": "吵吵机器人",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1468,7 +2381,7 @@
         },
         {
           "id": 4,
-          "name": "Aureate Laureate",
+          "name": "夺金健将",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1479,7 +2392,7 @@
         },
         {
           "id": 5,
-          "name": "Cord Puller",
+          "name": "拔线机",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1490,7 +2403,7 @@
         },
         {
           "id": 6,
-          "name": "Crackling Cyclone",
+          "name": "爆裂飓风",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1501,7 +2414,7 @@
         },
         {
           "id": 7,
-          "name": "Soul Rewinder",
+          "name": "灵魂回溯者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1512,13 +2425,145 @@
         },
         {
           "id": 8,
-          "name": "Power of Flurgl",
+          "name": "弗洛格尔之力",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
           "final_board_weight": 1,
           "card_id": "BG34_HeroPowerSpell_016",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_016.png",
+          "image_asset": null
+        },
+        {
+          "id": 9,
+          "name": "时空扭曲异变",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_933",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_933.png",
+          "image_asset": null
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲不朽者",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_597",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_597.png",
+          "image_asset": null
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲物色新人",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_917",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_917.png",
+          "image_asset": null
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲笼中之鼠",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_905",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_905.png",
+          "image_asset": null
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲海玻璃",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_110",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_110.png",
+          "image_asset": null
+        },
+        {
+          "id": 14,
+          "name": "时空扭曲弹跳鱼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_072",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_072.png",
+          "image_asset": null
+        },
+        {
+          "id": 15,
+          "name": "时空扭曲冰雪元素",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_586",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_586.png",
+          "image_asset": null
+        },
+        {
+          "id": 16,
+          "name": "时空扭曲钻探原油",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_932",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_932.png",
+          "image_asset": null
+        },
+        {
+          "id": 17,
+          "name": "时空扭曲基材元素",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_PreMadeChamp_032",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_PreMadeChamp_032.png",
+          "image_asset": null
+        },
+        {
+          "id": 18,
+          "name": "时空扭曲召唤师",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_324",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_324.png",
+          "image_asset": null
+        },
+        {
+          "id": 19,
+          "name": "主厨甄选",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG28_518",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG28_518.png",
+          "image_asset": null
+        },
+        {
+          "id": 20,
+          "name": "钻探原油",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG28_805",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG28_805.png",
           "image_asset": null
         }
       ]
@@ -1536,11 +2581,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Tethys + Paint Smudger + Brann",
+      "when_to_commit": "舰队上将特塞斯 + 油彩画家 + 布莱恩·铜须",
       "source_patch_number": 231720,
-      "overview": "循环流野猪人 | 成型信号: Tethys + Paint Smudger + Brann | 这套很缺钱，最佳是 Tethys 加 Visionary Shipman。成型后用 Brann 循环所有经济牌，再用 Foodie 和 Moon-Bacon Jazzer 放大鲜血宝石收益。",
-      "early_strategy": "看到 Tethys + Paint Smudger + Brann 再明确转型。",
-      "late_strategy": "这套很缺钱，最佳是 Tethys 加 Visionary Shipman。成型后用 Brann 循环所有经济牌，再用 Foodie 和 Moon-Bacon Jazzer 放大鲜血宝石收益。",
+      "overview": "循环流野猪人 | 成型信号: 舰队上将特塞斯 + 油彩画家 + 布莱恩·铜须 | 这套很缺钱，最佳是 舰队上将特塞斯 加 远望船夫。成型后用 布莱恩·铜须 循环所有经济牌，再用 美食家 和 暗膘爵士乐手 放大鲜血宝石收益。",
+      "early_strategy": "看到 舰队上将特塞斯 + 油彩画家 + 布莱恩·铜须 再明确转型。",
+      "late_strategy": "这套很缺钱，最佳是 舰队上将特塞斯 加 远望船夫。成型后用 布莱恩·铜须 循环所有经济牌，再用 美食家 和 暗膘爵士乐手 放大鲜血宝石收益。",
       "upgrade_turns": [
         "2 铸币升 2",
         "5 铸币升 3",
@@ -1563,7 +2608,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Brann Bronzebeard",
+          "name": "布莱恩·铜须",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1574,7 +2619,7 @@
         },
         {
           "id": 2,
-          "name": "Felboar",
+          "name": "邪能野猪人",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1585,7 +2630,7 @@
         },
         {
           "id": 3,
-          "name": "Paint Smudger",
+          "name": "油彩画家",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1596,7 +2641,7 @@
         },
         {
           "id": 4,
-          "name": "Visionary Shipman",
+          "name": "远望船夫",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1607,7 +2652,7 @@
         },
         {
           "id": 5,
-          "name": "Fleet Admiral Tethys",
+          "name": "舰队上将特塞斯",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1618,7 +2663,7 @@
         },
         {
           "id": 6,
-          "name": "Prickly Piper",
+          "name": "刺头吹笛人",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1629,7 +2674,7 @@
         },
         {
           "id": 7,
-          "name": "Sanguine Refiner",
+          "name": "鲜血精研者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1640,13 +2685,79 @@
         },
         {
           "id": 8,
-          "name": "Timewarped Bloodbinder",
+          "name": "时空扭曲血缚野猪人",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
           "final_board_weight": 1,
           "card_id": "BG34_PreMadeChamp_076",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_PreMadeChamp_076.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 9,
+          "name": "时空扭曲棘刺野猪人",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_104",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_104.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲主厨甄选",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_940",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_940.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲酒馆异变",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_900",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_900.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲套索牛仔",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_105",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_105.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 13,
+          "name": "无畏的食客",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG30_123",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG30_123.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 14,
+          "name": "暗膘爵士乐手",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG26_159",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG26_159.png",
           "image_asset": "minions/tribes/quilboar.svg"
         }
       ]
@@ -1664,11 +2775,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "酒馆法术能做大，并且拿到 Fauna Whisperer",
+      "when_to_commit": "酒馆法术能做大，并且拿到 动物低语者",
       "source_patch_number": 231720,
-      "overview": "回合结束流纳迦 | 成型信号: 酒馆法术能做大，并且拿到 Fauna Whisperer | 优先想办法放大酒馆法术，Felfire Conjurer 是最佳组件。如果条件允许，常见顺序是 Conjurer -> Amalgam（Atrocity 或 Par-Tea Guest）-> Fauna Whisperer -> Amalgam -> Felbat。",
-      "early_strategy": "看到 酒馆法术能做大，并且拿到 Fauna Whisperer 再明确转型。",
-      "late_strategy": "优先想办法放大酒馆法术，Felfire Conjurer 是最佳组件。如果条件允许，常见顺序是 Conjurer -> Amalgam（Atrocity 或 Par-Tea Guest）-> Fauna Whisperer -> Amalgam -> Felbat。",
+      "overview": "回合结束流纳迦 | 成型信号: 酒馆法术能做大，并且拿到 动物低语者 | 优先想办法放大酒馆法术，邪火咒龙 是最佳组件。如果条件允许，常见顺序是 邪火咒龙 -> 融合怪（旱地凶怪 或 梦魇茶客）-> 动物低语者 -> 融合怪 -> 饥饿的魔蝠。",
+      "early_strategy": "看到 酒馆法术能做大，并且拿到 动物低语者 再明确转型。",
+      "late_strategy": "优先想办法放大酒馆法术，邪火咒龙 是最佳组件。如果条件允许，常见顺序是 邪火咒龙 -> 融合怪（旱地凶怪 或 梦魇茶客）-> 动物低语者 -> 融合怪 -> 饥饿的魔蝠。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -1689,7 +2800,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Drakkari Enchanter",
+          "name": "达卡莱附魔师",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1700,7 +2811,7 @@
         },
         {
           "id": 2,
-          "name": "Fauna Whisperer",
+          "name": "动物低语者",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1711,7 +2822,7 @@
         },
         {
           "id": 3,
-          "name": "Felfire Conjurer",
+          "name": "邪火咒龙",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1722,7 +2833,7 @@
         },
         {
           "id": 4,
-          "name": "Arid Atrocity",
+          "name": "旱地凶怪",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1733,7 +2844,7 @@
         },
         {
           "id": 5,
-          "name": "Famished Felbat",
+          "name": "饥饿的魔蝠",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1744,7 +2855,7 @@
         },
         {
           "id": 6,
-          "name": "Firescale Hoarder",
+          "name": "火鳞囤积者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1755,7 +2866,7 @@
         },
         {
           "id": 7,
-          "name": "Nightmare Par-tea Guest",
+          "name": "梦魇茶客",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1766,13 +2877,112 @@
         },
         {
           "id": 8,
-          "name": "Tranquil Meditative",
+          "name": "宁静的冥想者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG32_835",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG32_835.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 9,
+          "name": "时空扭曲香蕉满手",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_912",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_912.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲克隆装置",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_302",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_302.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲酒馆异变",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_900",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_900.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲点金术",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_955",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_955.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲物色新人",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_917",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_917.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 14,
+          "name": "时空扭曲免费酬宾",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_903",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_903.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 15,
+          "name": "时空扭曲工兵",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_304",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_304.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 16,
+          "name": "时空扭曲套餐",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_950",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_950.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 17,
+          "name": "时空扭曲召唤师",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_324",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_324.png",
           "image_asset": "minions/tribes/naga.svg"
         }
       ]
@@ -1790,11 +3000,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Carapace Raiser + Friendly Geist + Titus",
+      "when_to_commit": "龟甲祈唤师 + 友善的恶鬼 + 提图斯·瑞文戴尔",
       "source_patch_number": 231720,
-      "overview": "龟甲流亡灵 | 成型信号: Carapace Raiser + Friendly Geist + Titus | 尽可能用 Macaw、Titus 和 Hand of Deios 反复触发 Carapace Raiser 与 Friendly Geist。有 Twilight Broodmother 时强度更高。",
-      "early_strategy": "看到 Carapace Raiser + Friendly Geist + Titus 再明确转型。",
-      "late_strategy": "尽可能用 Macaw、Titus 和 Hand of Deios 反复触发 Carapace Raiser 与 Friendly Geist。有 Twilight Broodmother 时强度更高。",
+      "overview": "龟甲流亡灵 | 成型信号: 龟甲祈唤师 + 友善的恶鬼 + 提图斯·瑞文戴尔 | 尽可能用 巨大的金刚鹦鹉、提图斯·瑞文戴尔 和 迪奥斯之手 反复触发 龟甲祈唤师 与 友善的恶鬼。有 暮光巢母 时强度更高。",
+      "early_strategy": "看到 龟甲祈唤师 + 友善的恶鬼 + 提图斯·瑞文戴尔 再明确转型。",
+      "late_strategy": "尽可能用 巨大的金刚鹦鹉、提图斯·瑞文戴尔 和 迪奥斯之手 反复触发 龟甲祈唤师 与 友善的恶鬼。有 暮光巢母 时强度更高。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -1816,7 +3026,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Carapace Raiser",
+          "name": "龟甲祈唤师",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1827,7 +3037,7 @@
         },
         {
           "id": 2,
-          "name": "Friendly Geist",
+          "name": "友善的恶鬼",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1838,7 +3048,7 @@
         },
         {
           "id": 3,
-          "name": "Titus Rivendare",
+          "name": "提图斯·瑞文戴尔",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1849,7 +3059,7 @@
         },
         {
           "id": 4,
-          "name": "Cadaver Caretaker",
+          "name": "遗骸看管者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1860,7 +3070,7 @@
         },
         {
           "id": 5,
-          "name": "Handless Forsaken",
+          "name": "断手被遗忘者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1871,7 +3081,7 @@
         },
         {
           "id": 6,
-          "name": "Monstrous Macaw",
+          "name": "巨大的金刚鹦鹉",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1882,7 +3092,7 @@
         },
         {
           "id": 7,
-          "name": "Twilight Broodmother",
+          "name": "暮光巢母",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1893,13 +3103,156 @@
         },
         {
           "id": 8,
-          "name": "Twilight Hatchling",
+          "name": "暮光龙崽",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG34_630",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_630.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 9,
+          "name": "冬拥食尸鬼",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG34_694",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_694.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 10,
+          "name": "塔隆之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_009",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_009.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 11,
+          "name": "巫妖王之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_010",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_010.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲入殓师",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_332",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_332.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲烂肠",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_590",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_590.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 14,
+          "name": "时空扭曲恶鬼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_034",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_034.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 15,
+          "name": "时空扭曲陆行鸟",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_370",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_370.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 16,
+          "name": "时空扭曲匪贼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_204",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_204.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 17,
+          "name": "时空扭曲托尼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_326",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_326.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 18,
+          "name": "时空扭曲战争食尸鬼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_331",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_331.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 19,
+          "name": "时空扭曲飓风机甲",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_599",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_599.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 20,
+          "name": "大地母亲之眼",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "EBG_Spell_017",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/EBG_Spell_017.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 21,
+          "name": "义肢假手",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG_DEEP_015",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG_DEEP_015.png",
           "image_asset": "minions/tribes/undead.svg"
         }
       ]
@@ -1917,11 +3270,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Felhorn + Rylak + Silky Shimmermoth",
+      "when_to_commit": "邪能恐角龙 + 重金属双头飞龙 + 丝柔烁光蛾",
       "source_patch_number": 231720,
-      "overview": "甲虫流野兽 | 成型信号: Felhorn + Rylak + Silky Shimmermoth | 用 Rylak 搭配 Brann 或 Titus，能带 Deios 更好，反复触发 Felhorn 来养大 Silky Shimmermoth。整套最好都尽量拿复生。",
-      "early_strategy": "看到 Felhorn + Rylak + Silky Shimmermoth 再明确转型。",
-      "late_strategy": "用 Rylak 搭配 Brann 或 Titus，能带 Deios 更好，反复触发 Felhorn 来养大 Silky Shimmermoth。整套最好都尽量拿复生。",
+      "overview": "甲虫流野兽 | 成型信号: 邪能恐角龙 + 重金属双头飞龙 + 丝柔烁光蛾 | 用 重金属双头飞龙 搭配 布莱恩·铜须 或 提图斯·瑞文戴尔，能带 迪奥斯之手 更好，反复触发 邪能恐角龙 来养大 丝柔烁光蛾。整套最好都尽量拿复生。",
+      "early_strategy": "看到 邪能恐角龙 + 重金属双头飞龙 + 丝柔烁光蛾 再明确转型。",
+      "late_strategy": "用 重金属双头飞龙 搭配 布莱恩·铜须 或 提图斯·瑞文戴尔，能带 迪奥斯之手 更好，反复触发 邪能恐角龙 来养大 丝柔烁光蛾。整套最好都尽量拿复生。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -1943,7 +3296,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Felhorn",
+          "name": "邪能恐角龙",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1954,7 +3307,7 @@
         },
         {
           "id": 2,
-          "name": "Rylak Metalhead",
+          "name": "重金属双头飞龙",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1965,7 +3318,7 @@
         },
         {
           "id": 3,
-          "name": "Silky Shimmermoth",
+          "name": "丝柔烁光蛾",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -1976,7 +3329,7 @@
         },
         {
           "id": 4,
-          "name": "Brann Bronzebeard",
+          "name": "布莱恩·铜须",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1987,7 +3340,7 @@
         },
         {
           "id": 5,
-          "name": "Monstrous Macaw",
+          "name": "巨大的金刚鹦鹉",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -1998,7 +3351,7 @@
         },
         {
           "id": 6,
-          "name": "Titus Rivendare",
+          "name": "提图斯·瑞文戴尔",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2009,7 +3362,7 @@
         },
         {
           "id": 7,
-          "name": "Power of Teron",
+          "name": "塔隆之力",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
@@ -2020,13 +3373,46 @@
         },
         {
           "id": 8,
-          "name": "Timewarped Chameleon",
+          "name": "时空扭曲变色龙",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
           "final_board_weight": 1,
           "card_id": "BG34_Giant_042",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_042.png",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 9,
+          "name": "时空扭曲护植绿龙",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_041",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_041.png",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 10,
+          "name": "猎食的虎鲨",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG34_523",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_523.png",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 11,
+          "name": "机变甲虫",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG27_084",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG27_084.png",
           "image_asset": "minions/tribes/beast.svg"
         }
       ]
@@ -2042,11 +3428,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Visionary Shipman + Nalaa 或 Plankwalker",
+      "when_to_commit": "远望船夫 + 救赎者娜拉 或 走跳板的海盗",
       "source_patch_number": 231720,
-      "overview": "法术循环流 | 成型信号: Visionary Shipman + Nalaa 或 Plankwalker | 用 Visionary Shipman 和 Brann 循环法术，再靠 Nalaa 或 Plankwalker 给全场上强度。优先把 Niuzao 这类优质单位养大。",
-      "early_strategy": "看到 Visionary Shipman + Nalaa 或 Plankwalker 再明确转型。",
-      "late_strategy": "用 Visionary Shipman 和 Brann 循环法术，再靠 Nalaa 或 Plankwalker 给全场上强度。优先把 Niuzao 这类优质单位养大。",
+      "overview": "法术循环流 | 成型信号: 远望船夫 + 救赎者娜拉 或 走跳板的海盗 | 用 远望船夫 和 布莱恩·铜须 循环法术，再靠 救赎者娜拉 或 走跳板的海盗 给全场上强度。优先把 砮皂 这类优质单位养大。",
+      "early_strategy": "看到 远望船夫 + 救赎者娜拉 或 走跳板的海盗 再明确转型。",
+      "late_strategy": "用 远望船夫 和 布莱恩·铜须 循环法术，再靠 救赎者娜拉 或 走跳板的海盗 给全场上强度。优先把 砮皂 这类优质单位养大。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -2068,7 +3454,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Brann Bronzebeard",
+          "name": "布莱恩·铜须",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2079,7 +3465,7 @@
         },
         {
           "id": 2,
-          "name": "Nalaa the Redeemer",
+          "name": "救赎者娜拉",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2090,7 +3476,7 @@
         },
         {
           "id": 3,
-          "name": "Plankwalker",
+          "name": "走跳板的海盗",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2101,7 +3487,7 @@
         },
         {
           "id": 4,
-          "name": "Visionary Shipman",
+          "name": "远望船夫",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2112,7 +3498,7 @@
         },
         {
           "id": 5,
-          "name": "Air Revenant",
+          "name": "空气亡魂",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2123,7 +3509,7 @@
         },
         {
           "id": 6,
-          "name": "Fleet Admiral Tethys",
+          "name": "舰队上将特塞斯",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2134,7 +3520,7 @@
         },
         {
           "id": 7,
-          "name": "Monstrous Macaw",
+          "name": "巨大的金刚鹦鹉",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2145,13 +3531,156 @@
         },
         {
           "id": 8,
-          "name": "Niuzao",
+          "name": "砮皂",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG27_822",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG27_822.png",
+          "image_asset": null
+        },
+        {
+          "id": 9,
+          "name": "自动漩涡套索装置",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG28_635",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG28_635.png",
+          "image_asset": null
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲香蕉满手",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_912",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_912.png",
+          "image_asset": null
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲百夫长",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_PreMadeChamp_200",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_PreMadeChamp_200.png",
+          "image_asset": null
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲伊莉斯",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_038",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_038.png",
+          "image_asset": null
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲附魔链索",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_930",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_930.png",
+          "image_asset": null
+        },
+        {
+          "id": 14,
+          "name": "时空扭曲点金术",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_955",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_955.png",
+          "image_asset": null
+        },
+        {
+          "id": 15,
+          "name": "时空扭曲钩尾",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_015",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_015.png",
+          "image_asset": null
+        },
+        {
+          "id": 16,
+          "name": "时空扭曲旱地元素",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_066",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_066.png",
+          "image_asset": null
+        },
+        {
+          "id": 17,
+          "name": "时空扭曲娜拉",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_205",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_205.png",
+          "image_asset": null
+        },
+        {
+          "id": 18,
+          "name": "时空扭曲九蛙",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_309",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_309.png",
+          "image_asset": null
+        },
+        {
+          "id": 19,
+          "name": "时空扭曲匪贼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_204",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_204.png",
+          "image_asset": null
+        },
+        {
+          "id": 20,
+          "name": "大地母亲之眼",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "EBG_Spell_017",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/EBG_Spell_017.png",
+          "image_asset": null
+        },
+        {
+          "id": 21,
+          "name": "义肢假手",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG_DEEP_015",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG_DEEP_015.png",
           "image_asset": null
         }
       ]
@@ -2169,11 +3698,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Stuntdrake + Twilight Broodmother + Titus",
+      "when_to_commit": "迷雾幼龙 + 暮光巢母 + 提图斯·瑞文戴尔",
       "source_patch_number": 231720,
-      "overview": "迷雾幼龙流龙族 | 成型信号: Stuntdrake + Twilight Broodmother + Titus | 先想办法把 Stuntdrake 做大，比如 Nalaa、Evoker、Mutanus 法术等。之后围绕 Twilight Broodmother、Twilight Hatching 和 Titus 完成终局。",
-      "early_strategy": "看到 Stuntdrake + Twilight Broodmother + Titus 再明确转型。",
-      "late_strategy": "先想办法把 Stuntdrake 做大，比如 Nalaa、Evoker、Mutanus 法术等。之后围绕 Twilight Broodmother、Twilight Hatching 和 Titus 完成终局。",
+      "overview": "迷雾幼龙流龙族 | 成型信号: 迷雾幼龙 + 暮光巢母 + 提图斯·瑞文戴尔 | 先想办法把 迷雾幼龙 做大，比如 救赎者娜拉、火铸唤魔师、吞噬者穆坦努斯 法术等。之后围绕 暮光巢母、暮光龙崽 和 提图斯·瑞文戴尔 完成终局。",
+      "early_strategy": "看到 迷雾幼龙 + 暮光巢母 + 提图斯·瑞文戴尔 再明确转型。",
+      "late_strategy": "先想办法把 迷雾幼龙 做大，比如 救赎者娜拉、火铸唤魔师、吞噬者穆坦努斯 法术等。之后围绕 暮光巢母、暮光龙崽 和 提图斯·瑞文戴尔 完成终局。",
       "upgrade_turns": [
         "2 铸币升 2",
         "5 铸币升 3",
@@ -2196,7 +3725,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Stuntdrake",
+          "name": "迷雾幼龙",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2207,7 +3736,7 @@
         },
         {
           "id": 2,
-          "name": "Titus Rivendare",
+          "name": "提图斯·瑞文戴尔",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2218,7 +3747,7 @@
         },
         {
           "id": 3,
-          "name": "Twilight Broodmother",
+          "name": "暮光巢母",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2229,7 +3758,7 @@
         },
         {
           "id": 4,
-          "name": "Amber Guardian",
+          "name": "琥珀卫士",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2240,7 +3769,7 @@
         },
         {
           "id": 5,
-          "name": "Fire-forged Evoker",
+          "name": "火铸唤魔师",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2251,7 +3780,7 @@
         },
         {
           "id": 6,
-          "name": "Persistent Poet",
+          "name": "执念诗心龙",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2262,7 +3791,7 @@
         },
         {
           "id": 7,
-          "name": "Stellar Freebooter",
+          "name": "星际海盗",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2273,13 +3802,68 @@
         },
         {
           "id": 8,
-          "name": "Twilight Hatchling",
+          "name": "暮光龙崽",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG34_630",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_630.png",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 9,
+          "name": "塔隆之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_009",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_009.png",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲暮喉龙",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_PreMadeChamp_020",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_PreMadeChamp_020.png",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲诗心龙",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_314",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_314.png",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲彩鳞龙",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_PreMadeChamp_022",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_PreMadeChamp_022.png",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲瓦拉斯塔兹",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_585",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_585.png",
           "image_asset": "minions/tribes/dragon.svg"
         }
       ]
@@ -2297,11 +3881,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Visionary Shipman + Brann + Photobomb",
+      "when_to_commit": "远望船夫 + 布莱恩·铜须 + 摄影炸弹",
       "source_patch_number": 231720,
-      "overview": "炸弹流机械 | 成型信号: Visionary Shipman + Brann + Photobomb | 用 Visionary Shipman 搭配 Brann 或 Tethys 循环酒馆法术，再用 Macaw、Titus、Deios 等去反复触发 Photobomb。",
-      "early_strategy": "看到 Visionary Shipman + Brann + Photobomb 再明确转型。",
-      "late_strategy": "用 Visionary Shipman 搭配 Brann 或 Tethys 循环酒馆法术，再用 Macaw、Titus、Deios 等去反复触发 Photobomb。",
+      "overview": "炸弹流机械 | 成型信号: 远望船夫 + 布莱恩·铜须 + 摄影炸弹 | 用 远望船夫 搭配 布莱恩·铜须 或 舰队上将特塞斯 循环酒馆法术，再用 巨大的金刚鹦鹉、提图斯·瑞文戴尔、迪奥斯之手 等去反复触发 摄影炸弹。",
+      "early_strategy": "看到 远望船夫 + 布莱恩·铜须 + 摄影炸弹 再明确转型。",
+      "late_strategy": "用 远望船夫 搭配 布莱恩·铜须 或 舰队上将特塞斯 循环酒馆法术，再用 巨大的金刚鹦鹉、提图斯·瑞文戴尔、迪奥斯之手 等去反复触发 摄影炸弹。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -2323,7 +3907,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Photobomber",
+          "name": "摄影炸弹",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2334,7 +3918,7 @@
         },
         {
           "id": 2,
-          "name": "Titus Rivendare",
+          "name": "提图斯·瑞文戴尔",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2345,7 +3929,7 @@
         },
         {
           "id": 3,
-          "name": "Visionary Shipman",
+          "name": "远望船夫",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2356,7 +3940,7 @@
         },
         {
           "id": 4,
-          "name": "Brann Bronzebeard",
+          "name": "布莱恩·铜须",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2367,7 +3951,7 @@
         },
         {
           "id": 5,
-          "name": "Monstrous Macaw",
+          "name": "巨大的金刚鹦鹉",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2378,7 +3962,7 @@
         },
         {
           "id": 6,
-          "name": "Stitched Salvager",
+          "name": "缝合回收者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2389,7 +3973,7 @@
         },
         {
           "id": 7,
-          "name": "Power of Teron",
+          "name": "塔隆之力",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
@@ -2400,13 +3984,57 @@
         },
         {
           "id": 8,
-          "name": "Timewarped Chameleon",
+          "name": "时空扭曲变色龙",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
           "final_board_weight": 1,
           "card_id": "BG34_Giant_042",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_042.png",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 9,
+          "name": "时空扭曲战争食尸鬼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_331",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_331.png",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲飓风机甲",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_599",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_599.png",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 11,
+          "name": "吵吵模组",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG_BOT_911",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG_BOT_911.png",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 12,
+          "name": "义肢假手",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG_DEEP_015",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG_DEEP_015.png",
           "image_asset": "minions/tribes/mech.svg"
         }
       ]
@@ -2424,11 +4052,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Apexis + Titus",
+      "when_to_commit": "埃匹希斯卫士 + 提图斯·瑞文戴尔",
       "source_patch_number": 231720,
-      "overview": "埃匹希斯流机械 | 成型信号: Apexis + Titus | 这套不需要满机械，只要 Apexis 和 Junk Jouster 作为核心即可，其余位置可以补 Macaw、Titus 等触发组件。",
-      "early_strategy": "看到 Apexis + Titus 再明确转型。",
-      "late_strategy": "这套不需要满机械，只要 Apexis 和 Junk Jouster 作为核心即可，其余位置可以补 Macaw、Titus 等触发组件。",
+      "overview": "埃匹希斯流机械 | 成型信号: 埃匹希斯卫士 + 提图斯·瑞文戴尔 | 这套不需要满机械，只要 埃匹希斯卫士 和 废铁枪骑士 作为核心即可，其余位置可以补 巨大的金刚鹦鹉、提图斯·瑞文戴尔 等触发组件。",
+      "early_strategy": "看到 埃匹希斯卫士 + 提图斯·瑞文戴尔 再明确转型。",
+      "late_strategy": "这套不需要满机械，只要 埃匹希斯卫士 和 废铁枪骑士 作为核心即可，其余位置可以补 巨大的金刚鹦鹉、提图斯·瑞文戴尔 等触发组件。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -2449,7 +4077,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Apexis Guardian",
+          "name": "埃匹希斯卫士",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2460,7 +4088,7 @@
         },
         {
           "id": 2,
-          "name": "Titus Rivendare",
+          "name": "提图斯·瑞文戴尔",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2471,7 +4099,7 @@
         },
         {
           "id": 3,
-          "name": "Arid Atrocity",
+          "name": "旱地凶怪",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2482,7 +4110,7 @@
         },
         {
           "id": 4,
-          "name": "Junk Jouster",
+          "name": "废铁枪骑士",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2493,7 +4121,7 @@
         },
         {
           "id": 5,
-          "name": "Monstrous Macaw",
+          "name": "巨大的金刚鹦鹉",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2504,7 +4132,7 @@
         },
         {
           "id": 6,
-          "name": "Nightmare Par-tea Guest",
+          "name": "梦魇茶客",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2515,7 +4143,7 @@
         },
         {
           "id": 7,
-          "name": "Persistent Poet",
+          "name": "执念诗心龙",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2526,13 +4154,68 @@
         },
         {
           "id": 8,
-          "name": "Photobomber",
+          "name": "摄影炸弹",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG34_780",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_780.png",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 9,
+          "name": "时空扭曲变色龙",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_042",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_042.png",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲战争食尸鬼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_331",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_331.png",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲飓风机甲",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_599",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_599.png",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 12,
+          "name": "义肢假手",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG_DEEP_015",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG_DEEP_015.png",
+          "image_asset": "minions/tribes/mech.svg"
+        },
+        {
+          "id": 13,
+          "name": "机变甲虫",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG27_084",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG27_084.png",
           "image_asset": "minions/tribes/mech.svg"
         }
       ]
@@ -2550,11 +4233,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "前期拿到 Trigore 或 Skyblazer，再配 Spiked Savior",
+      "when_to_commit": "前期拿到 鞭笞者特里高雷 或 炫彩灼天者，再配 尖角救星",
       "source_patch_number": 231720,
-      "overview": "自伤流野兽 | 成型信号: 前期拿到 Trigore 或 Skyblazer，再配 Spiked Savior | 如果你有 Rabid Panther，尽量把 Hunting Tiger Shark 留在场上，再用 Rylak 配合 Titus 或 Brann 去触发它，然后补一些循环野兽。",
-      "early_strategy": "看到 前期拿到 Trigore 或 Skyblazer，再配 Spiked Savior 再明确转型。",
-      "late_strategy": "如果你有 Rabid Panther，尽量把 Hunting Tiger Shark 留在场上，再用 Rylak 配合 Titus 或 Brann 去触发它，然后补一些循环野兽。",
+      "overview": "自伤流野兽 | 成型信号: 前期拿到 鞭笞者特里高雷 或 炫彩灼天者，再配 尖角救星 | 如果你有 狂乱的猎豹，尽量把 猎食的虎鲨 留在场上，再用 重金属双头飞龙 配合 提图斯·瑞文戴尔 或 布莱恩·铜须 去触发它，然后补一些循环野兽。",
+      "early_strategy": "看到 前期拿到 鞭笞者特里高雷 或 炫彩灼天者，再配 尖角救星 再明确转型。",
+      "late_strategy": "如果你有 狂乱的猎豹，尽量把 猎食的虎鲨 留在场上，再用 重金属双头飞龙 配合 提图斯·瑞文戴尔 或 布莱恩·铜须 去触发它，然后补一些循环野兽。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -2576,7 +4259,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Rabid Panther",
+          "name": "狂乱的猎豹",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2587,7 +4270,7 @@
         },
         {
           "id": 2,
-          "name": "Silky Shimmermoth",
+          "name": "丝柔烁光蛾",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2598,7 +4281,7 @@
         },
         {
           "id": 3,
-          "name": "Trigore the Lasher",
+          "name": "鞭笞者特里高雷",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2609,7 +4292,7 @@
         },
         {
           "id": 4,
-          "name": "Brann Bronzebeard",
+          "name": "布莱恩·铜须",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2620,7 +4303,7 @@
         },
         {
           "id": 5,
-          "name": "Hunting Tiger Shark",
+          "name": "猎食的虎鲨",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2631,7 +4314,7 @@
         },
         {
           "id": 6,
-          "name": "Iridescent Skyblazer",
+          "name": "炫彩灼天者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2642,7 +4325,7 @@
         },
         {
           "id": 7,
-          "name": "Monstrous Macaw",
+          "name": "巨大的金刚鹦鹉",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2653,13 +4336,79 @@
         },
         {
           "id": 8,
-          "name": "Niuzao",
+          "name": "砮皂",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG27_822",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG27_822.png",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 9,
+          "name": "重金属双头飞龙",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG26_801",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG26_801.png",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 10,
+          "name": "提图斯·瑞文戴尔",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG25_354",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG25_354.png",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲裂蹄牛",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_PreMadeChamp_090",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_PreMadeChamp_090.png",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲点金术",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_955",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_955.png",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲钻探原油",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Treasure_932",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Treasure_932.png",
+          "image_asset": "minions/tribes/beast.svg"
+        },
+        {
+          "id": 14,
+          "name": "机变甲虫",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG27_084",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG27_084.png",
           "image_asset": "minions/tribes/beast.svg"
         }
       ]
@@ -2677,11 +4426,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Cadaver Caretaker + Titus + Catacomb Crasher",
+      "when_to_commit": "遗骸看管者 + 提图斯·瑞文戴尔 + 古墓捣蛋鬼",
       "source_patch_number": 231720,
-      "overview": "挤爆流亡灵 | 成型信号: Cadaver Caretaker + Titus + Catacomb Crasher | 尽量用 Macaw 和 Titus 高频触发 Cadaver Caretaker。",
-      "early_strategy": "看到 Cadaver Caretaker + Titus + Catacomb Crasher 再明确转型。",
-      "late_strategy": "尽量用 Macaw 和 Titus 高频触发 Cadaver Caretaker。",
+      "overview": "挤爆流亡灵 | 成型信号: 遗骸看管者 + 提图斯·瑞文戴尔 + 古墓捣蛋鬼 | 尽量用 巨大的金刚鹦鹉 和 提图斯·瑞文戴尔 高频触发 遗骸看管者。",
+      "early_strategy": "看到 遗骸看管者 + 提图斯·瑞文戴尔 + 古墓捣蛋鬼 再明确转型。",
+      "late_strategy": "尽量用 巨大的金刚鹦鹉 和 提图斯·瑞文戴尔 高频触发 遗骸看管者。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -2702,7 +4451,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Catacomb Crasher",
+          "name": "古墓捣蛋鬼",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2713,7 +4462,7 @@
         },
         {
           "id": 2,
-          "name": "Titus Rivendare",
+          "name": "提图斯·瑞文戴尔",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2724,7 +4473,7 @@
         },
         {
           "id": 3,
-          "name": "Cadaver Caretaker",
+          "name": "遗骸看管者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2735,7 +4484,7 @@
         },
         {
           "id": 4,
-          "name": "Lava Lurker",
+          "name": "熔岩潜伏者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2746,7 +4495,7 @@
         },
         {
           "id": 5,
-          "name": "Monstrous Macaw",
+          "name": "巨大的金刚鹦鹉",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2757,7 +4506,7 @@
         },
         {
           "id": 6,
-          "name": "Surf n' Surf",
+          "name": "海上双雄",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2768,7 +4517,7 @@
         },
         {
           "id": 7,
-          "name": "Power of Teron",
+          "name": "塔隆之力",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
@@ -2779,13 +4528,68 @@
         },
         {
           "id": 8,
-          "name": "Timewarped Caretaker",
+          "name": "时空扭曲看管者",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
           "final_board_weight": 1,
           "card_id": "BG34_Giant_618",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_618.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 9,
+          "name": "时空扭曲烂肠",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_590",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_590.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲食尸卡布拉",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_609",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_609.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲陆行鸟",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_370",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_370.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲战争食尸鬼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_331",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_331.png",
+          "image_asset": "minions/tribes/undead.svg"
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲飓风机甲",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_599",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_599.png",
           "image_asset": "minions/tribes/undead.svg"
         }
       ]
@@ -2803,11 +4607,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "鲜血宝石成长足够，且拿到 Three Lil' Quilboar 与 Titus",
+      "when_to_commit": "鲜血宝石成长足够，且拿到 三只小野猪 与 提图斯·瑞文戴尔",
       "source_patch_number": 231720,
-      "overview": "亡语流野猪人 | 成型信号: 鲜血宝石成长足够，且拿到 Three Lil' Quilboar 与 Titus | 尽可能多次触发 Three Lil' Quilboar。",
-      "early_strategy": "看到 鲜血宝石成长足够，且拿到 Three Lil' Quilboar 与 Titus 再明确转型。",
-      "late_strategy": "尽可能多次触发 Three Lil' Quilboar。",
+      "overview": "亡语流野猪人 | 成型信号: 鲜血宝石成长足够，且拿到 三只小野猪 与 提图斯·瑞文戴尔 | 尽可能多次触发 三只小野猪。",
+      "early_strategy": "看到 鲜血宝石成长足够，且拿到 三只小野猪 与 提图斯·瑞文戴尔 再明确转型。",
+      "late_strategy": "尽可能多次触发 三只小野猪。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -2828,7 +4632,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Needling Crone",
+          "name": "刺针巫婆",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2839,7 +4643,7 @@
         },
         {
           "id": 2,
-          "name": "Three Lil' Quilboar",
+          "name": "三只小野猪",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2850,7 +4654,7 @@
         },
         {
           "id": 3,
-          "name": "Titus Rivendare",
+          "name": "提图斯·瑞文戴尔",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2861,7 +4665,7 @@
         },
         {
           "id": 4,
-          "name": "Monstrous Macaw",
+          "name": "巨大的金刚鹦鹉",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2872,7 +4676,7 @@
         },
         {
           "id": 5,
-          "name": "Moon-Bacon Jazzer",
+          "name": "暗膘爵士乐手",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2883,7 +4687,7 @@
         },
         {
           "id": 6,
-          "name": "Prickly Piper",
+          "name": "刺头吹笛人",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2894,7 +4698,7 @@
         },
         {
           "id": 7,
-          "name": "Rylak Metalhead",
+          "name": "重金属双头飞龙",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2905,13 +4709,46 @@
         },
         {
           "id": 8,
-          "name": "Sanguine Refiner",
+          "name": "鲜血精研者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG33_885",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG33_885.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 9,
+          "name": "时空扭曲爵士乐手",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_306",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_306.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲小野猪",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_608",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_608.png",
+          "image_asset": "minions/tribes/quilboar.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲吹笛人",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_069",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_069.png",
           "image_asset": "minions/tribes/quilboar.svg"
         }
       ]
@@ -2929,11 +4766,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Lord of Ruins + Silent Enforcer，或 Rylak + Felhorn + Titus",
+      "when_to_commit": "废墟领主 + 沉默的惩罚者，或 重金属双头飞龙 + 邪能恐角龙 + 提图斯·瑞文戴尔",
       "source_patch_number": 231720,
-      "overview": "废墟领主流恶魔 | 成型信号: Lord of Ruins + Silent Enforcer，或 Rylak + Felhorn + Titus | Lord of Ruins 有两种构筑，但核心思路差不多：要么尽量多触发 Rylak + Felhorn，要么把 Silent Enforcer 触发做满；如果走 Rylak 线，也可以补 Titus、Macaw、Brann。",
-      "early_strategy": "看到 Lord of Ruins + Silent Enforcer，或 Rylak + Felhorn + Titus 再明确转型。",
-      "late_strategy": "Lord of Ruins 有两种构筑，但核心思路差不多：要么尽量多触发 Rylak + Felhorn，要么把 Silent Enforcer 触发做满；如果走 Rylak 线，也可以补 Titus、Macaw、Brann。",
+      "overview": "废墟领主流恶魔 | 成型信号: 废墟领主 + 沉默的惩罚者，或 重金属双头飞龙 + 邪能恐角龙 + 提图斯·瑞文戴尔 | 废墟领主 有两种构筑，但核心思路差不多：要么尽量多触发 重金属双头飞龙 + 邪能恐角龙，要么把 沉默的惩罚者 触发做满；如果走 重金属双头飞龙 线，也可以补 提图斯·瑞文戴尔、巨大的金刚鹦鹉、布莱恩·铜须。",
+      "early_strategy": "看到 废墟领主 + 沉默的惩罚者，或 重金属双头飞龙 + 邪能恐角龙 + 提图斯·瑞文戴尔 再明确转型。",
+      "late_strategy": "废墟领主 有两种构筑，但核心思路差不多：要么尽量多触发 重金属双头飞龙 + 邪能恐角龙，要么把 沉默的惩罚者 触发做满；如果走 重金属双头飞龙 线，也可以补 提图斯·瑞文戴尔、巨大的金刚鹦鹉、布莱恩·铜须。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -2954,7 +4791,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Lord of the Ruins",
+          "name": "废墟领主",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2965,7 +4802,7 @@
         },
         {
           "id": 2,
-          "name": "Titus Rivendare",
+          "name": "提图斯·瑞文戴尔",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -2976,7 +4813,7 @@
         },
         {
           "id": 3,
-          "name": "Brann Bronzebeard",
+          "name": "布莱恩·铜须",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2987,7 +4824,7 @@
         },
         {
           "id": 4,
-          "name": "Devout Hellcaller",
+          "name": "虔诚的萨特唤魔者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -2998,7 +4835,7 @@
         },
         {
           "id": 5,
-          "name": "Felhorn",
+          "name": "邪能恐角龙",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -3009,7 +4846,7 @@
         },
         {
           "id": 6,
-          "name": "Monstrous Macaw",
+          "name": "巨大的金刚鹦鹉",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -3020,7 +4857,7 @@
         },
         {
           "id": 7,
-          "name": "Rylak Metalhead",
+          "name": "重金属双头飞龙",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -3031,13 +4868,101 @@
         },
         {
           "id": 8,
-          "name": "Silent Enforcer",
+          "name": "沉默的惩罚者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG33_156",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG33_156.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 9,
+          "name": "泰蕾苟萨",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG21_015",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG21_015.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 10,
+          "name": "希尔瓦娜斯之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_017",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_017.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 11,
+          "name": "塔隆之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_009",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_009.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 12,
+          "name": "巫妖王之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_010",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_010.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲陆行鸟",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_370",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_370.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 14,
+          "name": "时空扭曲战争食尸鬼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_331",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_331.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 15,
+          "name": "时空扭曲飓风机甲",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_599",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_599.png",
+          "image_asset": "minions/tribes/demon.svg"
+        },
+        {
+          "id": 16,
+          "name": "机变甲虫",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG27_084",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG27_084.png",
           "image_asset": "minions/tribes/demon.svg"
         }
       ]
@@ -3055,11 +4980,11 @@
         "无畸变"
       ],
       "recommended_mode": "BOTH",
-      "when_to_commit": "Burgeoning Whelp + Titus + Twilight Broodmother",
+      "when_to_commit": "萌芽雏龙 + 提图斯·瑞文戴尔 + 暮光巢母",
       "source_patch_number": 231720,
-      "overview": "雏龙流龙族 | 成型信号: Burgeoning Whelp + Titus + Twilight Broodmother | 核心是先把 Whelp 养大，所以要用 Rylak、Brann、Macaw、Titus 去频繁触发 Burgeoning Whelp，再用 Twilight Broodmother 稳定召龙。",
-      "early_strategy": "看到 Burgeoning Whelp + Titus + Twilight Broodmother 再明确转型。",
-      "late_strategy": "核心是先把 Whelp 养大，所以要用 Rylak、Brann、Macaw、Titus 去频繁触发 Burgeoning Whelp，再用 Twilight Broodmother 稳定召龙。",
+      "overview": "雏龙流龙族 | 成型信号: 萌芽雏龙 + 提图斯·瑞文戴尔 + 暮光巢母 | 核心是先把 萌芽雏龙 养大，所以要用 重金属双头飞龙、布莱恩·铜须、巨大的金刚鹦鹉、提图斯·瑞文戴尔 去频繁触发 萌芽雏龙，再用 暮光巢母 稳定召龙。",
+      "early_strategy": "看到 萌芽雏龙 + 提图斯·瑞文戴尔 + 暮光巢母 再明确转型。",
+      "late_strategy": "核心是先把 萌芽雏龙 养大，所以要用 重金属双头飞龙、布莱恩·铜须、巨大的金刚鹦鹉、提图斯·瑞文戴尔 去频繁触发 萌芽雏龙，再用 暮光巢母 稳定召龙。",
       "upgrade_turns": [
         "3 铸币升 2",
         "7 铸币升 3",
@@ -3080,7 +5005,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Brann Bronzebeard",
+          "name": "布莱恩·铜须",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -3091,7 +5016,7 @@
         },
         {
           "id": 2,
-          "name": "Burgeoning Whelp",
+          "name": "萌芽雏龙",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -3102,7 +5027,7 @@
         },
         {
           "id": 3,
-          "name": "Rylak Metalhead",
+          "name": "重金属双头飞龙",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -3113,7 +5038,7 @@
         },
         {
           "id": 4,
-          "name": "Titus Rivendare",
+          "name": "提图斯·瑞文戴尔",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -3124,7 +5049,7 @@
         },
         {
           "id": 5,
-          "name": "Twilight Broodmother",
+          "name": "暮光巢母",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -3135,7 +5060,7 @@
         },
         {
           "id": 6,
-          "name": "Monstrous Macaw",
+          "name": "巨大的金刚鹦鹉",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -3146,7 +5071,7 @@
         },
         {
           "id": 7,
-          "name": "Twilight Hatchling",
+          "name": "暮光龙崽",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -3157,13 +5082,79 @@
         },
         {
           "id": 8,
-          "name": "Power of Teron",
+          "name": "塔隆之力",
           "star": 3,
           "phase": "过渡",
           "status_raw": "RECOMMENDED",
           "final_board_weight": 1,
           "card_id": "BG34_HeroPowerSpell_009",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_009.png",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 9,
+          "name": "时空扭曲变色龙",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_042",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_042.png",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 10,
+          "name": "时空扭曲护植绿龙",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_041",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_041.png",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲战争食尸鬼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_331",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_331.png",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲飓风机甲",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_599",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_599.png",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 13,
+          "name": "大地母亲之眼",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "EBG_Spell_017",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/EBG_Spell_017.png",
+          "image_asset": "minions/tribes/dragon.svg"
+        },
+        {
+          "id": 14,
+          "name": "机变甲虫",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "BG27_084",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG27_084.png",
           "image_asset": "minions/tribes/dragon.svg"
         }
       ]
@@ -3207,7 +5198,7 @@
       "key_minions": [
         {
           "id": 1,
-          "name": "Showy Cyclist",
+          "name": "显眼的骑手",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -3218,7 +5209,7 @@
         },
         {
           "id": 2,
-          "name": "Timewarped Sapper",
+          "name": "时空扭曲工兵",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -3229,7 +5220,7 @@
         },
         {
           "id": 3,
-          "name": "Titus Rivendare",
+          "name": "提图斯·瑞文戴尔",
           "star": 5,
           "phase": "主核",
           "status_raw": "CORE",
@@ -3240,7 +5231,7 @@
         },
         {
           "id": 4,
-          "name": "Arid Atrocity",
+          "name": "旱地凶怪",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -3251,7 +5242,7 @@
         },
         {
           "id": 5,
-          "name": "Monstrous Macaw",
+          "name": "巨大的金刚鹦鹉",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -3262,7 +5253,7 @@
         },
         {
           "id": 6,
-          "name": "Nightmare Par-tea Guest",
+          "name": "梦魇茶客",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -3273,7 +5264,7 @@
         },
         {
           "id": 7,
-          "name": "Persistent Poet",
+          "name": "执念诗心龙",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
@@ -3284,13 +5275,101 @@
         },
         {
           "id": 8,
-          "name": "Stitched Salvager",
+          "name": "缝合回收者",
           "star": 4,
           "phase": "补强",
           "status_raw": "ADDON",
           "final_board_weight": 1,
           "card_id": "BG31_999",
           "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG31_999.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 9,
+          "name": "困倦的法师",
+          "star": 4,
+          "phase": "补强",
+          "status_raw": "ADDON",
+          "final_board_weight": 1,
+          "card_id": "BG31_830",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG31_830.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 10,
+          "name": "塔隆之力",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_HeroPowerSpell_009",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_HeroPowerSpell_009.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 11,
+          "name": "时空扭曲变色龙",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_042",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_042.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 12,
+          "name": "时空扭曲护植绿龙",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_041",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_041.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 13,
+          "name": "时空扭曲秘书",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_323",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_323.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 14,
+          "name": "时空扭曲战争食尸鬼",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_331",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_331.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 15,
+          "name": "时空扭曲飓风机甲",
+          "star": 3,
+          "phase": "过渡",
+          "status_raw": "RECOMMENDED",
+          "final_board_weight": 1,
+          "card_id": "BG34_Giant_599",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/BG34_Giant_599.png",
+          "image_asset": "minions/tribes/naga.svg"
+        },
+        {
+          "id": 16,
+          "name": "大地母亲之眼",
+          "star": 2,
+          "phase": "经济",
+          "status_raw": "CYCLE",
+          "final_board_weight": 1,
+          "card_id": "EBG_Spell_017",
+          "image_url": "https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/EBG_Spell_017.png",
           "image_asset": "minions/tribes/naga.svg"
         }
       ]

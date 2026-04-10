@@ -39,8 +39,8 @@ android {
         applicationId = "com.bgtactician.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "2026.04.01-alpha"
+        versionCode = 2
+        versionName = "2026.04.10-alpha"
         vectorDrawables.useSupportLibrary = true
         buildConfigField("String", "DEFAULT_MANIFEST_URL", remoteManifestUrl.asBuildConfigString())
     }

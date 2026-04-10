@@ -25,15 +25,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +34,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.bgtactician.app.data.model.StrategyDataSource
 import com.bgtactician.app.viewmodel.DashboardUiState
 
 private val WorkspaceTop = Color(0xFF071019)
@@ -60,15 +54,12 @@ private val HomeButtonStop = Color(0xFF8D4335)
 fun HomeScreen(
     uiState: DashboardUiState,
     overlayPermissionGranted: Boolean,
-    notificationGranted: Boolean,
     overlayRunning: Boolean,
     onRequestOverlayPermission: () -> Unit,
-    onRequestNotificationPermission: () -> Unit,
     onToggleOverlay: () -> Unit,
-    onSetBubbleOpacityPercent: (Int) -> Unit
+    onRefreshData: () -> Unit
 ) {
-    var autoCacheEnabled by rememberSaveable { mutableStateOf(true) }
-    val permissionsReady = overlayPermissionGranted && notificationGranted
+    val permissionsReady = overlayPermissionGranted
     val serviceColor = if (overlayRunning) HomeSuccess else HomeWarning
     val serviceText = if (overlayRunning) "服务运行中..." else "服务待启动"
     val actionLabel = if (overlayRunning) "停止助手" else "启动助手"
@@ -147,18 +138,39 @@ fun HomeScreen(
                                 fontWeight = FontWeight.Bold
                             )
                         }
-                        if (uiState.catalogVersion.isNotBlank() || uiState.lastSyncLabel != null) {
-                            Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = buildString {
+                                append("应用 ${uiState.appVersionLabel}")
+                                append(" · ")
+                                append("数据来源 ${uiState.dataSource.label()}")
+                                if (uiState.manifestVersionLabel != null) {
+                                    append(" · 清单 ${uiState.manifestVersionLabel}")
+                                }
+                                if (uiState.catalogVersion.isNotBlank()) {
+                                    append(" · 数据 ${uiState.catalogVersion}")
+                                }
+                                if (uiState.lastSyncLabel != null) {
+                                    append(" · 最近同步 ${uiState.lastSyncLabel}")
+                                }
+                            },
+                            color = HomeTextMuted,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedButton(
+                            onClick = onRefreshData,
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(14.dp)
+                        ) {
                             Text(
-                                text = buildString {
-                                    if (uiState.catalogVersion.isNotBlank()) {
-                                        append("数据版本 ${uiState.catalogVersion}")
-                                    }
-                                    if (uiState.lastSyncLabel != null) {
-                                        if (isNotEmpty()) append(" · ")
-                                        append("最近同步 ${uiState.lastSyncLabel}")
-                                    }
-                                },
+                                text = if (uiState.isRefreshing) "正在刷新数据..." else "刷新远程数据",
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        uiState.syncMessage?.let { message ->
+                            Text(
+                                text = message,
                                 color = HomeTextMuted,
                                 style = MaterialTheme.typography.bodySmall
                             )
@@ -172,11 +184,6 @@ fun HomeScreen(
                             label = "悬浮窗权限",
                             granted = overlayPermissionGranted,
                             onRequest = onRequestOverlayPermission
-                        )
-                        PermissionRow(
-                            label = "通知权限",
-                            granted = notificationGranted,
-                            onRequest = onRequestNotificationPermission
                         )
                     }
 
@@ -205,33 +212,9 @@ fun HomeScreen(
 
                     if (!permissionsReady && !overlayRunning) {
                         Text(
-                            text = "请先完成权限授权，再启动助手服务。",
+                            text = "请先授权悬浮窗权限，再启动助手服务。",
                             color = HomeTextMuted,
                             style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-
-                    HorizontalDivider(color = HomeDivider)
-
-                    SectionBlock(title = "全局设置") {
-                        SettingHeader(
-                            label = "面板透明度调节",
-                            value = "${uiState.bubbleOpacityPercent}%"
-                        )
-                        Slider(
-                            value = uiState.bubbleOpacityPercent.toFloat(),
-                            onValueChange = { onSetBubbleOpacityPercent(it.toInt()) },
-                            valueRange = 35f..100f,
-                            colors = SliderDefaults.colors(
-                                thumbColor = HomeAccent,
-                                activeTrackColor = HomeAccent,
-                                inactiveTrackColor = Color.White.copy(alpha = 0.12f)
-                            )
-                        )
-                        SettingSwitchRow(
-                            label = "自动缓存开关",
-                            checked = autoCacheEnabled,
-                            onCheckedChange = { autoCacheEnabled = it }
                         )
                     }
                 }
@@ -257,6 +240,12 @@ private fun SectionBlock(
             content()
         }
     )
+}
+
+private fun StrategyDataSource.label(): String = when (this) {
+    StrategyDataSource.ASSET -> "内置"
+    StrategyDataSource.CACHE -> "远程缓存"
+    StrategyDataSource.REMOTE -> "远程"
 }
 
 @Composable
@@ -296,66 +285,6 @@ private fun PermissionRow(
                     fontWeight = FontWeight.Bold
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun SettingHeader(
-    label: String,
-    value: String
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label,
-            color = Color.White,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium
-        )
-        Text(
-            text = value,
-            color = HomeAccent,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
-@Composable
-private fun SettingSwitchRow(
-    label: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label,
-            color = Color.White,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium
-        )
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = if (checked) "ON" else "OFF",
-                color = if (checked) HomeSuccess else HomeTextMuted,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Switch(
-                checked = checked,
-                onCheckedChange = onCheckedChange
-            )
         }
     }
 }

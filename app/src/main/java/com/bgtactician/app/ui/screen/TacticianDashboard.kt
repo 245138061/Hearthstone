@@ -1,5 +1,6 @@
 package com.bgtactician.app.ui.screen
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -82,9 +83,12 @@ import coil.compose.SubcomposeAsyncImage
 import com.bgtactician.app.data.model.CardRulesCatalog
 import com.bgtactician.app.data.model.KeyMinion
 import com.bgtactician.app.data.model.StrategyComp
+import com.bgtactician.app.data.model.StrategyCatalog
+import com.bgtactician.app.data.model.StrategyDataSource
 import com.bgtactician.app.data.model.Tribe
 import com.bgtactician.app.data.repository.MinionImageCache
 import com.bgtactician.app.viewmodel.DashboardUiState
+import kotlinx.serialization.json.Json
 import kotlin.math.roundToInt
 
 private val DashboardCard = Color(0xDD10202D)
@@ -105,6 +109,124 @@ private val OverlayDrawerText = Color(0xFFF5F8FC)
 private val OverlayDrawerSubtext = Color(0xFFB2C2D4)
 private val OverlayDrawerWarning = Color(0xFFFFA27E)
 private val OverlayDrawerActive = Color(0x1E6B8DB8)
+private val DashboardJson = Json { ignoreUnknownKeys = true }
+
+private const val BUNDLED_STRATEGY_ASSET = "strategies_zerotoheroes_zhCN.json"
+
+private val StrategyTextAliasMap = mapOf(
+    "Fleet Admiral Tethys" to "舰队上将特塞斯",
+    "Tethys" to "舰队上将特塞斯",
+    "Brann Bronzebeard" to "布莱恩·铜须",
+    "Brann" to "布莱恩·铜须",
+    "Titus Rivendare" to "提图斯·瑞文戴尔",
+    "Titus" to "提图斯·瑞文戴尔",
+    "Rylak Metalhead" to "重金属双头飞龙",
+    "Rylak" to "重金属双头飞龙",
+    "Drakkari Enchanter" to "达卡莱附魔师",
+    "Drakkari" to "达卡莱附魔师",
+    "Monstrous Macaw" to "巨大的金刚鹦鹉",
+    "Macaw" to "巨大的金刚鹦鹉",
+    "Hand of Deios" to "迪奥斯之手",
+    "Hand" to "迪奥斯之手",
+    "Deios" to "迪奥斯之手",
+    "Deep Blue Crooner" to "深沉蓝调歌手",
+    "Deep Blue" to "深沉蓝调歌手",
+    "Bluesy Siren" to "蓝调海妖",
+    "Flaming Enforcer" to "炽焰执行者",
+    "Leeroy Jenkins" to "火车王里诺艾",
+    "Leeroy" to "火车王里诺艾",
+    "Deadly Spore" to "致命的孢子",
+    "Spore" to "致命的孢子",
+    "Silithid Burrower" to "异种虫潜伏者",
+    "Silithid" to "异种虫潜伏者",
+    "Goldrinn" to "戈德林",
+    "Stuntdrake" to "迷雾幼龙",
+    "Twilight Broodmother" to "暮光巢母",
+    "Twilight Hatchling" to "暮光龙崽",
+    "Twilight Hatching" to "暮光龙崽",
+    "Timewarped Poet" to "时光诗人",
+    "Timewarped Vaelastrasz" to "时光瓦拉斯塔兹",
+    "Timewarped Prismscale" to "时光棱彩鳞片",
+    "Timewarped Duskmaw" to "时光暮牙",
+    "Photobomb" to "摄影炸弹",
+    "Charging Czarina" to "蓄能女沙皇",
+    "Czarina" to "蓄能女沙皇",
+    "Whirling Lass-o-Matic" to "自动漩涡套索装置",
+    "Lass-O-Matic" to "自动漩涡套索装置",
+    "Shadow Dancer" to "影舞者",
+    "Insatiable Ur'zul" to "贪食的乌祖尔",
+    "Ur'zul" to "贪食的乌祖尔",
+    "Felfire Conjurer" to "邪火咒龙",
+    "Conjurer" to "邪火咒龙",
+    "Tranquil Meditative" to "宁静的冥想者",
+    "Meditative" to "宁静的冥想者",
+    "Mrglin' Burglar" to "鱼人蟊贼",
+    "Burglar" to "鱼人蟊贼",
+    "Primalfin Lookout" to "蛮鱼斥候",
+    "Primalfin" to "蛮鱼斥候",
+    "Tad" to "塔德",
+    "Azerite Empowerment" to "艾泽里特强化",
+    "Time Management" to "时间管理",
+    "Shiny Ring" to "闪亮的戒指",
+    "Land Lubber" to "旱地元素",
+    "Lubber" to "旱地元素",
+    "Snow Elemental" to "冰雪元素",
+    "Strike Oil" to "钻探原油",
+    "Oil" to "钻探原油",
+    "Ballers" to "投球手",
+    "Lord of the Ruins" to "废墟领主",
+    "Lord of Ruins" to "废墟领主",
+    "Lord" to "废墟领主",
+    "Ruins" to "废墟领主",
+    "Burgeoning Whelp" to "茁壮幼龙",
+    "Whelp" to "萌芽雏龙",
+    "Foodie" to "美食家",
+    "Nalaa the Redeemer" to "救赎者娜拉",
+    "Nalaa" to "救赎者娜拉",
+    "Mutanus the Devourer" to "吞噬者穆坦努斯",
+    "Mutanus" to "吞噬者穆坦努斯",
+    "Fire-forged Evoker" to "火铸唤魔师",
+    "Evoker" to "火铸唤魔师",
+    "Amalgam" to "融合怪",
+    "Arid Atrocity" to "旱地凶怪",
+    "Atrocity" to "旱地凶怪",
+    "Famished Felbat" to "饥饿的魔蝠",
+    "Felbat" to "饥饿的魔蝠",
+    "Nightmare Par-Tea Guest" to "梦魇茶客",
+    "Par-Tea Guest" to "梦魇茶客",
+    "Iridescent Skyblazer" to "炫彩灼天者",
+    "Skyblazer" to "炫彩灼天者",
+    "Spiked Savior" to "尖角救星",
+    "Apexis" to "埃匹希斯",
+    "Magicfin" to "魔鳍鱼"
+)
+
+private object BundledCardNameRegistry {
+    @Volatile
+    private var cachedNames: Map<String, String>? = null
+
+    fun get(context: Context): Map<String, String> {
+        cachedNames?.let { return it }
+        return synchronized(this) {
+            cachedNames?.let { return@synchronized it }
+            val parsed = runCatching {
+                DashboardJson.decodeFromString<StrategyCatalog>(
+                    context.assets.open(BUNDLED_STRATEGY_ASSET).bufferedReader().use { it.readText() }
+                )
+                    .comps
+                    .flatMap { it.keyMinions }
+                    .mapNotNull { minion ->
+                        minion.cardId
+                            ?.takeIf { it.isNotBlank() }
+                            ?.let { cardId -> cardId to minion.name }
+                    }
+                    .toMap()
+            }.getOrDefault(emptyMap())
+            cachedNames = parsed
+            parsed
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
@@ -485,51 +607,56 @@ private fun DrawerSetupTab(
         badge = "${selectedTribes.size}/5",
         showHeader = false
     ) { bodyModifier ->
-        BoxWithConstraints(modifier = bodyModifier.fillMaxSize()) {
-            val compactHeight = maxHeight < 360.dp
-            val useWideSummary = maxWidth > maxHeight || maxWidth >= 480.dp
-            val tribeItemsPerRow = when {
-                maxWidth >= 640.dp -> 5
-                maxWidth >= 460.dp -> 4
-                else -> 3
-            }
-            val tribeCardWidth = when {
-                maxWidth >= 640.dp -> 92.dp
-                maxWidth >= 460.dp -> 84.dp
-                else -> 78.dp
-            }
-            if (useWideSummary) {
-                DrawerLandscapeSetupGrid(
-                    selectedTribes = selectedTribes,
-                    onToggleTribe = onToggleTribe,
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    DrawerSetupProgressCard(
-                        selectedCount = selectedTribes.size,
-                        modifier = Modifier.fillMaxWidth(),
-                        compactHeight = compactHeight
-                    )
-                    DrawerSelectedTribesCard(
-                        selectedTribes = selectedTribes,
-                        modifier = Modifier.fillMaxWidth(),
-                        compactHeight = compactHeight
-                    )
-
-                    DrawerTribePickerSection(
+        Column(
+            modifier = bodyModifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            BoxWithConstraints(modifier = Modifier.weight(1f)) {
+                val compactHeight = maxHeight < 360.dp
+                val useWideSummary = maxWidth > maxHeight || maxWidth >= 480.dp
+                val tribeItemsPerRow = when {
+                    maxWidth >= 640.dp -> 5
+                    maxWidth >= 460.dp -> 4
+                    else -> 3
+                }
+                val tribeCardWidth = when {
+                    maxWidth >= 640.dp -> 92.dp
+                    maxWidth >= 460.dp -> 84.dp
+                    else -> 78.dp
+                }
+                if (useWideSummary) {
+                    DrawerLandscapeSetupGrid(
                         selectedTribes = selectedTribes,
                         onToggleTribe = onToggleTribe,
-                        modifier = Modifier.fillMaxWidth(),
-                        compactHeight = compactHeight,
-                        tribeCardWidth = tribeCardWidth,
-                        maxItemsInEachRow = tribeItemsPerRow
+                        modifier = Modifier.fillMaxSize()
                     )
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        DrawerSetupProgressCard(
+                            selectedCount = selectedTribes.size,
+                            modifier = Modifier.fillMaxWidth(),
+                            compactHeight = compactHeight
+                        )
+                        DrawerSelectedTribesCard(
+                            selectedTribes = selectedTribes,
+                            modifier = Modifier.fillMaxWidth(),
+                            compactHeight = compactHeight
+                        )
+
+                        DrawerTribePickerSection(
+                            selectedTribes = selectedTribes,
+                            onToggleTribe = onToggleTribe,
+                            modifier = Modifier.fillMaxWidth(),
+                            compactHeight = compactHeight,
+                            tribeCardWidth = tribeCardWidth,
+                            maxItemsInEachRow = tribeItemsPerRow
+                        )
+                    }
                 }
             }
         }
@@ -1251,7 +1378,10 @@ private data class StrategyDecisionProfile(
 )
 
 @Composable
-private fun DrawerDecisionSummaryCard(summary: DrawerDecisionSummary) {
+private fun DrawerDecisionSummaryCard(
+    summary: DrawerDecisionSummary,
+    strategy: StrategyComp? = null
+) {
     Surface(
         shape = RoundedCornerShape(12.dp),
         color = summary.accent.copy(alpha = 0.12f),
@@ -1278,7 +1408,7 @@ private fun DrawerDecisionSummaryCard(summary: DrawerDecisionSummary) {
                 )
             }
             Text(
-                text = summary.detail,
+                text = localizedStrategyText(summary.detail, strategy),
                 color = OverlayDrawerText,
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium
@@ -1343,7 +1473,7 @@ private fun DrawerCompReasonLine(
             )
         }
         Text(
-            text = summary.detail,
+            text = localizedStrategyText(summary.detail, strategy),
             color = OverlayDrawerSubtext,
             style = MaterialTheme.typography.bodySmall,
             maxLines = 1
@@ -1372,7 +1502,7 @@ private fun MainCompReasonLine(strategy: StrategyComp) {
             )
         }
         Text(
-            text = summary.detail,
+            text = localizedStrategyText(summary.detail, strategy),
             color = DashboardMuted,
             style = MaterialTheme.typography.bodySmall,
             maxLines = 1
@@ -1682,19 +1812,20 @@ private fun DrawerTacticalTab(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             DrawerDecisionSummaryCard(
-                summary = drawerDecisionSummary(strategy)
+                summary = drawerDecisionSummary(strategy),
+                strategy = strategy
             )
             strategy.overview.takeIf { it.isNotBlank() }?.let { overview ->
                 DrawerActionStrip(
                     title = "先记住",
-                    body = localizeStrategyText(overview),
+                    body = localizedStrategyText(overview, strategy),
                     accent = OverlayDrawerSubtext
                 )
             }
             strategy.whenToCommit?.takeIf { it.isNotBlank() }?.let { signal ->
                 DrawerActionStrip(
                     title = "等这些牌",
-                    body = localizeStrategyText(signal),
+                    body = localizedStrategyText(signal, strategy),
                     accent = OverlayDrawerAccent
                 )
             }
@@ -1704,14 +1835,14 @@ private fun DrawerTacticalTab(
                 DrawerActionCard(
                     modifier = Modifier.weight(1f),
                     title = "现在做",
-                    body = localizeStrategyText(strategy.earlyStrategy),
+                    body = localizedStrategyText(strategy.earlyStrategy, strategy),
                     accent = OverlayDrawerAccent,
                     emphasize = true
                 )
                 DrawerActionCard(
                     modifier = Modifier.weight(1f),
                     title = "后续补完",
-                    body = localizeStrategyText(strategy.lateStrategy),
+                    body = localizedStrategyText(strategy.lateStrategy, strategy),
                     accent = DashboardIce,
                     emphasize = false
                 )
@@ -1734,7 +1865,7 @@ private fun DrawerTacticalTab(
                     )
                 }
             }
-            val recommended = recommendedMinions(strategy.keyMinions, selectedTribes, cardRules, limit = 4)
+            val recommended = recommendedMinions(strategy.keyMinions, selectedTribes, cardRules, limit = Int.MAX_VALUE)
             if (recommended.isNotEmpty()) {
                 DrawerSectionChip(label = "推荐拿牌")
                 FlowRow(
@@ -1749,7 +1880,7 @@ private fun DrawerTacticalTab(
                     }
                 }
             }
-            val cycle = cycleMinions(strategy.keyMinions, selectedTribes, cardRules, limit = 4)
+            val cycle = cycleMinions(strategy.keyMinions, selectedTribes, cardRules, limit = Int.MAX_VALUE)
             if (cycle.isNotEmpty()) {
                 DrawerSectionChip(label = "循环牌")
                 FlowRow(
@@ -1867,6 +1998,7 @@ private fun DrawerMinionThumb(
     ) {
         Column(
             modifier = Modifier.padding(5.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Box(
@@ -1882,14 +2014,17 @@ private fun DrawerMinionThumb(
             displayName?.let {
                 Text(
                     text = it,
+                    modifier = Modifier.fillMaxWidth(),
                     color = OverlayDrawerText,
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
-                    maxLines = 2
+                    maxLines = 2,
+                    textAlign = TextAlign.Center
                 )
             }
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 MiniMetaBadge(
@@ -2158,10 +2293,11 @@ private fun RecommendationBlock(
                     }
                 }
             } else {
+                val overviewSummary = drawerDecisionSummary(sortedStrategies)
                 SignalCallout(
-                    title = drawerDecisionSummary(sortedStrategies).label,
-                    body = drawerDecisionSummary(sortedStrategies).detail,
-                    accent = drawerDecisionSummary(sortedStrategies).accent
+                    title = overviewSummary.label,
+                    body = localizedStrategyText(overviewSummary.detail, sortedStrategies.firstOrNull()),
+                    accent = overviewSummary.accent
                 )
                 sortedStrategies.forEachIndexed { index, strategy ->
                     StrategyCommandCard(
@@ -2368,10 +2504,11 @@ private fun DetailBlock(
                 return@Column
             }
 
+            val tacticalSummary = drawerDecisionSummary(strategy)
             SignalCallout(
-                title = drawerDecisionSummary(strategy).label,
-                body = drawerDecisionSummary(strategy).detail,
-                accent = drawerDecisionSummary(strategy).accent
+                title = tacticalSummary.label,
+                body = localizedStrategyText(tacticalSummary.detail, strategy),
+                accent = tacticalSummary.accent
             )
 
             Surface(
@@ -2391,7 +2528,7 @@ private fun DetailBlock(
                             Text(strategy.name, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black)
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                localizeStrategyText(strategy.overview),
+                                localizedStrategyText(strategy.overview, strategy),
                                 color = DashboardMuted,
                                 style = MaterialTheme.typography.bodyMedium,
                                 maxLines = 2
@@ -2411,7 +2548,7 @@ private fun DetailBlock(
                     strategy.whenToCommit?.takeIf { it.isNotBlank() }?.let { signal ->
                         SignalCallout(
                             title = "转型信号",
-                            body = localizeStrategyText(signal),
+                            body = localizedStrategyText(signal, strategy),
                             accent = DashboardGold
                         )
                     }
@@ -2451,13 +2588,13 @@ private fun BattlePlanSection(strategy: StrategyComp) {
             StrategyNoteCard(
                 modifier = Modifier.weight(1f),
                 title = "现在做",
-                body = localizeStrategyText(strategy.earlyStrategy),
+                body = localizedStrategyText(strategy.earlyStrategy, strategy),
                 accent = DashboardIce
             )
             StrategyNoteCard(
                 modifier = Modifier.weight(1f),
                 title = "后续补完",
-                body = localizeStrategyText(strategy.lateStrategy),
+                body = localizedStrategyText(strategy.lateStrategy, strategy),
                 accent = DashboardGold
             )
         }
@@ -2549,8 +2686,8 @@ private fun RecommendedCardsSection(
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog
 ) {
-    val recommended = recommendedMinions(strategy.keyMinions, selectedTribes, cardRules, limit = 4)
-    val cycle = cycleMinions(strategy.keyMinions, selectedTribes, cardRules, limit = 4)
+    val recommended = recommendedMinions(strategy.keyMinions, selectedTribes, cardRules, limit = Int.MAX_VALUE)
+    val cycle = cycleMinions(strategy.keyMinions, selectedTribes, cardRules, limit = Int.MAX_VALUE)
 
     if (recommended.isEmpty() && cycle.isEmpty()) return
 
@@ -2947,12 +3084,13 @@ private fun AddOnMinionStrip(
 ) {
     val available = filterMinionsForLobby(minions, selectedTribes, cardRules)
     val addOns = (
-        genericSupportMinions(minions, selectedTribes, cardRules, limit = Int.MAX_VALUE) +
+        available
+            .filter { it.statusRaw == "ADDON" && isGenericSupportMinion(it) }
+            .sortedWith(compareBy<KeyMinion> { it.star }.thenBy { it.name }) +
             available
-                .filter { (it.statusRaw == "ADDON" || it.statusRaw == "RECOMMENDED") && !isGenericSupportMinion(it) }
+                .filter { it.statusRaw == "ADDON" && !isGenericSupportMinion(it) }
                 .sortedWith(compareBy<KeyMinion> { it.star }.thenBy { it.name })
         )
-        .ifEmpty { available.dropWhile { it.statusRaw == "CORE" } }
 
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -3042,6 +3180,7 @@ private fun KeyMinionCard(minion: KeyMinion) {
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Box(
@@ -3071,11 +3210,19 @@ private fun KeyMinionCard(minion: KeyMinion) {
                 }
             }
             displayName?.let {
-                Text(it, fontWeight = FontWeight.Bold, maxLines = 2)
+                Text(
+                    text = it,
+                    modifier = Modifier.fillMaxWidth(),
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    textAlign = TextAlign.Center
+                )
             }
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                maxItemsInEachRow = 2
             ) {
                 if (minion.phase.isNotBlank()) {
                     MiniMetaBadge(text = minion.phase, accent = DashboardIce)
@@ -3100,6 +3247,7 @@ private fun OverlayMiniMinion(minion: KeyMinion) {
     ) {
         Column(
             modifier = Modifier.padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Box(
@@ -3131,8 +3279,10 @@ private fun OverlayMiniMinion(minion: KeyMinion) {
             displayName?.let {
                 Text(
                     text = it,
+                    modifier = Modifier.fillMaxWidth(),
                     style = MaterialTheme.typography.labelSmall,
-                    maxLines = 2
+                    maxLines = 2,
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -3530,18 +3680,86 @@ private fun localizedRequiredTribes(requiredTribes: List<String>): String {
     }
 }
 
+@Composable
 private fun localizedMinionTitle(minion: KeyMinion): String? {
-    return minion.name.takeUnless(::hasAsciiLetters)
+    val context = LocalContext.current.applicationContext
+    val bundledNames = remember(context) { BundledCardNameRegistry.get(context) }
+    return minion.cardId
+        ?.let(bundledNames::get)
+        ?.takeIf { it.isNotBlank() }
+        ?: minion.name.takeUnless(::hasAsciiLetters)
 }
 
-private fun localizeStrategyText(text: String): String {
+private fun localizeStrategyText(
+    text: String,
+    strategy: StrategyComp? = null,
+    bundledNames: Map<String, String> = emptyMap()
+): String {
     if (text.isBlank()) return text
 
-    return text
+    val replacements = buildStrategyTextReplacements(strategy, bundledNames, text)
+    var localized = text
+    replacements.forEach { (english, chinese) ->
+        localized = localized.replace(english, chinese, ignoreCase = true)
+    }
+
+    StrategyTextAliasMap.forEach { (english, chinese) ->
+        localized = localized.replace(english, chinese, ignoreCase = true)
+    }
+
+    return localized
         .replace("all in", "梭哈", ignoreCase = true)
         .replace("APM", "高频操作")
         .replace("token", "衍生物", ignoreCase = true)
         .replace("buff", "增益", ignoreCase = true)
+}
+
+@Composable
+private fun localizedStrategyText(text: String, strategy: StrategyComp? = null): String {
+    val context = LocalContext.current.applicationContext
+    val bundledNames = remember(context) { BundledCardNameRegistry.get(context) }
+    return remember(text, strategy, bundledNames) {
+        localizeStrategyText(text, strategy, bundledNames)
+    }
+}
+
+private fun buildStrategyTextReplacements(
+    strategy: StrategyComp?,
+    bundledNames: Map<String, String>,
+    text: String
+): Map<String, String> {
+    if (strategy == null || bundledNames.isEmpty()) return emptyMap()
+
+    val replacements = linkedMapOf<String, String>()
+    val aliasCandidates = linkedMapOf<String, MutableSet<String>>()
+    val lowerText = text.lowercase()
+    val aliasStopwords = setOf("of", "the", "and")
+
+    strategy.keyMinions.forEach { minion ->
+        val englishName = minion.name.takeIf(::hasAsciiLetters) ?: return@forEach
+        val localizedName = minion.cardId?.let(bundledNames::get)?.takeIf { it.isNotBlank() } ?: return@forEach
+        replacements.putIfAbsent(englishName, localizedName)
+
+        val parts = englishName.split(" ")
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+        if (parts.size >= 2 && parts[1].lowercase() !in aliasStopwords) {
+            aliasCandidates.getOrPut(parts.take(2).joinToString(" ")) { linkedSetOf() }.add(localizedName)
+        }
+        parts.firstOrNull()
+            ?.takeIf { it.length >= 5 }
+            ?.let { aliasCandidates.getOrPut(it) { linkedSetOf() }.add(localizedName) }
+    }
+
+    aliasCandidates.forEach { (alias, localizedValues) ->
+        if (localizedValues.size == 1 && alias.lowercase() in lowerText && alias !in replacements) {
+            replacements[alias] = localizedValues.first()
+        }
+    }
+
+    return replacements.entries
+        .sortedByDescending { it.key.length }
+        .associate { it.toPair() }
 }
 
 private fun minionStatusLabel(status: String?): String = when (status?.uppercase()) {
@@ -3550,6 +3768,12 @@ private fun minionStatusLabel(status: String?): String = when (status?.uppercase
     "RECOMMENDED" -> "推荐"
     "CYCLE" -> "经济"
     else -> "功能牌"
+}
+
+private fun StrategyDataSource.label(): String = when (this) {
+    StrategyDataSource.ASSET -> "内置"
+    StrategyDataSource.CACHE -> "远程缓存"
+    StrategyDataSource.REMOTE -> "远程"
 }
 
 @Composable
@@ -3561,13 +3785,19 @@ private fun resolveMinionImageModel(minion: KeyMinion): Any? {
 private fun resolveMinionImageModels(minion: KeyMinion): List<Any> {
     val context = LocalContext.current.applicationContext
     val models by produceState(
-        initialValue = MinionImageCache.resolveModels(context, minion),
+        initialValue = listOfNotNull(
+            MinionImageCache.localModel(context, minion),
+            minion.imageAsset?.takeIf { it.isNotBlank() }?.let { "file:///android_asset/$it" }
+        ),
         key1 = minion.cardId,
         key2 = minion.imageUrl,
         key3 = minion.imageAsset
     ) {
-        MinionImageCache.ensureCached(context, minion)
-        value = MinionImageCache.resolveModels(context, minion)
+        val localFile = MinionImageCache.ensureCached(context, minion)
+        value = listOfNotNull(
+            localFile,
+            minion.imageAsset?.takeIf { it.isNotBlank() }?.let { "file:///android_asset/$it" }
+        )
     }
     return models
 }

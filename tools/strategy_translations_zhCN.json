@@ -8,6 +8,7 @@
     "tip": "尽量制造酒馆法术，再用 Czarina 放大你的圣盾机械体系。"
   },
   "buff_shop_demons": {
+    "name": "酒馆增益流恶魔",
     "whenToCommit": "Shadow Dancer + Ur'zul 或 Felboar",
     "tip": "先用 Shadow Dancer 或时空扭曲版 Shadow Dancer 给酒馆加属性，再用 Ur'zul 或 Felboar 吃掉酒馆。也可以用 Conjurer、Meditative 等手段放大酒馆法术收益。"
   },

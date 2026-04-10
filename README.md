@@ -51,6 +51,12 @@ echo 'BGT_REMOTE_MANIFEST_URL=https://<your-pages-host>/manifest.json' >> ~/.gra
 
 Without that property, the app still works with built-in data and supports a manual manifest override in the debug UI.
 
+Current live example:
+
+```text
+https://245138061.github.io/Hearthstone/manifest.json
+```
+
 Before the workflow can deploy, set your repository Pages source to `GitHub Actions` in:
 
 - `Settings -> Pages -> Build and deployment -> Source -> GitHub Actions`

@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -15,6 +16,7 @@ DEFAULT_STRATEGIES_URL = "https://static.zerotoheroes.com/hearthstone/data/battl
 DEFAULT_LOCALE_EN_URL = "https://static.firestoneapp.com/data/i18n/enUS.json?v=1196-main"
 DEFAULT_LOCALE_ZH_URL = "https://static.firestoneapp.com/data/i18n/zhCN.json?v=1196-main"
 DEFAULT_CARD_RULES_URL = "https://static.firestoneapp.com/data/cards/card-rules.gz.json"
+DEFAULT_CARD_NAMES_ZH_URL = "https://api.hearthstonejson.com/v1/latest/zhCN/cards.json"
 DEFAULT_TRANSLATIONS_ZH = Path(__file__).with_name("strategy_translations_zhCN.json")
 
 REQUIRED_COMP_FIELDS = {
@@ -32,6 +34,8 @@ REQUIRED_COMP_FIELDS = {
     "positioning_hints",
     "key_minions",
 }
+
+ASCII_WORD_RE = re.compile(r"[A-Za-z]{3,}")
 
 
 def sha256_text(raw: str) -> str:
@@ -58,6 +62,39 @@ def validate_catalog(catalog: dict[str, Any], locale: str) -> None:
         if not comp["key_minions"]:
             raise ValueError(f"{locale} comp {comp['id']} has no key minions")
 
+    if locale == "zhCN":
+        validate_zh_catalog_localization(comps)
+
+
+def validate_zh_catalog_localization(comps: list[dict[str, Any]]) -> None:
+    violations: list[str] = []
+
+    for comp in comps:
+        comp_id = str(comp.get("id") or "<unknown>")
+        for field in ("overview", "early_strategy", "late_strategy", "when_to_commit"):
+            value = str(comp.get(field) or "").strip()
+            if value and contains_ascii_word(value):
+                violations.append(f"{comp_id}.{field}: {value}")
+
+        for minion in comp.get("key_minions", []):
+            name = str(minion.get("name") or "").strip()
+            if name and contains_ascii_word(name):
+                card_id = str(minion.get("card_id") or "<unknown>")
+                violations.append(f"{comp_id}.key_minions[{card_id}]: {name}")
+
+    if violations:
+        sample = "\n".join(violations[:12])
+        extra = len(violations) - min(len(violations), 12)
+        suffix = f"\n... and {extra} more" if extra > 0 else ""
+        raise ValueError(
+            "zhCN catalog still contains untranslated English content.\n"
+            f"{sample}{suffix}"
+        )
+
+
+def contains_ascii_word(value: str) -> bool:
+    return ASCII_WORD_RE.search(value) is not None
+
 
 def build_bundle(
     output_dir: Path,
@@ -65,6 +102,7 @@ def build_bundle(
     locale_en_source: str,
     locale_zh_source: str,
     card_rules_source: str,
+    card_names_zh_source: str,
     translations_zh_source: str,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -72,7 +110,7 @@ def build_bundle(
     base_version = timestamp.strftime("%Y.%m.%d")
 
     zh_catalog = convert(
-        SourceUrls(strategies=strategies_source, locale=locale_zh_source),
+        SourceUrls(strategies=strategies_source, locale=locale_zh_source, card_names=card_names_zh_source),
         version_label=f"{base_version}-firestone-zhCN",
         language="zhCN",
         translations=load_json(translations_zh_source),
@@ -209,6 +247,7 @@ def main() -> None:
     parser.add_argument("--locale-en", default=DEFAULT_LOCALE_EN_URL, help="English locale JSON URL or local file.")
     parser.add_argument("--locale-zh", default=DEFAULT_LOCALE_ZH_URL, help="Chinese locale JSON URL or local file.")
     parser.add_argument("--card-rules", default=DEFAULT_CARD_RULES_URL, help="Firestone card rules URL or local file.")
+    parser.add_argument("--card-names-zh", default=DEFAULT_CARD_NAMES_ZH_URL, help="zhCN card names JSON URL or local file.")
     parser.add_argument(
         "--translations-zh",
         default=str(DEFAULT_TRANSLATIONS_ZH),
@@ -222,6 +261,7 @@ def main() -> None:
         locale_en_source=args.locale_en,
         locale_zh_source=args.locale_zh,
         card_rules_source=args.card_rules,
+        card_names_zh_source=args.card_names_zh,
         translations_zh_source=args.translations_zh,
     )
 

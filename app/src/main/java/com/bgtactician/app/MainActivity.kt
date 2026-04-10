@@ -1,13 +1,9 @@
 package com.bgtactician.app
 
-import android.Manifest
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -53,21 +49,11 @@ private fun MainRoute(viewModel: MainViewModel) {
     var overlayPermissionGranted by remember {
         mutableStateOf(OverlayPermissionHelper.canDrawOverlays(context))
     }
-    var notificationGranted by remember {
-        mutableStateOf(OverlayPermissionHelper.hasNotificationPermission(context))
-    }
-
-    val notificationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { granted ->
-        notificationGranted = granted
-    }
 
     DisposableEffect(context) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 overlayPermissionGranted = OverlayPermissionHelper.canDrawOverlays(context)
-                notificationGranted = OverlayPermissionHelper.hasNotificationPermission(context)
             }
         }
         lifecycle.addObserver(observer)
@@ -83,15 +69,9 @@ private fun MainRoute(viewModel: MainViewModel) {
     HomeScreen(
         uiState = uiState,
         overlayPermissionGranted = overlayPermissionGranted,
-        notificationGranted = notificationGranted,
         overlayRunning = overlayRunning,
         onRequestOverlayPermission = {
             OverlayPermissionHelper.openOverlaySettings(context)
-        },
-        onRequestNotificationPermission = {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
         },
         onToggleOverlay = {
             if (!overlayPermissionGranted) {
@@ -102,11 +82,8 @@ private fun MainRoute(viewModel: MainViewModel) {
                 OverlayService.start(context)
             }
         },
-        onSetBubbleOpacityPercent = { value ->
-            viewModel.setBubbleOpacityPercent(value)
-            if (overlayRunning) {
-                OverlayService.refreshSettings(context)
-            }
+        onRefreshData = {
+            viewModel.refreshCatalog(silent = false)
         }
     )
 }

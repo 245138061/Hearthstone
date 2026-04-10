@@ -20,6 +20,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.security.MessageDigest
 import java.util.Locale
+import kotlin.math.min
 
 class StrategyRepository {
 
@@ -87,7 +88,7 @@ class StrategyRepository {
         return withContext(Dispatchers.IO) {
             val preferences = AppPreferences(context)
             val manifestUrl = resolveManifestUrl(manifestUrlOverride)
-            val manifestRaw = downloadText(manifestUrl)
+            val manifestRaw = downloadTextWithRetry(manifestUrl)
             val manifest = decodeManifest(manifestRaw)
             require(manifest.manifestFormat == "bgtactician.pages.v1") {
                 "远程 manifest 格式不受支持"
@@ -126,7 +127,7 @@ class StrategyRepository {
                     bundledSnapshot(context)
                 }
             } else {
-                val raw = downloadText(catalogUrl)
+                val raw = downloadTextWithRetry(catalogUrl)
                 val actualHash = sha256(raw)
                 require(actualHash == selectedFile.sha256) {
                     "远程数据校验失败，哈希不匹配"
@@ -239,7 +240,7 @@ class StrategyRepository {
             return false
         }
 
-        val raw = downloadText(resolveCatalogUrl(manifestUrl, supportFile))
+        val raw = downloadTextWithRetry(resolveCatalogUrl(manifestUrl, supportFile))
         val actualHash = sha256(raw)
         require(actualHash == supportFile.sha256) {
             "远程 card rules 校验失败，哈希不匹配"
@@ -267,6 +268,26 @@ class StrategyRepository {
         } finally {
             connection.disconnect()
         }
+    }
+
+    private fun downloadTextWithRetry(url: String, attempts: Int = 3): String {
+        var lastError: Throwable? = null
+
+        repeat(attempts) { attempt ->
+            try {
+                return downloadText(url)
+            } catch (error: Throwable) {
+                lastError = error
+                if (attempt < attempts - 1) {
+                    Thread.sleep(min(2_500L, 600L * (attempt + 1)))
+                }
+            }
+        }
+
+        throw IllegalStateException(
+            "远程下载失败: ${lastError?.message ?: url}",
+            lastError
+        )
     }
 
     private fun writeAtomically(target: File, raw: String) {

@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 from urllib.request import Request, urlopen
+import re
 
 
 COMP_TRIBE_OVERRIDES = {
@@ -104,11 +105,81 @@ TRIBE_ASSET_MAP = {
 
 RENDER_BASE_URL = "https://art.hearthstonejson.com/v1/render/latest"
 
+MANUAL_ZH_TEXT_ALIASES = {
+    "Fleet Admiral Tethys": "舰队上将特塞斯",
+    "Monstrous Macaw": "巨大的金刚鹦鹉",
+    "Hand of Deios": "迪奥斯之手",
+    "Lord of the Ruins": "废墟领主",
+    "Lord of Ruins": "废墟领主",
+    "Charging Czarina": "蓄能女沙皇",
+    "Whirling Lass-o-Matic": "自动漩涡套索装置",
+    "Lass-o-Matic": "自动漩涡套索装置",
+    "Lass-O-Matic": "自动漩涡套索装置",
+    "Shadow Dancer": "影舞者",
+    "Shadowdancer": "影舞者",
+    "Insatiable Ur'zul": "贪食的乌祖尔",
+    "Ur'zul": "贪食的乌祖尔",
+    "Felfire Conjurer": "邪火咒龙",
+    "Tranquil Meditative": "宁静的冥想者",
+    "Deadly Spore": "致命的孢子",
+    "Mrglin' Burglar": "鱼人蟊贼",
+    "Primalfin Lookout": "蛮鱼斥候",
+    "Azerite Empowerment": "艾泽里特强化",
+    "Time Management": "时间管理",
+    "Shiny Ring": "闪亮的戒指",
+    "Land Lubber": "旱地元素",
+    "Snow Elemental": "冰雪元素",
+    "Strike Oil": "钻探原油",
+    "Stuntdrake": "迷雾幼龙",
+    "Twilight Broodmother": "暮光巢母",
+    "Twilight Hatchling": "暮光龙崽",
+    "Twilight Hatching": "暮光龙崽",
+    "Nalaa the Redeemer": "救赎者娜拉",
+    "Fire-forged Evoker": "火铸唤魔师",
+    "Mutanus the Devourer": "吞噬者穆坦努斯",
+    "Iridescent Skyblazer": "炫彩灼天者",
+    "Spiked Savior": "尖角救星",
+    "Nightmare Par-tea Guest": "梦魇茶客",
+    "Par-Tea Guest": "梦魇茶客",
+    "Arid Atrocity": "旱地凶怪",
+    "Famished Felbat": "饥饿的魔蝠",
+    "Brann": "布莱恩·铜须",
+    "Titus": "提图斯·瑞文戴尔",
+    "Rylak": "重金属双头飞龙",
+    "Tethys": "舰队上将特塞斯",
+    "Photobomb": "摄影炸弹",
+    "Macaw": "巨大的金刚鹦鹉",
+    "Deios": "迪奥斯之手",
+    "Goldrinn": "戈德林",
+    "Whelp": "萌芽雏龙",
+    "Foodie": "美食家",
+    "Czarina": "蓄能女沙皇",
+    "Conjurer": "邪火咒龙",
+    "Meditative": "宁静的冥想者",
+    "Spore": "致命的孢子",
+    "Burglar": "鱼人蟊贼",
+    "Tad": "塔德",
+    "Primalfin": "蛮鱼斥候",
+    "Lubber": "旱地元素",
+    "Oil": "钻探原油",
+    "Ballers": "投球手",
+    "Amalgam": "融合怪",
+    "Guest": "梦魇茶客",
+    "Evoker": "火铸唤魔师",
+    "Mutanus": "吞噬者穆坦努斯",
+    "Nalaa": "救赎者娜拉",
+    "Skyblazer": "炫彩灼天者",
+    "Par-Tea": "梦魇茶客",
+    "Atrocity": "旱地凶怪",
+    "Felbat": "饥饿的魔蝠",
+}
+
 
 @dataclass
 class SourceUrls:
     strategies: str
     locale: str
+    card_names: str | None = None
 
 
 def load_json(source: str) -> Any:
@@ -147,6 +218,77 @@ def infer_required_tribes(comp_id: str, cards: list[dict[str, Any]]) -> list[str
     return tribes[:2]
 
 
+def load_card_name_map(source: str | None) -> dict[str, str]:
+    if not source:
+        return {}
+    payload = load_json(source)
+    if not isinstance(payload, list):
+        return {}
+
+    localized: dict[str, str] = {}
+    for card in payload:
+        card_id = str(card.get("id") or "").strip()
+        name = str(card.get("name") or "").strip()
+        if card_id and name:
+            localized[card_id] = name
+    return localized
+
+
+def build_name_replacements(
+    cards: list[dict[str, Any]],
+    localized_names: dict[str, str],
+    texts: list[str | None],
+) -> dict[str, str]:
+    replacements: dict[str, str] = {}
+    alias_candidates: dict[str, set[str]] = {}
+    text_blob = "\n".join(filter(None, texts)).lower()
+    alias_stopwords = {"of", "the", "and"}
+
+    for card in cards:
+        english_name = str(card.get("name") or "").strip()
+        card_id = str(card.get("cardId") or "").strip()
+        localized = localized_names.get(card_id, "").strip()
+        if english_name and localized and english_name != localized:
+            replacements[english_name] = localized
+            parts = english_name.split()
+            if len(parts) >= 2 and parts[1].lower() not in alias_stopwords:
+                alias_candidates.setdefault(" ".join(parts[:2]), set()).add(localized)
+            if parts and len(parts[0]) >= 5:
+                alias_candidates.setdefault(parts[0], set()).add(localized)
+
+    for alias, localized_values in alias_candidates.items():
+        if len(localized_values) != 1:
+            continue
+        if alias in replacements:
+            continue
+        if alias.lower() in text_blob:
+            replacements[alias] = next(iter(localized_values))
+
+    return replacements
+
+
+def localize_embedded_card_names(text: str | None, replacements: dict[str, str]) -> str | None:
+    if not text:
+        return text
+
+    localized_text = text
+    for english_name, localized_name in sorted(replacements.items(), key=lambda item: len(item[0]), reverse=True):
+        localized_text = re.sub(
+            re.escape(english_name),
+            localized_name,
+            localized_text,
+            flags=re.IGNORECASE,
+        )
+    for english_alias, localized_name in sorted(MANUAL_ZH_TEXT_ALIASES.items(), key=lambda item: len(item[0]), reverse=True):
+        localized_text = re.sub(
+            re.escape(english_alias),
+            localized_name,
+            localized_text,
+            flags=re.IGNORECASE,
+        )
+    return localized_text
+
+
 def build_render_url(card_id: str | None, language: str) -> str | None:
     if not card_id:
         return None
@@ -166,6 +308,7 @@ def normalize_cards(
     cards: list[dict[str, Any]],
     primary_tribe: str | None,
     language: str,
+    localized_card_names: dict[str, str],
 ) -> list[dict[str, Any]]:
     prioritized = sorted(
         cards,
@@ -184,7 +327,7 @@ def normalize_cards(
         normalized.append(
             {
                 "id": index,
-                "name": card.get("name", card.get("cardId", "Unknown Card")),
+                "name": localized_card_names.get(card_id) or card.get("name", card.get("cardId", "Unknown Card")),
                 "star": star,
                 "phase": phase,
                 "status_raw": status or None,
@@ -241,6 +384,7 @@ def convert(
 ) -> dict[str, Any]:
     raw_comps = load_json(source_urls.strategies)
     locale = load_json(source_urls.locale)
+    localized_card_names = load_card_name_map(source_urls.card_names)
     localized_names = locale.get("bgs-comp", {})
     translations = translations or {}
 
@@ -260,9 +404,27 @@ def convert(
         power_level = (raw.get("powerLevel") or "").strip() or None
         required_tribes = infer_required_tribes(comp_id, raw.get("cards", []))
         primary_tribe = required_tribes[0] if required_tribes else None
-        overview = to_overview(name, tip_text, when_to_commit, language)
-        early_strategy = translation.get("earlyStrategy") or default_early_strategy(when_to_commit, language)
-        late_strategy = translation.get("lateStrategy") or tip_text or default_late_strategy(language)
+        card_name_replacements = build_name_replacements(
+            raw.get("cards", []),
+            localized_card_names,
+            [
+                tip_text,
+                when_to_commit,
+                translation.get("earlyStrategy"),
+                translation.get("lateStrategy"),
+            ],
+        )
+        localized_tip_text = localize_embedded_card_names(tip_text, card_name_replacements)
+        localized_when_to_commit = localize_embedded_card_names(when_to_commit, card_name_replacements)
+        overview = to_overview(name, localized_tip_text, localized_when_to_commit, language)
+        early_strategy = localize_embedded_card_names(
+            translation.get("earlyStrategy") or default_early_strategy(localized_when_to_commit, language),
+            card_name_replacements,
+        )
+        late_strategy = localize_embedded_card_names(
+            translation.get("lateStrategy") or localized_tip_text or default_late_strategy(language),
+            card_name_replacements,
+        )
 
         comps.append(
             {
@@ -274,14 +436,14 @@ def convert(
                 "required_tribes": required_tribes,
                 "allowed_anomalies": ["无畸变"],
                 "recommended_mode": "BOTH",
-                "when_to_commit": when_to_commit,
+                "when_to_commit": localized_when_to_commit,
                 "source_patch_number": source_patch_number,
                 "overview": overview,
                 "early_strategy": early_strategy,
                 "late_strategy": late_strategy,
                 "upgrade_turns": DIFFICULTY_TO_TURNS.get(difficulty, DIFFICULTY_TO_TURNS[""]),
                 "positioning_hints": build_positioning_hints(required_tribes),
-                "key_minions": normalize_cards(raw.get("cards", []), primary_tribe, language),
+                "key_minions": normalize_cards(raw.get("cards", []), primary_tribe, language, localized_card_names),
             }
         )
 

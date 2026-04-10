@@ -24,6 +24,7 @@ import java.util.Date
 import java.util.Locale
 
 data class DashboardUiState(
+    val appVersionLabel: String = BuildConfig.VERSION_NAME,
     val catalogVersion: String = "",
     val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
@@ -127,6 +128,7 @@ class MainViewModel(
             ?: if (uiMeta.awaitingManualStrategySelection) null else filtered.firstOrNull()?.id
 
         DashboardUiState(
+            appVersionLabel = BuildConfig.VERSION_NAME,
             catalogVersion = snapshot?.catalog?.version.orEmpty(),
             isLoading = snapshot == null,
             isRefreshing = uiMeta.isRefreshing,
