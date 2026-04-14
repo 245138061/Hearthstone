@@ -5,20 +5,32 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bgtactician.app.BuildConfig
 import com.bgtactician.app.data.local.AppPreferences
-import com.bgtactician.app.data.local.OverlaySettings
+import com.bgtactician.app.data.local.HeroSelectionSessionStore
+import com.bgtactician.app.data.local.VisionApiSettings
+import com.bgtactician.app.data.model.AutoDetectDebugInfo
+import com.bgtactician.app.data.model.AutoDetectStatus
+import com.bgtactician.app.data.model.BattlegroundCardStatsCatalog
+import com.bgtactician.app.data.model.BattlegroundHeroNameIndex
+import com.bgtactician.app.data.model.BattlegroundHeroStatsCatalog
 import com.bgtactician.app.data.model.CardRulesCatalog
 import com.bgtactician.app.data.model.CatalogSnapshot
+import com.bgtactician.app.data.model.HeroSelectionVisionResult
+import com.bgtactician.app.data.model.HeroSelectionVisionHeroOption
+import com.bgtactician.app.data.model.ResolvedHeroStatOption
 import com.bgtactician.app.data.model.StrategyComp
 import com.bgtactician.app.data.model.StrategyDataSource
 import com.bgtactician.app.data.model.Tribe
+import com.bgtactician.app.data.repository.HeroSelectionRecommendationEngine
 import com.bgtactician.app.data.repository.StrategyEngine
 import com.bgtactician.app.data.repository.StrategyRepository
+import com.bgtactician.app.vision.HeroSelectionVisionValidator
+import com.bgtactician.app.overlay.OverlayService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -35,15 +47,34 @@ data class DashboardUiState(
     val lastSyncLabel: String? = null,
     val manifestVersionLabel: String? = null,
     val syncMessage: String? = null,
-    val overlayInteractionEnabled: Boolean = true,
-    val bubbleOpacityPercent: Int = 72,
+    val autoDetectStatus: AutoDetectStatus = AutoDetectStatus.WAITING,
+    val autoDetectDebugInfo: AutoDetectDebugInfo = AutoDetectDebugInfo(),
+    val visionBaseUrl: String = "",
+    val visionApiKey: String = "",
+    val visionModel: String = "",
+    val visionBackupBaseUrl: String = "",
+    val visionBackupApiKey: String = "",
+    val visionBackupModel: String = "",
     val cardRules: CardRulesCatalog = emptyMap(),
+    val recognizedHeroes: List<ResolvedHeroStatOption> = emptyList(),
+    val heroStatsUpdatedAtLabel: String? = null,
+    val selectedHeroCardId: String? = null,
+    val selectedHeroName: String? = null,
+    val selectedHeroSlot: Int? = null,
     val allStrategies: List<StrategyComp> = emptyList(),
     val strategies: List<StrategyComp> = emptyList(),
     val selectedStrategyId: String? = null
 ) {
     val selectedStrategy: StrategyComp?
         get() = strategies.firstOrNull { it.id == selectedStrategyId }
+
+    val selectedHero: ResolvedHeroStatOption?
+        get() = recognizedHeroes.firstOrNull { hero ->
+            (!selectedHeroCardId.isNullOrBlank() && hero.heroCardId == selectedHeroCardId) ||
+                (selectedHeroSlot != null && hero.slot == selectedHeroSlot) ||
+                (!selectedHeroName.isNullOrBlank() &&
+                    (hero.displayName == selectedHeroName || hero.recognizedName == selectedHeroName))
+        }
 }
 
 class MainViewModel(
@@ -58,12 +89,27 @@ class MainViewModel(
 
     private data class UiMetaInputs(
         val selectedStrategyId: String?,
-        val awaitingManualStrategySelection: Boolean,
         val isRefreshing: Boolean,
         val syncMessage: String?,
-        val overlaySettings: OverlaySettings,
         val manifestVersion: String?,
-        val cardRules: CardRulesCatalog
+        val cardRules: CardRulesCatalog,
+        val visionApiSettings: VisionApiSettings,
+        val recognizedHeroOptions: List<HeroSelectionVisionHeroOption>,
+        val heroStatsCatalog: BattlegroundHeroStatsCatalog,
+        val cardStatsCatalog: BattlegroundCardStatsCatalog,
+        val heroNameIndex: BattlegroundHeroNameIndex,
+        val autoDetectStatus: AutoDetectStatus,
+        val autoDetectDebugInfo: AutoDetectDebugInfo,
+        val selectedHeroCardId: String?,
+        val selectedHeroName: String?,
+        val selectedHeroSlot: Int?
+    )
+
+    private data class HeroMetaInputs(
+        val recognizedHeroOptions: List<HeroSelectionVisionHeroOption>,
+        val heroStatsCatalog: BattlegroundHeroStatsCatalog,
+        val cardStatsCatalog: BattlegroundCardStatsCatalog,
+        val heroNameIndex: BattlegroundHeroNameIndex
     )
 
     private val catalogFlow = MutableStateFlow<CatalogSnapshot?>(null)
@@ -72,12 +118,18 @@ class MainViewModel(
     )
     private val manifestUrlOverrideFlow = MutableStateFlow("")
     private val selectedStrategyFlow = MutableStateFlow<String?>(null)
-    private val awaitingManualStrategySelectionFlow = MutableStateFlow(false)
     private val isRefreshingFlow = MutableStateFlow(false)
     private val syncMessageFlow = MutableStateFlow<String?>(null)
-    private val overlaySettingsFlow = MutableStateFlow(OverlaySettings())
     private val manifestVersionFlow = MutableStateFlow<String?>(null)
     private val cardRulesFlow = MutableStateFlow<CardRulesCatalog>(emptyMap())
+    private val visionApiSettingsFlow = MutableStateFlow(VisionApiSettings())
+    private val recognizedHeroOptionsFlow = MutableStateFlow<List<HeroSelectionVisionHeroOption>>(emptyList())
+    private val heroStatsCatalogFlow = MutableStateFlow(BattlegroundHeroStatsCatalog())
+    private val cardStatsCatalogFlow = MutableStateFlow(BattlegroundCardStatsCatalog())
+    private val heroNameIndexFlow = MutableStateFlow(BattlegroundHeroNameIndex())
+    private val autoDetectStatusFlow = OverlayService.autoDetectStatus
+    private val autoDetectDebugInfoFlow = OverlayService.autoDetectDebugInfo
+    private val heroSelectionSessionFlow = HeroSelectionSessionStore.state
     private var appContext: Context? = null
 
     private val filterInputsFlow = combine(
@@ -94,27 +146,70 @@ class MainViewModel(
 
     private val uiSelectionFlow = combine(
         selectedStrategyFlow,
-        awaitingManualStrategySelectionFlow,
         isRefreshingFlow
-    ) { selectedId, awaitingManualSelection, isRefreshing ->
-        Triple(selectedId, awaitingManualSelection, isRefreshing)
+    ) { selectedId, isRefreshing ->
+        selectedId to isRefreshing
+    }
+
+    private val uiCatalogMetaFlow = combine(
+        syncMessageFlow,
+        manifestVersionFlow,
+        cardRulesFlow
+    ) { syncMessage, manifestVersion, cardRules ->
+        Triple(syncMessage, manifestVersion, cardRules)
+    }
+
+    private val uiHeroMetaFlow = combine(
+        recognizedHeroOptionsFlow,
+        heroStatsCatalogFlow,
+        cardStatsCatalogFlow,
+        heroNameIndexFlow
+    ) { recognizedHeroOptions, heroStatsCatalog, cardStatsCatalog, heroNameIndex ->
+        HeroMetaInputs(
+            recognizedHeroOptions = recognizedHeroOptions,
+            heroStatsCatalog = heroStatsCatalog,
+            cardStatsCatalog = cardStatsCatalog,
+            heroNameIndex = heroNameIndex
+        )
+    }
+
+    private val uiSupportMetaFlow = combine(
+        uiCatalogMetaFlow,
+        visionApiSettingsFlow,
+        uiHeroMetaFlow,
+        autoDetectStatusFlow,
+        autoDetectDebugInfoFlow
+    ) { catalogMeta, visionApiSettings, heroMeta, autoDetectStatus, autoDetectDebugInfo ->
+        UiMetaInputs(
+            selectedStrategyId = null,
+            isRefreshing = false,
+            syncMessage = catalogMeta.first,
+            manifestVersion = catalogMeta.second,
+            cardRules = catalogMeta.third,
+            visionApiSettings = visionApiSettings,
+            recognizedHeroOptions = heroMeta.recognizedHeroOptions,
+            heroStatsCatalog = heroMeta.heroStatsCatalog,
+            cardStatsCatalog = heroMeta.cardStatsCatalog,
+            heroNameIndex = heroMeta.heroNameIndex,
+            autoDetectStatus = autoDetectStatus,
+            autoDetectDebugInfo = autoDetectDebugInfo,
+            selectedHeroCardId = null,
+            selectedHeroName = null,
+            selectedHeroSlot = null
+        )
     }
 
     private val uiMetaFlow = combine(
         uiSelectionFlow,
-        syncMessageFlow,
-        overlaySettingsFlow,
-        manifestVersionFlow,
-        cardRulesFlow
-    ) { selection, syncMessage, overlaySettings, manifestVersion, cardRules ->
-        UiMetaInputs(
+        uiSupportMetaFlow,
+        heroSelectionSessionFlow
+    ) { selection, support, heroSession ->
+        support.copy(
             selectedStrategyId = selection.first,
-            awaitingManualStrategySelection = selection.second,
-            isRefreshing = selection.third,
-            syncMessage = syncMessage,
-            overlaySettings = overlaySettings,
-            manifestVersion = manifestVersion,
-            cardRules = cardRules
+            isRefreshing = selection.second,
+            selectedHeroCardId = heroSession.selectedHeroCardId,
+            selectedHeroName = heroSession.selectedHeroName,
+            selectedHeroSlot = heroSession.selectedHeroSlot
         )
     }
 
@@ -124,8 +219,24 @@ class MainViewModel(
             allStrategies = snapshot?.catalog?.comps.orEmpty(),
             selectedTribes = filterInputs.selectedTribes
         ).sortedWith(compareBy<StrategyComp> { strategyTierRank(it.tier) }.thenBy { it.name })
-        val resolvedId = uiMeta.selectedStrategyId?.takeIf { id -> filtered.any { it.id == id } }
-            ?: if (uiMeta.awaitingManualStrategySelection) null else filtered.firstOrNull()?.id
+        val recognizedHeroes = resolveRecognizedHeroes(
+            heroOptions = uiMeta.recognizedHeroOptions,
+            heroStatsCatalog = uiMeta.heroStatsCatalog,
+            cardStatsCatalog = uiMeta.cardStatsCatalog,
+            heroNameIndex = uiMeta.heroNameIndex,
+            selectedTribes = filterInputs.selectedTribes,
+            allStrategies = snapshot?.catalog?.comps.orEmpty()
+        )
+        val selectedHero = recognizedHeroes.firstOrNull { hero ->
+            (!uiMeta.selectedHeroCardId.isNullOrBlank() && hero.heroCardId == uiMeta.selectedHeroCardId) ||
+                (uiMeta.selectedHeroSlot != null && hero.slot == uiMeta.selectedHeroSlot) ||
+                (!uiMeta.selectedHeroName.isNullOrBlank() &&
+                    (hero.displayName == uiMeta.selectedHeroName || hero.recognizedName == uiMeta.selectedHeroName))
+        }
+        val orderedStrategies = sortStrategiesForSelectedHero(filtered, selectedHero)
+        val resolvedId = uiMeta.selectedStrategyId?.takeIf { id -> orderedStrategies.any { it.id == id } }
+            ?: selectedHero?.recommendation?.recommendedCompId?.takeIf { id -> orderedStrategies.any { it.id == id } }
+            ?: orderedStrategies.firstOrNull()?.id
 
         DashboardUiState(
             appVersionLabel = BuildConfig.VERSION_NAME,
@@ -139,11 +250,22 @@ class MainViewModel(
             lastSyncLabel = formatTimestamp(snapshot?.lastSyncAt),
             manifestVersionLabel = uiMeta.manifestVersion,
             syncMessage = uiMeta.syncMessage,
-            overlayInteractionEnabled = uiMeta.overlaySettings.interactionEnabled,
-            bubbleOpacityPercent = uiMeta.overlaySettings.bubbleOpacityPercent,
+            autoDetectStatus = uiMeta.autoDetectStatus,
+            autoDetectDebugInfo = uiMeta.autoDetectDebugInfo,
+            visionBaseUrl = uiMeta.visionApiSettings.baseUrl,
+            visionApiKey = uiMeta.visionApiSettings.apiKey,
+            visionModel = uiMeta.visionApiSettings.model,
+            visionBackupBaseUrl = uiMeta.visionApiSettings.backupBaseUrl,
+            visionBackupApiKey = uiMeta.visionApiSettings.backupApiKey,
+            visionBackupModel = uiMeta.visionApiSettings.backupModel,
             cardRules = uiMeta.cardRules,
+            recognizedHeroes = recognizedHeroes,
+            heroStatsUpdatedAtLabel = formatIsoTimestamp(uiMeta.heroStatsCatalog.lastUpdateDate),
+            selectedHeroCardId = uiMeta.selectedHeroCardId,
+            selectedHeroName = uiMeta.selectedHeroName,
+            selectedHeroSlot = uiMeta.selectedHeroSlot,
             allStrategies = snapshot?.catalog?.comps.orEmpty(),
-            strategies = filtered,
+            strategies = orderedStrategies,
             selectedStrategyId = resolvedId
         )
     }.stateIn(
@@ -159,7 +281,7 @@ class MainViewModel(
         val dashboardPreferences = preferences.loadDashboardPreferences()
         selectedTribesFlow.value = dashboardPreferences.selectedTribes
         manifestUrlOverrideFlow.value = dashboardPreferences.manifestUrlOverride
-        overlaySettingsFlow.value = preferences.loadOverlaySettings()
+        visionApiSettingsFlow.value = preferences.loadVisionApiSettings()
         manifestVersionFlow.value = preferences.loadLastManifestVersion()
 
         if (catalogFlow.value != null) return
@@ -167,48 +289,21 @@ class MainViewModel(
         viewModelScope.launch {
             val snapshot = repository.loadCatalog(context.applicationContext)
             cardRulesFlow.value = repository.loadCardRules(context.applicationContext)
+            heroNameIndexFlow.value = repository.loadHeroNameIndex(context.applicationContext)
+            heroStatsCatalogFlow.value = repository.loadHeroStats(context.applicationContext)
+            cardStatsCatalogFlow.value = repository.loadCardStats(context.applicationContext)
             catalogFlow.value = snapshot
             if (hasConfiguredManifestSource()) {
                 refreshCatalog(silent = true)
+            } else {
+                refreshHeroStats(silent = true)
             }
         }
-    }
-
-    fun toggleTribe(tribe: Tribe) {
-        var changed = false
-        selectedTribesFlow.update { current ->
-            when {
-                current.contains(tribe) -> {
-                    changed = true
-                    current - tribe
-                }
-                current.size >= 5 -> current
-                else -> {
-                    changed = true
-                    current + tribe
-                }
-            }
-        }
-        if (changed) {
-            selectedStrategyFlow.value = null
-            awaitingManualStrategySelectionFlow.value = true
-        }
-        persistDashboardPreferences()
     }
 
     fun updateManifestUrlOverride(value: String) {
         manifestUrlOverrideFlow.value = value
         persistDashboardPreferences()
-    }
-
-    fun setOverlayInteractionEnabled(enabled: Boolean) {
-        overlaySettingsFlow.update { it.copy(interactionEnabled = enabled) }
-        persistOverlaySettings()
-    }
-
-    fun setBubbleOpacityPercent(value: Int) {
-        overlaySettingsFlow.update { it.copy(bubbleOpacityPercent = value.coerceIn(35, 100)) }
-        persistOverlaySettings()
     }
 
     fun refreshCatalog(silent: Boolean = false) {
@@ -230,6 +325,16 @@ class MainViewModel(
             }.onSuccess { result ->
                 catalogFlow.value = result.snapshot
                 cardRulesFlow.value = repository.loadCardRules(context, ignoreMemoryCache = true)
+                runCatching {
+                    repository.loadHeroStats(context, ignoreMemoryCache = true)
+                }.onSuccess { heroStats ->
+                    heroStatsCatalogFlow.value = heroStats
+                }
+                runCatching {
+                    repository.loadCardStats(context, ignoreMemoryCache = true)
+                }.onSuccess { cardStats ->
+                    cardStatsCatalogFlow.value = cardStats
+                }
                 manifestVersionFlow.value = result.manifestVersion
                 syncMessageFlow.value = when {
                     result.wasUpdated -> "已同步到 ${result.snapshot.catalog.version}"
@@ -247,7 +352,86 @@ class MainViewModel(
 
     fun selectStrategy(strategyId: String) {
         selectedStrategyFlow.value = strategyId
-        awaitingManualStrategySelectionFlow.value = false
+    }
+
+    fun resolvePreviewHeroes(result: HeroSelectionVisionResult): List<ResolvedHeroStatOption> {
+        val detectedTribes = result.toDomainTribes()
+        val effectiveSelectedTribes = detectedTribes.takeIf { it.size == 5 } ?: selectedTribesFlow.value
+        return resolveRecognizedHeroes(
+            heroOptions = result.selectableHeroOptions,
+            heroStatsCatalog = heroStatsCatalogFlow.value,
+            cardStatsCatalog = cardStatsCatalogFlow.value,
+            heroNameIndex = heroNameIndexFlow.value,
+            selectedTribes = effectiveSelectedTribes,
+            allStrategies = catalogFlow.value?.catalog?.comps.orEmpty()
+        )
+    }
+
+    fun applyVisionResult(result: HeroSelectionVisionResult) {
+        val validation = HeroSelectionVisionValidator.validate(
+            result,
+            requireCompleteTribes = false
+        )
+        if (!validation.isValid) {
+            syncMessageFlow.value = "AI 识图结果未通过校验：${validation.errors.firstOrNull() ?: "未知错误"}"
+            return
+        }
+
+        val recognizedHeroNames = result.selectableHeroOptions
+            .mapNotNull { option -> option.name?.trim()?.takeIf(String::isNotBlank) }
+            .distinct()
+        val detectedTribes = result.toDomainTribes()
+        val effectiveSelectedTribes = detectedTribes.takeIf { it.size == 5 } ?: selectedTribesFlow.value
+        val resolvedHeroes = resolveRecognizedHeroes(
+            heroOptions = result.selectableHeroOptions,
+            heroStatsCatalog = heroStatsCatalogFlow.value,
+            cardStatsCatalog = cardStatsCatalogFlow.value,
+            heroNameIndex = heroNameIndexFlow.value,
+            selectedTribes = effectiveSelectedTribes,
+            allStrategies = catalogFlow.value?.catalog?.comps.orEmpty()
+        )
+
+        if (detectedTribes.size == 5) {
+            selectedTribesFlow.value = detectedTribes
+        }
+        recognizedHeroOptionsFlow.value = result.selectableHeroOptions
+        HeroSelectionSessionStore.updateVisionResult(
+            selectedTribes = effectiveSelectedTribes,
+            recognizedHeroes = resolvedHeroes
+        )
+        selectedStrategyFlow.value = null
+        syncMessageFlow.value = buildString {
+            append("已应用 AI 识图结果：")
+            if (detectedTribes.size == 5) {
+                append(result.availableTribes.joinToString(" / ") { it.label })
+            } else {
+                append("5族未稳定，沿用当前环境")
+            }
+            if (recognizedHeroNames.isNotEmpty()) {
+                append("；可用英雄：")
+                append(recognizedHeroNames.joinToString(" / "))
+            }
+            if (resolvedHeroes.isNotEmpty()) {
+                append("；统计命中 ${resolvedHeroes.count { it.hasStats }}/")
+                append(resolvedHeroes.size)
+            }
+        }
+        persistDashboardPreferences()
+    }
+
+    private fun refreshHeroStats(silent: Boolean) {
+        val context = appContext ?: return
+        viewModelScope.launch {
+            runCatching {
+                repository.refreshHeroStats(context)
+            }.onSuccess { heroStats ->
+                heroStatsCatalogFlow.value = heroStats
+            }.onFailure { error ->
+                if (!silent && syncMessageFlow.value.isNullOrBlank()) {
+                    syncMessageFlow.value = error.message ?: "英雄统计同步失败"
+                }
+            }
+        }
     }
 
     private fun persistDashboardPreferences() {
@@ -274,12 +458,42 @@ class MainViewModel(
         return override.ifBlank { BuildConfig.DEFAULT_MANIFEST_URL }
     }
 
-    private fun persistOverlaySettings() {
-        val context = appContext ?: return
-        val settings = overlaySettingsFlow.value
-        AppPreferences(context).saveOverlaySettings(
-            interactionEnabled = settings.interactionEnabled,
-            bubbleOpacityPercent = settings.bubbleOpacityPercent
+    private fun resolveRecognizedHeroes(
+        heroOptions: List<HeroSelectionVisionHeroOption>,
+        heroStatsCatalog: BattlegroundHeroStatsCatalog,
+        cardStatsCatalog: BattlegroundCardStatsCatalog,
+        heroNameIndex: BattlegroundHeroNameIndex,
+        selectedTribes: Set<Tribe>,
+        allStrategies: List<StrategyComp>
+    ): List<ResolvedHeroStatOption> {
+        return HeroSelectionRecommendationEngine.resolveRecognizedHeroes(
+            heroOptions = heroOptions,
+            heroStatsCatalog = heroStatsCatalog,
+            cardStatsCatalog = cardStatsCatalog,
+            heroNameIndex = heroNameIndex,
+            selectedTribes = selectedTribes,
+            allStrategies = allStrategies
+        )
+    }
+
+    private fun sortStrategiesForSelectedHero(
+        strategies: List<StrategyComp>,
+        selectedHero: ResolvedHeroStatOption?
+    ): List<StrategyComp> {
+        val pinnedIds = listOfNotNull(
+            selectedHero?.recommendation?.recommendedCompId,
+            selectedHero?.recommendation?.fallbackCompId
+        )
+        if (pinnedIds.isEmpty()) return strategies
+        val originalOrder = strategies.withIndex().associate { it.value.id to it.index }
+        return strategies.sortedWith(
+            compareByDescending<StrategyComp> { strategy ->
+                when (strategy.id) {
+                    pinnedIds.getOrNull(0) -> 2
+                    pinnedIds.getOrNull(1) -> 1
+                    else -> 0
+                }
+            }.thenBy { originalOrder[it.id] ?: Int.MAX_VALUE }
         )
     }
 
@@ -288,4 +502,13 @@ class MainViewModel(
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
         return formatter.format(Date(timestamp))
     }
+
+    private fun formatIsoTimestamp(raw: String?): String? {
+        val trimmed = raw?.trim()?.takeIf(String::isNotBlank) ?: return null
+        return trimmed
+            .replace('T', ' ')
+            .removeSuffix("Z")
+            .take(16)
+    }
+
 }

@@ -4,6 +4,8 @@
 
 - GitHub Actions 定时拉取上游数据
 - 转换为项目可用的 `strategies.json`
+- 同步英雄统计 `hero-stats.json`
+- 同步卡牌统计 `card-stats.json`
 - 生成 `manifest.json`
 - 发布到 GitHub Pages
 - 供安卓客户端在线检查更新
@@ -43,12 +45,18 @@ schedule:
   `https://static.firestoneapp.com/data/i18n/enUS.json?v=1196-main`
 - 中文语言包  
   `https://static.firestoneapp.com/data/i18n/zhCN.json?v=1196-main`
+- 英雄统计  
+  `https://static.zerotoheroes.com/api/bgs/hero-stats/mmr-100/all-time/overview-from-hourly.gz.json`
+- 卡牌统计  
+  `https://static.zerotoheroes.com/api/bgs/card-stats/mmr-100/all-time/overview-from-hourly.gz.json`
 
 其中：
 
 - `bgs-comps-strategies` 提供阵容、核心牌、强度、难度、英文攻略提示
 - `zhCN.json` 提供阵容名中文翻译
 - `strategy_translations_zhCN.json` 负责补齐目前项目里手工整理的中文运营说明
+- `overview-from-hourly.gz.json` 提供英雄均名、样本量和分种族环境收益
+- `card-stats` 提供核心随从在不同回合拿到时的平均名次收益，可用于生成主核优先级和转向条件
 
 ## 构建产物
 
@@ -104,6 +112,19 @@ schedule:
 
 一个简单的静态说明页，便于手工查看当前发布版本。
 
+### `hero-stats.json`
+
+英雄统计文件，客户端现在会优先从我们自己的 GitHub Pages `manifest.support_files.heroStats`
+下载，不再把正式刷新流程直接绑死在 Zero to Heroes 域名上。
+
+### `card-stats.json`
+
+卡牌统计文件，客户端会缓存到本地，后面可用于：
+
+- 关键牌优先级
+- 主阵容转向备选阵容
+- “几回合前没拿到主核就该转”的提示
+
 ## 本地调试
 
 可以直接在本地执行：
@@ -127,6 +148,8 @@ python tools/build_pages_bundle.py \
 - `site/manifest.json`
 - `site/strategies.json`
 - `site/strategies.enUS.json`
+- `site/hero-stats.json`
+- `site/card-stats.json`
 - `site/index.html`
 
 ## 启用 GitHub Pages

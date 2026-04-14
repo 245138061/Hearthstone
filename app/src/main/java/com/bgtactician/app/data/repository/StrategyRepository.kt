@@ -3,8 +3,11 @@ package com.bgtactician.app.data.repository
 import android.content.Context
 import com.bgtactician.app.BuildConfig
 import com.bgtactician.app.data.local.AppPreferences
+import com.bgtactician.app.data.model.BattlegroundCardStatsCatalog
 import com.bgtactician.app.data.model.CardRuleEntry
 import com.bgtactician.app.data.model.CardRulesCatalog
+import com.bgtactician.app.data.model.BattlegroundHeroNameIndex
+import com.bgtactician.app.data.model.BattlegroundHeroStatsCatalog
 import com.bgtactician.app.data.model.CatalogRefreshResult
 import com.bgtactician.app.data.model.CatalogSnapshot
 import com.bgtactician.app.data.model.RemoteCatalogFile
@@ -30,6 +33,9 @@ class StrategyRepository {
 
     private var cachedSnapshot: CatalogSnapshot? = null
     private var cachedCardRules: CardRulesCatalog? = null
+    private var cachedCardStats: BattlegroundCardStatsCatalog? = null
+    private var cachedHeroStats: BattlegroundHeroStatsCatalog? = null
+    private var cachedHeroNameIndex: BattlegroundHeroNameIndex? = null
 
     suspend fun loadCatalog(context: Context, ignoreMemoryCache: Boolean = false): CatalogSnapshot {
         if (!ignoreMemoryCache) {
@@ -78,6 +84,73 @@ class StrategyRepository {
                 emptyMap()
             }
             snapshot.also { cachedCardRules = it }
+        }
+    }
+
+    suspend fun loadHeroStats(
+        context: Context,
+        ignoreMemoryCache: Boolean = false
+    ): BattlegroundHeroStatsCatalog {
+        if (!ignoreMemoryCache) {
+            cachedHeroStats?.let { return it }
+        }
+
+        return withContext(Dispatchers.IO) {
+            val cacheFile = heroStatsCacheFile(context)
+            val snapshot = if (cacheFile.exists()) {
+                runCatching {
+                    decodeHeroStats(cacheFile.readText())
+                }.getOrDefault(BattlegroundHeroStatsCatalog())
+            } else {
+                BattlegroundHeroStatsCatalog()
+            }
+            snapshot.also { cachedHeroStats = it }
+        }
+    }
+
+    suspend fun loadCardStats(
+        context: Context,
+        ignoreMemoryCache: Boolean = false
+    ): BattlegroundCardStatsCatalog {
+        if (!ignoreMemoryCache) {
+            cachedCardStats?.let { return it }
+        }
+
+        return withContext(Dispatchers.IO) {
+            val cacheFile = cardStatsCacheFile(context)
+            val snapshot = if (cacheFile.exists()) {
+                runCatching {
+                    decodeCardStats(cacheFile.readText())
+                }.getOrDefault(BattlegroundCardStatsCatalog())
+            } else {
+                BattlegroundCardStatsCatalog()
+            }
+            snapshot.also { cachedCardStats = it }
+        }
+    }
+
+    suspend fun refreshHeroStats(context: Context): BattlegroundHeroStatsCatalog {
+        return withContext(Dispatchers.IO) {
+            val raw = downloadTextWithRetry(HERO_STATS_URL)
+            val decoded = decodeHeroStats(raw)
+            writeAtomically(heroStatsCacheFile(context), raw)
+            decoded.also { cachedHeroStats = it }
+        }
+    }
+
+    suspend fun loadHeroNameIndex(
+        context: Context,
+        ignoreMemoryCache: Boolean = false
+    ): BattlegroundHeroNameIndex {
+        if (!ignoreMemoryCache) {
+            cachedHeroNameIndex?.let { return it }
+        }
+
+        return withContext(Dispatchers.IO) {
+            val snapshot = decodeHeroNameIndex(
+                context.assets.open(HERO_NAME_INDEX_ASSET).bufferedReader().use { it.readText() }
+            )
+            snapshot.also { cachedHeroNameIndex = it }
         }
     }
 
@@ -170,6 +243,10 @@ class StrategyRepository {
 
     private fun cardRulesCacheFile(context: Context): File = File(context.filesDir, CARD_RULES_CACHE_FILE)
 
+    private fun cardStatsCacheFile(context: Context): File = File(context.filesDir, CARD_STATS_CACHE_FILE)
+
+    private fun heroStatsCacheFile(context: Context): File = File(context.filesDir, HERO_STATS_CACHE_FILE)
+
     private fun bundledSnapshot(context: Context): CatalogSnapshot {
         return CatalogSnapshot(
             catalog = decode(context.assets.open(ASSET_FILE).bufferedReader().use { it.readText() }),
@@ -180,6 +257,15 @@ class StrategyRepository {
     private fun decode(raw: String): StrategyCatalog = json.decodeFromString<StrategyCatalog>(raw)
 
     private fun decodeCardRules(raw: String): CardRulesCatalog = json.decodeFromString<Map<String, CardRuleEntry>>(raw)
+
+    private fun decodeCardStats(raw: String): BattlegroundCardStatsCatalog =
+        json.decodeFromString<BattlegroundCardStatsCatalog>(raw)
+
+    private fun decodeHeroStats(raw: String): BattlegroundHeroStatsCatalog =
+        json.decodeFromString<BattlegroundHeroStatsCatalog>(raw)
+
+    private fun decodeHeroNameIndex(raw: String): BattlegroundHeroNameIndex =
+        json.decodeFromString<BattlegroundHeroNameIndex>(raw)
 
     private fun decodeManifest(raw: String): RemoteManifest = json.decodeFromString<RemoteManifest>(raw)
 
@@ -228,26 +314,82 @@ class StrategyRepository {
         manifest: RemoteManifest,
         manifestUrl: String
     ): Boolean {
-        val supportFile = manifest.supportFiles[CARD_RULES_RESOURCE_KEY] ?: return false
-        val cacheFile = cardRulesCacheFile(context)
+        var updated = false
+
+        manifest.supportFiles[CARD_RULES_RESOURCE_KEY]?.let { supportFile ->
+            val raw = syncSupportFile(
+                cacheFile = cardRulesCacheFile(context),
+                manifestUrl = manifestUrl,
+                supportFile = supportFile,
+                resourceLabel = "card rules"
+            )
+            if (raw != null) {
+                cachedCardRules = decodeCardRules(raw)
+                updated = true
+            } else if (cachedCardRules == null) {
+                cachedCardRules = runCatching {
+                    decodeCardRules(cardRulesCacheFile(context).readText())
+                }.getOrDefault(emptyMap())
+            }
+        }
+
+        manifest.supportFiles[CARD_STATS_RESOURCE_KEY]?.let { supportFile ->
+            val raw = syncSupportFile(
+                cacheFile = cardStatsCacheFile(context),
+                manifestUrl = manifestUrl,
+                supportFile = supportFile,
+                resourceLabel = "card stats"
+            )
+            if (raw != null) {
+                cachedCardStats = decodeCardStats(raw)
+                updated = true
+            } else if (cachedCardStats == null) {
+                cachedCardStats = runCatching {
+                    decodeCardStats(cardStatsCacheFile(context).readText())
+                }.getOrDefault(BattlegroundCardStatsCatalog())
+            }
+        }
+
+        manifest.supportFiles[HERO_STATS_RESOURCE_KEY]?.let { supportFile ->
+            val raw = syncSupportFile(
+                cacheFile = heroStatsCacheFile(context),
+                manifestUrl = manifestUrl,
+                supportFile = supportFile,
+                resourceLabel = "hero stats"
+            )
+            if (raw != null) {
+                cachedHeroStats = decodeHeroStats(raw)
+                updated = true
+            } else if (cachedHeroStats == null) {
+                cachedHeroStats = runCatching {
+                    decodeHeroStats(heroStatsCacheFile(context).readText())
+                }.getOrDefault(BattlegroundHeroStatsCatalog())
+            }
+        }
+
+        return updated
+    }
+
+    private fun syncSupportFile(
+        cacheFile: File,
+        manifestUrl: String,
+        supportFile: RemoteCatalogFile,
+        resourceLabel: String
+    ): String? {
         val cacheText = cacheFile.takeIf(File::exists)?.readText()
         val existingHash = cacheText?.let(::sha256)
 
         if (existingHash == supportFile.sha256) {
-            if (cachedCardRules == null) {
-                cachedCardRules = runCatching { decodeCardRules(cacheText) }.getOrDefault(emptyMap())
-            }
-            return false
+            return null
         }
 
         val raw = downloadTextWithRetry(resolveCatalogUrl(manifestUrl, supportFile))
         val actualHash = sha256(raw)
         require(actualHash == supportFile.sha256) {
-            "远程 card rules 校验失败，哈希不匹配"
+            "远程 $resourceLabel 校验失败，哈希不匹配"
         }
         writeAtomically(cacheFile, raw)
-        cachedCardRules = decodeCardRules(raw)
-        return true
+        return raw
     }
 
     private fun downloadText(url: String): String {
@@ -322,8 +464,15 @@ class StrategyRepository {
 
     companion object {
         private const val ASSET_FILE = "strategies_zerotoheroes_zhCN.json"
+        private const val HERO_NAME_INDEX_ASSET = "bgs_hero_name_index.json"
         private const val CACHE_FILE = "strategies_cache.json"
         private const val CARD_RULES_CACHE_FILE = "card_rules_cache.json"
+        private const val CARD_STATS_CACHE_FILE = "card_stats_cache.json"
+        private const val HERO_STATS_CACHE_FILE = "hero_stats_cache.json"
         private const val CARD_RULES_RESOURCE_KEY = "cardRules"
+        private const val CARD_STATS_RESOURCE_KEY = "cardStats"
+        private const val HERO_STATS_RESOURCE_KEY = "heroStats"
+        private const val HERO_STATS_URL =
+            "https://static.zerotoheroes.com/api/bgs/hero-stats/mmr-100/all-time/overview-from-hourly.gz.json"
     }
 }

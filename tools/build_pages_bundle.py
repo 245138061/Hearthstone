@@ -16,6 +16,8 @@ DEFAULT_STRATEGIES_URL = "https://static.zerotoheroes.com/hearthstone/data/battl
 DEFAULT_LOCALE_EN_URL = "https://static.firestoneapp.com/data/i18n/enUS.json?v=1196-main"
 DEFAULT_LOCALE_ZH_URL = "https://static.firestoneapp.com/data/i18n/zhCN.json?v=1196-main"
 DEFAULT_CARD_RULES_URL = "https://static.firestoneapp.com/data/cards/card-rules.gz.json"
+DEFAULT_CARD_STATS_URL = "https://static.zerotoheroes.com/api/bgs/card-stats/mmr-100/all-time/overview-from-hourly.gz.json"
+DEFAULT_HERO_STATS_URL = "https://static.zerotoheroes.com/api/bgs/hero-stats/mmr-100/all-time/overview-from-hourly.gz.json"
 DEFAULT_CARD_NAMES_ZH_URL = "https://api.hearthstonejson.com/v1/latest/zhCN/cards.json"
 DEFAULT_TRANSLATIONS_ZH = Path(__file__).with_name("strategy_translations_zhCN.json")
 
@@ -102,6 +104,8 @@ def build_bundle(
     locale_en_source: str,
     locale_zh_source: str,
     card_rules_source: str,
+    card_stats_source: str,
+    hero_stats_source: str,
     card_names_zh_source: str,
     translations_zh_source: str,
 ) -> None:
@@ -130,6 +134,14 @@ def build_bundle(
     if not isinstance(card_rules, dict) or not card_rules:
         raise ValueError("card rules payload is empty")
     card_rules_size, card_rules_sha = write_json(output_dir / "card-rules.json", card_rules)
+    card_stats = load_json(card_stats_source)
+    if not isinstance(card_stats, dict) or not isinstance(card_stats.get("cardStats"), list) or not card_stats["cardStats"]:
+        raise ValueError("card stats payload is empty")
+    card_stats_size, card_stats_sha = write_json(output_dir / "card-stats.json", card_stats)
+    hero_stats = load_json(hero_stats_source)
+    if not isinstance(hero_stats, dict) or not isinstance(hero_stats.get("heroStats"), list) or not hero_stats["heroStats"]:
+        raise ValueError("hero stats payload is empty")
+    hero_stats_size, hero_stats_sha = write_json(output_dir / "hero-stats.json", hero_stats)
 
     manifest = {
         "manifest_format": "bgtactician.pages.v1",
@@ -161,11 +173,27 @@ def build_bundle(
                 "catalog_version": f"{base_version}-firestone-card-rules",
                 "sha256": card_rules_sha,
                 "size_bytes": card_rules_size,
+            },
+            "cardStats": {
+                "path": "card-stats.json",
+                "url": "./card-stats.json",
+                "catalog_version": f"{base_version}-zerotoheroes-card-stats",
+                "sha256": card_stats_sha,
+                "size_bytes": card_stats_size,
+            },
+            "heroStats": {
+                "path": "hero-stats.json",
+                "url": "./hero-stats.json",
+                "catalog_version": f"{base_version}-zerotoheroes-hero-stats",
+                "sha256": hero_stats_sha,
+                "size_bytes": hero_stats_size,
             }
         },
         "sources": {
             "strategies": strategies_source,
             "card_rules": card_rules_source,
+            "card_stats": card_stats_source,
+            "hero_stats": hero_stats_source,
             "locales": {
                 "zhCN": locale_zh_source,
                 "enUS": locale_en_source,
@@ -230,6 +258,8 @@ def build_bundle(
         <p><strong>Default zhCN catalog</strong>: <a href="./strategies.json">strategies.json</a></p>
         <p><strong>Fallback enUS catalog</strong>: <a href="./strategies.enUS.json">strategies.enUS.json</a></p>
         <p><strong>Card rules</strong>: <a href="./card-rules.json">card-rules.json</a></p>
+        <p><strong>Card stats</strong>: <a href="./card-stats.json">card-stats.json</a></p>
+        <p><strong>Hero stats</strong>: <a href="./hero-stats.json">hero-stats.json</a></p>
         <p><strong>Version</strong>: <code>{manifest["version"]}</code></p>
         <p><strong>Schema</strong>: <code>{manifest["schema_version"]}</code></p>
       </div>
@@ -247,6 +277,8 @@ def main() -> None:
     parser.add_argument("--locale-en", default=DEFAULT_LOCALE_EN_URL, help="English locale JSON URL or local file.")
     parser.add_argument("--locale-zh", default=DEFAULT_LOCALE_ZH_URL, help="Chinese locale JSON URL or local file.")
     parser.add_argument("--card-rules", default=DEFAULT_CARD_RULES_URL, help="Firestone card rules URL or local file.")
+    parser.add_argument("--card-stats", default=DEFAULT_CARD_STATS_URL, help="Card stats JSON URL or local file.")
+    parser.add_argument("--hero-stats", default=DEFAULT_HERO_STATS_URL, help="Hero stats JSON URL or local file.")
     parser.add_argument("--card-names-zh", default=DEFAULT_CARD_NAMES_ZH_URL, help="zhCN card names JSON URL or local file.")
     parser.add_argument(
         "--translations-zh",
@@ -261,6 +293,8 @@ def main() -> None:
         locale_en_source=args.locale_en,
         locale_zh_source=args.locale_zh,
         card_rules_source=args.card_rules,
+        card_stats_source=args.card_stats,
+        hero_stats_source=args.hero_stats,
         card_names_zh_source=args.card_names_zh,
         translations_zh_source=args.translations_zh,
     )

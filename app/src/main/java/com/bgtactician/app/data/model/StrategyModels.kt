@@ -79,5 +79,19 @@ enum class Tribe(val wireName: String, val label: String, val shortLabel: String
 
     companion object {
         fun fromWireName(value: String): Tribe? = entries.firstOrNull { it.wireName == value }
+
+        fun fromStatsRaceId(value: Int): Tribe? = when (value) {
+            20 -> BEAST
+            15 -> DEMON
+            24 -> DRAGON
+            18 -> ELEMENTAL
+            17 -> MECH
+            14 -> MURLOC
+            92 -> NAGA
+            23 -> PIRATE
+            43 -> QUILBOAR
+            11 -> UNDEAD
+            else -> null
+        }
     }
 }

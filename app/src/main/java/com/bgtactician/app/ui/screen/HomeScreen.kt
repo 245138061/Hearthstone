@@ -2,12 +2,15 @@ package com.bgtactician.app.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,10 +35,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.bgtactician.app.data.model.StrategyDataSource
 import com.bgtactician.app.viewmodel.DashboardUiState
+import com.bgtactician.app.data.model.ResolvedHeroStatOption
 
 private val WorkspaceTop = Color(0xFF071019)
 private val WorkspaceMid = Color(0xFF0B1621)
@@ -54,10 +60,20 @@ private val HomeButtonStop = Color(0xFF8D4335)
 fun HomeScreen(
     uiState: DashboardUiState,
     overlayPermissionGranted: Boolean,
+    screenCaptureGranted: Boolean,
     overlayRunning: Boolean,
     onRequestOverlayPermission: () -> Unit,
+    onRequestScreenCapturePermission: () -> Unit,
     onToggleOverlay: () -> Unit,
-    onRefreshData: () -> Unit
+    onRefreshData: () -> Unit,
+    imageDebugLoading: Boolean,
+    imageDebugTitle: String?,
+    imageDebugLines: List<String>,
+    imageDebugPreviewImage: Any?,
+    imageDebugPreviewAspectRatio: Float?,
+    imageDebugPreviewOverlayVisible: Boolean,
+    imageDebugPreviewHeroes: List<ResolvedHeroStatOption>,
+    onPickAiVisionImage: () -> Unit
 ) {
     val permissionsReady = overlayPermissionGranted
     val serviceColor = if (overlayRunning) HomeSuccess else HomeWarning
@@ -185,6 +201,82 @@ fun HomeScreen(
                             granted = overlayPermissionGranted,
                             onRequest = onRequestOverlayPermission
                         )
+                        PermissionRow(
+                            label = "屏幕识别权限",
+                            granted = screenCaptureGranted,
+                            onRequest = onRequestScreenCapturePermission
+                        )
+                    }
+
+                    HorizontalDivider(color = HomeDivider)
+
+                    SectionBlock(title = "图片识别测试") {
+                        Text(
+                            text = "AI 识图已改为内置配置模式，不需要再手动填写接口参数。",
+                            color = HomeTextMuted,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        if (uiState.visionModel.isNotBlank()) {
+                            Text(
+                                text = "当前内置模型：${uiState.visionModel}",
+                                color = HomeTextMuted,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                        if (uiState.visionBackupModel.isNotBlank()) {
+                            Text(
+                                text = "备用模型：${uiState.visionBackupModel}",
+                                color = HomeTextMuted,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                        OutlinedButton(
+                            onClick = onPickAiVisionImage,
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(14.dp)
+                        ) {
+                            Text(
+                                text = if (imageDebugLoading) "正在请求 AI 识图..." else "AI 视觉测试",
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Text(
+                            text = "把截图发给内置 AI 视觉模型，只要求返回 5 个种族，用来驱动后面的推荐结果。",
+                            color = HomeTextMuted,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        imageDebugTitle?.let { title ->
+                            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Text(
+                                    text = title,
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                imageDebugLines.forEach { line ->
+                                    Text(
+                                        text = line,
+                                        color = HomeTextMuted,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                            }
+                        }
+                        if (imageDebugPreviewImage != null) {
+                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text(
+                                    text = "绘制预览",
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                ImageDebugOverlayPreview(
+                                    image = imageDebugPreviewImage,
+                                    aspectRatio = imageDebugPreviewAspectRatio ?: 16f / 9f,
+                                    heroes = if (imageDebugPreviewOverlayVisible) imageDebugPreviewHeroes else emptyList()
+                                )
+                            }
+                        }
                     }
 
                     HorizontalDivider(color = HomeDivider)
@@ -213,6 +305,12 @@ fun HomeScreen(
                     if (!permissionsReady && !overlayRunning) {
                         Text(
                             text = "请先授权悬浮窗权限，再启动助手服务。",
+                            color = HomeTextMuted,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    } else if (!screenCaptureGranted) {
+                        Text(
+                            text = "还未授权屏幕识别，自动识别状态灯会保持等待状态。安卓 14+ / 16 下，录屏会话结束或服务重启后需要重新授权。",
                             color = HomeTextMuted,
                             style = MaterialTheme.typography.bodySmall
                         )
@@ -285,6 +383,42 @@ private fun PermissionRow(
                     fontWeight = FontWeight.Bold
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ImageDebugOverlayPreview(
+    image: Any,
+    aspectRatio: Float,
+    heroes: List<ResolvedHeroStatOption>
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xD4101822))
+    ) {
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(aspectRatio.coerceIn(1f, 3f))
+                .border(1.dp, HomeCardBorder.copy(alpha = 0.6f), RoundedCornerShape(18.dp))
+                .clip(RoundedCornerShape(18.dp))
+        ) {
+            AsyncImage(
+                model = image,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.FillBounds
+            )
+            HeroSelectionFloatingOverlay(
+                heroes = heroes,
+                selectedHero = null,
+                onClose = null,
+                onSelectHero = null,
+                previewMode = true,
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }
