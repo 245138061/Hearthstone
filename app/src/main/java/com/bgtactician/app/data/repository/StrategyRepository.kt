@@ -218,7 +218,7 @@ class StrategyRepository {
                     bundledSnapshot(context)
                 }
             }
-            val supportUpdated = syncSupportFiles(
+            val supportSync = syncSupportFiles(
                 context = context,
                 manifest = manifest,
                 manifestUrl = manifestUrl
@@ -231,10 +231,11 @@ class StrategyRepository {
 
             CatalogRefreshResult(
                 snapshot = snapshot.also { cachedSnapshot = it },
-                wasUpdated = catalogUpdated || supportUpdated,
+                wasUpdated = catalogUpdated || supportSync.updated,
                 manifestVersion = manifest.version,
                 manifestUpdatedAt = manifest.updatedAt,
-                sourceUrl = catalogUrl
+                sourceUrl = catalogUrl,
+                warnings = supportSync.warnings
             )
         }
     }
@@ -313,19 +314,21 @@ class StrategyRepository {
         context: Context,
         manifest: RemoteManifest,
         manifestUrl: String
-    ): Boolean {
+    ): SupportSyncResult {
         var updated = false
+        val warnings = mutableListOf<String>()
 
         manifest.supportFiles[CARD_RULES_RESOURCE_KEY]?.let { supportFile ->
-            val raw = syncSupportFile(
+            val result = syncSupportFile(
                 cacheFile = cardRulesCacheFile(context),
                 manifestUrl = manifestUrl,
                 supportFile = supportFile,
-                resourceLabel = "card rules"
+                resourceLabel = "卡牌规则"
             )
-            if (raw != null) {
-                cachedCardRules = decodeCardRules(raw)
-                updated = true
+            warnings += result.warnings
+            if (result.raw != null) {
+                cachedCardRules = decodeCardRules(result.raw)
+                updated = updated || result.updated
             } else if (cachedCardRules == null) {
                 cachedCardRules = runCatching {
                     decodeCardRules(cardRulesCacheFile(context).readText())
@@ -334,15 +337,16 @@ class StrategyRepository {
         }
 
         manifest.supportFiles[CARD_STATS_RESOURCE_KEY]?.let { supportFile ->
-            val raw = syncSupportFile(
+            val result = syncSupportFile(
                 cacheFile = cardStatsCacheFile(context),
                 manifestUrl = manifestUrl,
                 supportFile = supportFile,
-                resourceLabel = "card stats"
+                resourceLabel = "卡牌统计"
             )
-            if (raw != null) {
-                cachedCardStats = decodeCardStats(raw)
-                updated = true
+            warnings += result.warnings
+            if (result.raw != null) {
+                cachedCardStats = decodeCardStats(result.raw)
+                updated = updated || result.updated
             } else if (cachedCardStats == null) {
                 cachedCardStats = runCatching {
                     decodeCardStats(cardStatsCacheFile(context).readText())
@@ -351,15 +355,16 @@ class StrategyRepository {
         }
 
         manifest.supportFiles[HERO_STATS_RESOURCE_KEY]?.let { supportFile ->
-            val raw = syncSupportFile(
+            val result = syncSupportFile(
                 cacheFile = heroStatsCacheFile(context),
                 manifestUrl = manifestUrl,
                 supportFile = supportFile,
-                resourceLabel = "hero stats"
+                resourceLabel = "英雄统计"
             )
-            if (raw != null) {
-                cachedHeroStats = decodeHeroStats(raw)
-                updated = true
+            warnings += result.warnings
+            if (result.raw != null) {
+                cachedHeroStats = decodeHeroStats(result.raw)
+                updated = updated || result.updated
             } else if (cachedHeroStats == null) {
                 cachedHeroStats = runCatching {
                     decodeHeroStats(heroStatsCacheFile(context).readText())
@@ -367,7 +372,10 @@ class StrategyRepository {
             }
         }
 
-        return updated
+        return SupportSyncResult(
+            updated = updated,
+            warnings = warnings
+        )
     }
 
     private fun syncSupportFile(
@@ -375,21 +383,34 @@ class StrategyRepository {
         manifestUrl: String,
         supportFile: RemoteCatalogFile,
         resourceLabel: String
-    ): String? {
+    ): SupportFileSyncResult {
         val cacheText = cacheFile.takeIf(File::exists)?.readText()
         val existingHash = cacheText?.let(::sha256)
 
         if (existingHash == supportFile.sha256) {
-            return null
+            return SupportFileSyncResult()
         }
 
-        val raw = downloadTextWithRetry(resolveCatalogUrl(manifestUrl, supportFile))
-        val actualHash = sha256(raw)
-        require(actualHash == supportFile.sha256) {
-            "远程 $resourceLabel 校验失败，哈希不匹配"
+        val supportUrl = resolveCatalogUrl(manifestUrl, supportFile)
+        return runCatching {
+            val raw = downloadTextWithRetry(supportUrl)
+            val actualHash = sha256(raw)
+            require(actualHash == supportFile.sha256) {
+                "远程 $resourceLabel 校验失败，哈希不匹配"
+            }
+            writeAtomically(cacheFile, raw)
+            SupportFileSyncResult(
+                raw = raw,
+                updated = true
+            )
+        }.getOrElse { error ->
+            val fallbackAction = if (cacheFile.exists()) "已保留本地缓存" else "本次跳过"
+            SupportFileSyncResult(
+                warnings = listOf(
+                    "$resourceLabel 更新失败：${error.message ?: "未知错误"}；$fallbackAction"
+                )
+            )
         }
-        writeAtomically(cacheFile, raw)
-        return raw
     }
 
     private fun downloadText(url: String): String {
@@ -404,7 +425,7 @@ class StrategyRepository {
             val stream = if (connection.responseCode in 200..299) {
                 connection.inputStream
             } else {
-                throw IllegalStateException("远程更新失败: HTTP ${connection.responseCode}")
+                throw IllegalStateException("远程更新失败: HTTP ${connection.responseCode} ($url)")
             }
             stream.bufferedReader().use { it.readText() }
         } finally {
@@ -475,4 +496,15 @@ class StrategyRepository {
         private const val HERO_STATS_URL =
             "https://static.zerotoheroes.com/api/bgs/hero-stats/mmr-100/all-time/overview-from-hourly.gz.json"
     }
+
+    private data class SupportSyncResult(
+        val updated: Boolean = false,
+        val warnings: List<String> = emptyList()
+    )
+
+    private data class SupportFileSyncResult(
+        val raw: String? = null,
+        val updated: Boolean = false,
+        val warnings: List<String> = emptyList()
+    )
 }

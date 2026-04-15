@@ -36,5 +36,6 @@ data class CatalogRefreshResult(
     val wasUpdated: Boolean,
     val manifestVersion: String,
     val manifestUpdatedAt: String,
-    val sourceUrl: String
+    val sourceUrl: String,
+    val warnings: List<String> = emptyList()
 )

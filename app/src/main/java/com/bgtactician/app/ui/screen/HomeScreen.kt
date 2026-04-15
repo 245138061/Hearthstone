@@ -25,11 +25,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +45,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.bgtactician.app.data.local.VisionRoutingMode
 import com.bgtactician.app.data.model.StrategyDataSource
 import com.bgtactician.app.viewmodel.DashboardUiState
 import com.bgtactician.app.data.model.ResolvedHeroStatOption
@@ -66,6 +73,7 @@ fun HomeScreen(
     onRequestScreenCapturePermission: () -> Unit,
     onToggleOverlay: () -> Unit,
     onRefreshData: () -> Unit,
+    onUpdateVisionRoutingMode: (VisionRoutingMode) -> Unit,
     imageDebugLoading: Boolean,
     imageDebugTitle: String?,
     imageDebugLines: List<String>,
@@ -79,6 +87,7 @@ fun HomeScreen(
     val serviceColor = if (overlayRunning) HomeSuccess else HomeWarning
     val serviceText = if (overlayRunning) "服务运行中..." else "服务待启动"
     val actionLabel = if (overlayRunning) "停止助手" else "启动助手"
+    var visionRoutingMenuExpanded by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -226,6 +235,45 @@ fun HomeScreen(
                         if (uiState.visionBackupModel.isNotBlank()) {
                             Text(
                                 text = "备用模型：${uiState.visionBackupModel}",
+                                color = HomeTextMuted,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Text(
+                                text = "模型策略：${uiState.visionRoutingMode.label}",
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Box {
+                                OutlinedButton(
+                                    onClick = { visionRoutingMenuExpanded = true },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(14.dp)
+                                ) {
+                                    Text(
+                                        text = "切换模型策略",
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                                DropdownMenu(
+                                    expanded = visionRoutingMenuExpanded,
+                                    onDismissRequest = { visionRoutingMenuExpanded = false }
+                                ) {
+                                    VisionRoutingMode.entries.forEach { mode ->
+                                        DropdownMenuItem(
+                                            text = { Text(mode.label) },
+                                            onClick = {
+                                                visionRoutingMenuExpanded = false
+                                                onUpdateVisionRoutingMode(mode)
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                            Text(
+                                text = "默认走自动；如果某个模型这一张图识别异常，可以临时切到仅主模型或仅备用模型。",
                                 color = HomeTextMuted,
                                 style = MaterialTheme.typography.bodySmall
                             )

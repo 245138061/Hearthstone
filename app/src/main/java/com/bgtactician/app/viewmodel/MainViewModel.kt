@@ -7,6 +7,7 @@ import com.bgtactician.app.BuildConfig
 import com.bgtactician.app.data.local.AppPreferences
 import com.bgtactician.app.data.local.HeroSelectionSessionStore
 import com.bgtactician.app.data.local.VisionApiSettings
+import com.bgtactician.app.data.local.VisionRoutingMode
 import com.bgtactician.app.data.model.AutoDetectDebugInfo
 import com.bgtactician.app.data.model.AutoDetectStatus
 import com.bgtactician.app.data.model.BattlegroundCardStatsCatalog
@@ -55,6 +56,7 @@ data class DashboardUiState(
     val visionBackupBaseUrl: String = "",
     val visionBackupApiKey: String = "",
     val visionBackupModel: String = "",
+    val visionRoutingMode: VisionRoutingMode = VisionRoutingMode.AUTO,
     val cardRules: CardRulesCatalog = emptyMap(),
     val recognizedHeroes: List<ResolvedHeroStatOption> = emptyList(),
     val heroStatsUpdatedAtLabel: String? = null,
@@ -258,6 +260,7 @@ class MainViewModel(
             visionBackupBaseUrl = uiMeta.visionApiSettings.backupBaseUrl,
             visionBackupApiKey = uiMeta.visionApiSettings.backupApiKey,
             visionBackupModel = uiMeta.visionApiSettings.backupModel,
+            visionRoutingMode = uiMeta.visionApiSettings.routingMode,
             cardRules = uiMeta.cardRules,
             recognizedHeroes = recognizedHeroes,
             heroStatsUpdatedAtLabel = formatIsoTimestamp(uiMeta.heroStatsCatalog.lastUpdateDate),
@@ -306,6 +309,12 @@ class MainViewModel(
         persistDashboardPreferences()
     }
 
+    fun updateVisionRoutingMode(mode: VisionRoutingMode) {
+        val context = appContext ?: return
+        AppPreferences(context).saveVisionRoutingMode(mode)
+        visionApiSettingsFlow.value = AppPreferences(context).loadVisionApiSettings()
+    }
+
     fun refreshCatalog(silent: Boolean = false) {
         val context = appContext ?: return
         if (!hasConfiguredManifestSource()) {
@@ -337,7 +346,11 @@ class MainViewModel(
                 }
                 manifestVersionFlow.value = result.manifestVersion
                 syncMessageFlow.value = when {
+                    result.wasUpdated && result.warnings.isNotEmpty() ->
+                        "已同步到 ${result.snapshot.catalog.version}；${result.warnings.first()}"
                     result.wasUpdated -> "已同步到 ${result.snapshot.catalog.version}"
+                    result.warnings.isNotEmpty() ->
+                        "主数据已检查完成；${result.warnings.first()}"
                     silent -> "已检查更新，当前已是最新版本"
                     else -> "当前已是最新版本"
                 }

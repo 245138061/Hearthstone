@@ -29,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bgtactician.app.autodetect.CapturedFrame
 import com.bgtactician.app.autodetect.ScreenCapturePermissionStore
 import com.bgtactician.app.data.local.VisionApiSettings
+import com.bgtactician.app.data.local.VisionRoutingMode
 import com.bgtactician.app.data.model.HeroSelectionVisionResult
 import com.bgtactician.app.data.model.HeroSelectionVisionHeroOption
 import com.bgtactician.app.data.model.ResolvedHeroStatOption
@@ -129,7 +130,8 @@ private fun MainRoute(viewModel: MainViewModel) {
                     model = uiState.visionModel.ifBlank { BuildConfig.DEFAULT_VISION_MODEL },
                     backupBaseUrl = uiState.visionBackupBaseUrl.ifBlank { BuildConfig.DEFAULT_VISION_BACKUP_BASE_URL },
                     backupApiKey = uiState.visionBackupApiKey.ifBlank { BuildConfig.DEFAULT_VISION_BACKUP_API_KEY },
-                    backupModel = uiState.visionBackupModel.ifBlank { BuildConfig.DEFAULT_VISION_BACKUP_MODEL }
+                    backupModel = uiState.visionBackupModel.ifBlank { BuildConfig.DEFAULT_VISION_BACKUP_MODEL },
+                    routingMode = uiState.visionRoutingMode
                 )
             )
             imageDebugPreviewHeroes = snapshot.visionResult
@@ -187,6 +189,7 @@ private fun MainRoute(viewModel: MainViewModel) {
         onRefreshData = {
             viewModel.refreshCatalog(silent = false)
         },
+        onUpdateVisionRoutingMode = viewModel::updateVisionRoutingMode,
         imageDebugLoading = imageDebugLoading,
         imageDebugTitle = imageDebugTitle,
         imageDebugLines = imageDebugLines,
@@ -423,27 +426,30 @@ private fun HeroSelectionVisionResult.mergeTribesFrom(
 }
 
 private fun VisionApiSettings.toVisionEndpoints(): List<VisionEndpoint> {
-    return buildList {
-        if (baseUrl.isNotBlank() && apiKey.isNotBlank() && model.isNotBlank()) {
-            add(
-                VisionEndpoint(
-                    label = "主模型",
-                    baseUrl = baseUrl,
-                    apiKey = apiKey,
-                    model = model
-                )
+    val primary = baseUrl.takeIf(String::isNotBlank)
+        ?.takeIf { apiKey.isNotBlank() && model.isNotBlank() }
+        ?.let {
+            VisionEndpoint(
+                label = "主模型",
+                baseUrl = baseUrl,
+                apiKey = apiKey,
+                model = model
             )
         }
-        if (backupBaseUrl.isNotBlank() && backupApiKey.isNotBlank() && backupModel.isNotBlank()) {
-            add(
-                VisionEndpoint(
-                    label = "备用模型",
-                    baseUrl = backupBaseUrl,
-                    apiKey = backupApiKey,
-                    model = backupModel
-                )
+    val backup = backupBaseUrl.takeIf(String::isNotBlank)
+        ?.takeIf { backupApiKey.isNotBlank() && backupModel.isNotBlank() }
+        ?.let {
+            VisionEndpoint(
+                label = "备用模型",
+                baseUrl = backupBaseUrl,
+                apiKey = backupApiKey,
+                model = backupModel
             )
         }
+    return when (routingMode) {
+        VisionRoutingMode.AUTO -> listOfNotNull(primary, backup)
+        VisionRoutingMode.PRIMARY_ONLY -> listOfNotNull(primary)
+        VisionRoutingMode.BACKUP_ONLY -> listOfNotNull(backup)
     }
 }
 

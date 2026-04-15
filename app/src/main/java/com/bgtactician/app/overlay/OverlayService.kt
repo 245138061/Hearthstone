@@ -43,6 +43,7 @@ import com.bgtactician.app.data.local.AppPreferences
 import com.bgtactician.app.data.local.HeroSelectionSessionStore
 import com.bgtactician.app.data.local.OverlaySettings
 import com.bgtactician.app.data.local.VisionApiSettings
+import com.bgtactician.app.data.local.VisionRoutingMode
 import com.bgtactician.app.data.model.AutoDetectDebugInfo
 import com.bgtactician.app.data.model.AutoDetectStatus
 import com.bgtactician.app.data.model.BattlegroundHeroNameIndex
@@ -1021,27 +1022,30 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
     }
 
     private fun VisionApiSettings.toVisionEndpoints(): List<VisionEndpoint> {
-        return buildList {
-            if (baseUrl.isNotBlank() && apiKey.isNotBlank() && model.isNotBlank()) {
-                add(
-                    VisionEndpoint(
-                        label = "主模型",
-                        baseUrl = baseUrl,
-                        apiKey = apiKey,
-                        model = model
-                    )
+        val primary = baseUrl.takeIf(String::isNotBlank)
+            ?.takeIf { apiKey.isNotBlank() && model.isNotBlank() }
+            ?.let {
+                VisionEndpoint(
+                    label = "主模型",
+                    baseUrl = baseUrl,
+                    apiKey = apiKey,
+                    model = model
                 )
             }
-            if (backupBaseUrl.isNotBlank() && backupApiKey.isNotBlank() && backupModel.isNotBlank()) {
-                add(
-                    VisionEndpoint(
-                        label = "备用模型",
-                        baseUrl = backupBaseUrl,
-                        apiKey = backupApiKey,
-                        model = backupModel
-                    )
+        val backup = backupBaseUrl.takeIf(String::isNotBlank)
+            ?.takeIf { backupApiKey.isNotBlank() && backupModel.isNotBlank() }
+            ?.let {
+                VisionEndpoint(
+                    label = "备用模型",
+                    baseUrl = backupBaseUrl,
+                    apiKey = backupApiKey,
+                    model = backupModel
                 )
             }
+        return when (routingMode) {
+            VisionRoutingMode.AUTO -> listOfNotNull(primary, backup)
+            VisionRoutingMode.PRIMARY_ONLY -> listOfNotNull(primary)
+            VisionRoutingMode.BACKUP_ONLY -> listOfNotNull(backup)
         }
     }
 

@@ -622,15 +622,19 @@ private fun DrawerSetupTab(
                             .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        DrawerSetupProgressCard(
-                            selectedCount = selectedTribes.size,
+                        DrawerRecognitionOutcomeCard(
+                            selectedTribes = selectedTribes,
                             autoDetectStatus = uiState.autoDetectStatus,
                             autoDetectDebugInfo = uiState.autoDetectDebugInfo,
+                            recognizedHeroes = uiState.recognizedHeroes,
+                            heroStatsUpdatedAtLabel = uiState.heroStatsUpdatedAtLabel,
                             modifier = Modifier.fillMaxWidth(),
                             compactHeight = compactHeight
                         )
-                        DrawerSelectedTribesCard(
-                            selectedTribes = selectedTribes,
+                        DrawerSelectedHeroFocusCard(
+                            selectedHero = uiState.selectedHero,
+                            recognizedHeroes = uiState.recognizedHeroes,
+                            onSelectHero = onSelectHero,
                             modifier = Modifier.fillMaxWidth(),
                             compactHeight = compactHeight
                         )
@@ -644,6 +648,11 @@ private fun DrawerSetupTab(
                                 compactHeight = compactHeight
                             )
                         }
+                        DrawerSelectedTribesCard(
+                            selectedTribes = selectedTribes,
+                            modifier = Modifier.fillMaxWidth(),
+                            compactHeight = compactHeight
+                        )
                         DrawerAiRecognitionTipCard(
                             selectedTribes = selectedTribes,
                             autoDetectStatus = uiState.autoDetectStatus,
@@ -669,65 +678,50 @@ private fun DrawerLandscapeSetupGrid(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.verticalScroll(rememberScrollState())
+        modifier = modifier
+            .fillMaxSize()
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Column(
             modifier = Modifier
-                .weight(0.96f)
+                .widthIn(min = 260.dp, max = 340.dp)
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Row(
+            DrawerRecognitionOutcomeCard(
+                selectedTribes = selectedTribes,
+                autoDetectStatus = autoDetectStatus,
+                autoDetectDebugInfo = autoDetectDebugInfo,
+                recognizedHeroes = recognizedHeroes,
+                heroStatsUpdatedAtLabel = heroStatsUpdatedAtLabel,
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "本局种族",
-                    color = OverlayDrawerText,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Black
-                )
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Surface(
-                        shape = RoundedCornerShape(999.dp),
-                        color = OverlayDrawerAccent.copy(alpha = 0.12f),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerAccent.copy(alpha = 0.3f))
-                    ) {
-                        Text(
-                            text = "${selectedTribes.size}/5",
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                            color = OverlayDrawerAccent,
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Black
-                        )
-                    }
-                }
-            }
-
-            DrawerAutoDetectStatusChip(status = autoDetectStatus)
-            DrawerAutoDetectHeroBanner(
-                status = autoDetectStatus,
-                onTrigger = null,
-                compact = true
+                compactHeight = true
             )
-            AutoDetectDebugSummary(
-                debugInfo = autoDetectDebugInfo,
-                compact = true
-            )
-            DrawerSelectionMeter(
-                selectedCount = selectedTribes.size,
-                targetCount = 5,
-                modifier = Modifier.fillMaxWidth()
+            DrawerSelectedHeroFocusCard(
+                selectedHero = selectedHero,
+                recognizedHeroes = recognizedHeroes,
+                onSelectHero = onSelectHero,
+                modifier = Modifier.fillMaxWidth(),
+                compactHeight = true
             )
             DrawerSelectedTribesCard(
                 selectedTribes = selectedTribes,
                 modifier = Modifier.fillMaxWidth(),
                 compactHeight = true
             )
+            DrawerAiRecognitionTipCard(
+                selectedTribes = selectedTribes,
+                autoDetectStatus = autoDetectStatus,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        Column(
+            modifier = Modifier
+                .widthIn(min = 300.dp, max = 420.dp)
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             if (showRecognizedHeroesCard) {
                 DrawerRecognizedHeroesCard(
                     recognizedHeroes = recognizedHeroes,
@@ -737,12 +731,16 @@ private fun DrawerLandscapeSetupGrid(
                     modifier = Modifier.fillMaxWidth(),
                     compactHeight = true
                 )
+            } else {
+                DrawerRecognizedHeroesCard(
+                    recognizedHeroes = recognizedHeroes,
+                    heroStatsUpdatedAtLabel = heroStatsUpdatedAtLabel,
+                    selectedHero = selectedHero,
+                    onSelectHero = onSelectHero,
+                    modifier = Modifier.fillMaxWidth(),
+                    compactHeight = true
+                )
             }
-            DrawerAiRecognitionTipCard(
-                selectedTribes = selectedTribes,
-                autoDetectStatus = autoDetectStatus,
-                modifier = Modifier.fillMaxWidth()
-            )
         }
     }
 }
@@ -825,6 +823,306 @@ private fun DrawerSetupProgressCard(
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 1
             )
+        }
+    }
+}
+
+@Composable
+private fun DrawerRecognitionOutcomeCard(
+    selectedTribes: Set<Tribe>,
+    autoDetectStatus: AutoDetectStatus,
+    autoDetectDebugInfo: AutoDetectDebugInfo,
+    recognizedHeroes: List<ResolvedHeroStatOption>,
+    heroStatsUpdatedAtLabel: String?,
+    modifier: Modifier = Modifier,
+    compactHeight: Boolean = false
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        color = OverlayDrawerAccent.copy(alpha = 0.08f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerAccent.copy(alpha = 0.18f))
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = if (compactHeight) 10.dp else 12.dp),
+            verticalArrangement = Arrangement.spacedBy(if (compactHeight) 8.dp else 10.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        text = "AI 识别结果",
+                        color = OverlayDrawerText,
+                        style = if (compactHeight) MaterialTheme.typography.titleSmall else MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Black
+                    )
+                    Text(
+                        text = when {
+                            recognizedHeroes.isNotEmpty() -> "已识别 ${recognizedHeroes.size} 个候选英雄"
+                            autoDetectStatus == AutoDetectStatus.SCANNING -> "正在读取当前英雄选择界面"
+                            else -> "等待稳定识别结果"
+                        },
+                        color = OverlayDrawerSubtext,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+                heroStatsUpdatedAtLabel?.let { updatedAt ->
+                    Text(
+                        text = updatedAt,
+                        color = OverlayDrawerSubtext,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+            }
+
+            DrawerAutoDetectStatusChip(status = autoDetectStatus)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                DrawerRecognitionMetric(
+                    label = "环境",
+                    value = if (selectedTribes.isEmpty()) "未同步" else "${selectedTribes.size}/5",
+                    highlight = OverlayDrawerAccent,
+                    modifier = Modifier.weight(1f)
+                )
+                DrawerRecognitionMetric(
+                    label = "英雄",
+                    value = if (recognizedHeroes.isEmpty()) "--" else recognizedHeroes.size.toString(),
+                    highlight = DashboardIce,
+                    modifier = Modifier.weight(1f)
+                )
+                DrawerRecognitionMetric(
+                    label = "状态",
+                    value = if (recognizedHeroes.isEmpty()) "待定" else "可推荐",
+                    highlight = if (recognizedHeroes.isEmpty()) OverlayDrawerSubtext else DashboardMint,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            autoDetectDebugInfo.recognizedTribesLabel?.takeIf { it.isNotBlank() }?.let { tribesLabel ->
+                DrawerSingleLineInfo(
+                    label = "本轮识别",
+                    value = tribesLabel
+                )
+            }
+
+            autoDetectDebugInfo.rawText?.takeIf { it.isNotBlank() }?.let { rawText ->
+                DrawerSingleLineInfo(
+                    label = "识别摘要",
+                    value = rawText,
+                    maxLines = if (compactHeight) 2 else 3
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DrawerRecognitionMetric(
+    label: String,
+    value: String,
+    highlight: Color,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(10.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.36f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, highlight.copy(alpha = 0.2f))
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(3.dp)
+        ) {
+            Text(
+                text = label,
+                color = OverlayDrawerSubtext,
+                style = MaterialTheme.typography.labelSmall
+            )
+            Text(
+                text = value,
+                color = highlight,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Black,
+                maxLines = 1
+            )
+        }
+    }
+}
+
+@Composable
+private fun DrawerSingleLineInfo(
+    label: String,
+    value: String,
+    maxLines: Int = 1
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(
+            text = label,
+            color = OverlayDrawerSubtext,
+            style = MaterialTheme.typography.labelSmall
+        )
+        Text(
+            text = value,
+            color = OverlayDrawerText,
+            style = MaterialTheme.typography.bodySmall,
+            maxLines = maxLines,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+private fun DrawerSelectedHeroFocusCard(
+    selectedHero: ResolvedHeroStatOption?,
+    recognizedHeroes: List<ResolvedHeroStatOption>,
+    onSelectHero: ((ResolvedHeroStatOption) -> Unit)?,
+    modifier: Modifier = Modifier,
+    compactHeight: Boolean = false
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.34f),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            if (selectedHero != null) recommendationTone(selectedHero).copy(alpha = 0.34f) else OverlayDrawerStrokeSoft.copy(alpha = 0.68f)
+        )
+    ) {
+        if (selectedHero == null) {
+            Column(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = if (compactHeight) 10.dp else 12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "当前选择的英雄",
+                    color = OverlayDrawerText,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Black
+                )
+                Text(
+                    text = if (recognizedHeroes.isEmpty()) {
+                        "AI 还没有稳定识别出可选英雄。"
+                    } else {
+                        "已识别到候选英雄，请在下方点选你实际选择的英雄。"
+                    },
+                    color = OverlayDrawerSubtext,
+                    style = MaterialTheme.typography.bodySmall
+                )
+                recognizedHeroes.firstOrNull()?.let { firstHero ->
+                    Surface(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(999.dp))
+                            .clickable(enabled = onSelectHero != null) { onSelectHero?.invoke(firstHero) },
+                        shape = RoundedCornerShape(999.dp),
+                        color = OverlayDrawerAccent.copy(alpha = 0.12f),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerAccent.copy(alpha = 0.24f))
+                    ) {
+                        Text(
+                            text = "快速选择 ${firstHero.displayName}",
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+                            color = OverlayDrawerAccent,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+            return@Surface
+        }
+
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = if (compactHeight) 10.dp else 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.Top
+        ) {
+            HeroPortrait(
+                hero = selectedHero,
+                modifier = Modifier.size(if (compactHeight) 72.dp else 84.dp)
+            )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        Text(
+                            text = "当前选择的英雄",
+                            color = OverlayDrawerSubtext,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                        Text(
+                            text = selectedHero.displayName,
+                            color = OverlayDrawerText,
+                            style = if (compactHeight) MaterialTheme.typography.titleSmall else MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Black,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    Surface(
+                        shape = RoundedCornerShape(999.dp),
+                        color = recommendationTone(selectedHero).copy(alpha = 0.14f),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            recommendationTone(selectedHero).copy(alpha = 0.32f)
+                        )
+                    ) {
+                        Text(
+                            text = heroRecommendationLabel(selectedHero),
+                            modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
+                            color = recommendationTone(selectedHero),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                selectedHero.recommendation?.recommendedCompName?.takeIf { it.isNotBlank() }?.let { compName ->
+                    DrawerSingleLineInfo(label = "推荐流派", value = compName)
+                }
+
+                DrawerSingleLineInfo(
+                    label = "选择理由",
+                    value = selectedHeroReasonText(selectedHero),
+                    maxLines = if (compactHeight) 3 else 4
+                )
+
+                DrawerSingleLineInfo(
+                    label = "识别命中",
+                    value = heroMatchDebugLine(selectedHero) ?: "AI 已识别，缺少命中明细",
+                    maxLines = 2
+                )
+
+                Text(
+                    text = buildString {
+                        append("均名 ")
+                        append(formatHeroAverage(selectedHero.averagePosition))
+                        append(" · 样本 ")
+                        append(formatCompactCount(selectedHero.dataPoints))
+                        heroLobbyImpactLine(selectedHero)?.let {
+                            append(" · ")
+                            append(it)
+                        }
+                    },
+                    color = OverlayDrawerSubtext,
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = if (compactHeight) 2 else 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
@@ -1354,6 +1652,96 @@ private fun HeroStatsSummaryItem(
     }
 }
 
+@Composable
+private fun HeroPortrait(
+    hero: ResolvedHeroStatOption,
+    modifier: Modifier = Modifier
+) {
+    val models = remember(hero.heroCardId) { resolveHeroPortraitModels(hero) }
+    var modelIndex by remember(models) { mutableStateOf(0) }
+    val currentModel = models.getOrNull(modelIndex)
+
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(18.dp))
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(Color(0xFF31465A), Color(0xFF121B24))
+                )
+            )
+            .border(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.72f), RoundedCornerShape(18.dp)),
+        contentAlignment = Alignment.Center
+    ) {
+        if (currentModel == null) {
+            HeroPortraitFallback(hero)
+            return@Box
+        }
+
+        SubcomposeAsyncImage(
+            model = currentModel,
+            contentDescription = hero.displayName,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+            loading = { HeroPortraitFallback(hero) },
+            error = {
+                val nextIndex = modelIndex + 1
+                if (nextIndex < models.size) {
+                    LaunchedEffect(nextIndex) {
+                        modelIndex = nextIndex
+                    }
+                } else {
+                    HeroPortraitFallback(hero)
+                }
+            }
+        )
+    }
+}
+
+@Composable
+private fun HeroPortraitFallback(hero: ResolvedHeroStatOption) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Color(0xFF31465A), Color(0xFF121B24))
+                )
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = hero.displayName.take(2),
+                color = Color.White,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Black
+            )
+            hero.heroCardId?.substringAfterLast('_')?.takeIf { it.isNotBlank() }?.let { shortId ->
+                Text(
+                    text = shortId.take(8),
+                    color = OverlayDrawerSubtext,
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1
+                )
+            }
+        }
+    }
+}
+
+private fun resolveHeroPortraitModels(hero: ResolvedHeroStatOption): List<String> {
+    val heroCardId = hero.heroCardId?.trim().orEmpty()
+    if (heroCardId.isBlank()) return emptyList()
+    return buildList {
+        // 英雄头像优先走中文渲染图，失败后再降级英文和 jpg 静态图。
+        add("https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/$heroCardId.png")
+        add("https://art.hearthstonejson.com/v1/render/latest/enUS/256x/$heroCardId.png")
+        add("https://art.hearthstonejson.com/v1/256x/$heroCardId.jpg")
+    }
+}
+
 private fun heroRecommendationLabel(hero: ResolvedHeroStatOption): String {
     return when (hero.recommendation?.tier) {
         HeroRecommendationTier.TOP_PICK -> "首选"
@@ -1451,6 +1839,15 @@ private fun heroFallbackLine(hero: ResolvedHeroStatOption): String? {
 
 private fun heroPivotHintLine(hero: ResolvedHeroStatOption): String? {
     return hero.recommendation?.pivotHint?.takeIf { it.isNotBlank() }?.let { "转向：$it" }
+}
+
+private fun selectedHeroReasonText(hero: ResolvedHeroStatOption): String {
+    return buildList {
+        hero.recommendation?.reason?.trim()?.takeIf { it.isNotBlank() }?.let(::add)
+        hero.recommendation?.summary?.trim()?.takeIf { it.isNotBlank() }?.let(::add)
+        hero.recommendation?.fallbackCompName?.takeIf { it.isNotBlank() }?.let { add("备选方案：$it") }
+        hero.recommendation?.pivotHint?.takeIf { it.isNotBlank() }?.let { add("转向提示：$it") }
+    }.joinToString("；").ifBlank { "当前还没有稳定的推荐理由" }
 }
 
 private fun heroFloatingDetailLine(hero: ResolvedHeroStatOption): String? {
