@@ -4,6 +4,7 @@ import android.content.Context
 import com.bgtactician.app.BuildConfig
 import com.bgtactician.app.data.local.AppPreferences
 import com.bgtactician.app.data.model.BattlegroundCardMetadataCatalog
+import com.bgtactician.app.data.model.BattlegroundHeroNameEntry
 import com.bgtactician.app.data.model.BattlegroundCardStatsCatalog
 import com.bgtactician.app.data.model.CardRuleEntry
 import com.bgtactician.app.data.model.CardRulesCatalog
@@ -172,9 +173,7 @@ class StrategyRepository {
         }
 
         return withContext(Dispatchers.IO) {
-            val snapshot = decodeHeroNameIndex(
-                context.assets.open(HERO_NAME_INDEX_ASSET).bufferedReader().use { it.readText() }
-            )
+            val snapshot = readHeroNameIndex(context)
             snapshot.also { cachedHeroNameIndex = it }
         }
     }
@@ -253,6 +252,7 @@ class StrategyRepository {
             preferences.saveLastManifestVersion(manifest.version)
             preferences.saveLastManifestUpdatedAt(manifest.updatedAt)
             MinionImageCache.schedulePrefetch(context, snapshot.catalog)
+            cachedHeroNameIndex = readHeroNameIndex(context)
 
             CatalogRefreshResult(
                 snapshot = snapshot.also { cachedSnapshot = it },
@@ -286,6 +286,22 @@ class StrategyRepository {
         return decodeCardMetadata(
             context.assets.open(CARD_METADATA_ASSET_FILE).bufferedReader().use { it.readText() }
         )
+    }
+
+    private fun readHeroNameIndex(context: Context): BattlegroundHeroNameIndex {
+        val baseIndex = decodeHeroNameIndex(
+            context.assets.open(HERO_NAME_INDEX_ASSET).bufferedReader().use { it.readText() }
+        )
+        val cardMetadata = runCatching {
+            val cacheFile = cardMetadataCacheFile(context)
+            when {
+                cacheFile.exists() -> decodeCardMetadata(cacheFile.readText())
+                else -> bundledCardMetadata(context)
+            }
+        }.getOrElse {
+            bundledCardMetadata(context)
+        }
+        return mergeHeroNameIndexWithCardMetadata(baseIndex, cardMetadata)
     }
 
     private fun decode(raw: String): StrategyCatalog = json.decodeFromString<StrategyCatalog>(raw)
@@ -541,6 +557,66 @@ class StrategyRepository {
         val withStatusMetadata = minions.count { !it.statusRaw.isNullOrBlank() }
 
         return withImageMetadata > 0 && withStatusMetadata > 0
+    }
+
+    internal fun mergeHeroNameIndexWithCardMetadata(
+        baseIndex: BattlegroundHeroNameIndex,
+        cardMetadata: BattlegroundCardMetadataCatalog
+    ): BattlegroundHeroNameIndex {
+        val mergedHeroes = linkedMapOf<String, BattlegroundHeroNameEntry>()
+        baseIndex.heroes.forEach { entry ->
+            mergedHeroes[entry.heroCardId] = entry.normalize()
+        }
+
+        cardMetadata.cards.forEach { (cardId, entry) ->
+            if (entry.type != "HERO") return@forEach
+
+            val englishName = entry.name.trim()
+            val localizedName = entry.localizedName?.trim().orEmpty()
+            if (englishName.isBlank() && localizedName.isBlank()) return@forEach
+
+            val existing = mergedHeroes[cardId]
+            val aliases = buildSet {
+                existing?.aliases
+                    ?.map(String::trim)
+                    ?.filter(String::isNotBlank)
+                    ?.forEach(::add)
+                englishName.takeIf(String::isNotBlank)?.let(::add)
+                localizedName.takeIf(String::isNotBlank)?.let(::add)
+                existing?.name?.trim()?.takeIf(String::isNotBlank)?.let(::add)
+                existing?.localizedName?.trim()?.takeIf(String::isNotBlank)?.let(::add)
+            }.toList()
+
+            mergedHeroes[cardId] = BattlegroundHeroNameEntry(
+                heroCardId = cardId,
+                name = existing?.name?.takeIf(String::isNotBlank)
+                    ?: englishName.takeIf(String::isNotBlank)
+                    ?: localizedName,
+                localizedName = existing?.localizedName?.takeIf(String::isNotBlank)
+                    ?: localizedName,
+                aliases = aliases
+            ).normalize()
+        }
+
+        return baseIndex.copy(
+            heroes = mergedHeroes.values.sortedBy(BattlegroundHeroNameEntry::heroCardId)
+        )
+    }
+
+    private fun BattlegroundHeroNameEntry.normalize(): BattlegroundHeroNameEntry {
+        val normalizedAliases = buildList {
+            aliases.map(String::trim)
+                .filter(String::isNotBlank)
+                .forEach(::add)
+            name.trim().takeIf(String::isNotBlank)?.let(::add)
+            localizedName.trim().takeIf(String::isNotBlank)?.let(::add)
+        }.distinct()
+
+        return copy(
+            name = name.trim(),
+            localizedName = localizedName.trim(),
+            aliases = normalizedAliases
+        )
     }
 
     companion object {

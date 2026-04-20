@@ -377,6 +377,7 @@ class MainViewModel(
                 catalogFlow.value = result.snapshot
                 cardRulesFlow.value = repository.loadCardRules(context, ignoreMemoryCache = true)
                 cardMetadataFlow.value = repository.loadBattlegroundCardMetadata(context, ignoreMemoryCache = true)
+                heroNameIndexFlow.value = repository.loadHeroNameIndex(context, ignoreMemoryCache = true)
                 runCatching {
                     repository.loadHeroStats(context, ignoreMemoryCache = true)
                 }.onSuccess { heroStats ->

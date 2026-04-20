@@ -39,6 +39,13 @@ jobs:
       - name: Verify generated site
         run: python tools/verify_pages_bundle.py --site-dir site
 
+      - name: Verify hero data coverage
+        run: >
+          python tools/verify_hero_data_sources.py
+          --hero-stats site/hero-stats.json
+          --card-metadata site/bgs-card-metadata.json
+          --hero-name-index app/src/main/assets/bgs_hero_name_index.json
+
       - name: Inspect generated site
         run: |
           pwd
