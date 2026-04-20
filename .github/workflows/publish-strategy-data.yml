@@ -30,8 +30,14 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Run publish pipeline tests
+        run: python -m unittest discover -s tools/tests -p 'test_*.py'
+
       - name: Build static data bundle
         run: python tools/build_pages_bundle.py --output-dir site
+
+      - name: Verify generated site
+        run: python tools/verify_pages_bundle.py --site-dir site
 
       - name: Inspect generated site
         run: |

@@ -7,10 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items as lazyItems
-import androidx.compose.foundation.lazy.grid.items as gridItems
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -103,6 +100,7 @@ import com.bgtactician.app.data.model.StrategyDataSource
 import com.bgtactician.app.data.model.Tribe
 import com.bgtactician.app.data.repository.MinionImageCache
 import com.bgtactician.app.data.repository.MinionLobbyFilter
+import com.bgtactician.app.data.repository.RealtimeMinionRecommendationEngine
 import com.bgtactician.app.viewmodel.DashboardUiState
 import kotlinx.serialization.json.Json
 import kotlin.math.roundToInt
@@ -116,9 +114,9 @@ private val DashboardGold = Color(0xFFF3C86B)
 private val DashboardMint = Color(0xFF6FD6C2)
 private val DashboardIce = Color(0xFF7DDCFF)
 private val DashboardCoral = Color(0xFFFF8A69)
-private val OverlayDrawerShell = Color(0xC5121A29)
-private val OverlayDrawerCore = Color(0xEF213049)
-private val OverlayDrawerInset = Color(0xD91A2538)
+private val OverlayDrawerShell = Color(0xFF111929)
+private val OverlayDrawerCore = Color(0xFF1C2940)
+private val OverlayDrawerInset = Color(0xFF162134)
 private val OverlayDrawerStroke = Color(0x7AFFD45B)
 private val OverlayDrawerStrokeSoft = Color(0x4D667DA1)
 private val OverlayDrawerAccent = Color(0xFFFFD45B)
@@ -469,6 +467,8 @@ private fun BattlegroundsDrawerOverlay(
                             else -> DrawerTacticalTab(
                                 strategy = selected,
                                 selectedTribes = uiState.selectedTribes,
+                                selectedHero = uiState.selectedHero,
+                                autoDetectDebugInfo = uiState.autoDetectDebugInfo,
                                 cardRules = uiState.cardRules,
                                 cardMetadata = uiState.cardMetadata
                             )
@@ -551,7 +551,7 @@ private fun DrawerTabHeader(
             .then(dragModifier)
             .padding(horizontal = 10.dp, vertical = 8.dp)
             .clip(RoundedCornerShape(18.dp))
-            .background(OverlayDrawerShell.copy(alpha = 0.88f))
+            .background(OverlayDrawerShell)
             .border(1.dp, OverlayDrawerStrokeSoft, RoundedCornerShape(18.dp))
     ) {
         tabs.forEachIndexed { index, (icon, label) ->
@@ -622,32 +622,66 @@ private fun DrawerSetupTab(
     ) { bodyModifier ->
         Column(
             modifier = bodyModifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             BoxWithConstraints(modifier = Modifier.weight(1f)) {
-                val compactHeight = maxHeight < 360.dp
-                // 抽屉宽度通常不足以稳定承载双列，只有足够宽时才启用。
-                val useWideSummary = maxWidth > maxHeight && maxWidth >= 720.dp
+                val compactHeight = true
+                val useWideSummary = maxWidth > maxHeight && maxWidth >= 500.dp
                 if (useWideSummary) {
-                    DrawerLandscapeSetupGrid(
-                        selectedTribes = selectedTribes,
-                        autoDetectStatus = uiState.autoDetectStatus,
-                        autoDetectDebugInfo = uiState.autoDetectDebugInfo,
-                        recognizedHeroes = uiState.recognizedHeroes,
-                        heroStatsUpdatedAtLabel = uiState.heroStatsUpdatedAtLabel,
-                        showRecognizedHeroesCard = showRecognizedHeroesCard,
-                        selectedHero = uiState.selectedHero,
-                        onSelectHero = onSelectHero,
-                        onApplySessionTribes = onApplySessionTribes,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        DrawerAutoDetectHeroBanner(
+                            status = uiState.autoDetectStatus,
+                            onTrigger = onTriggerAutoDetect,
+                            compact = true
+                        )
+                        DrawerSetupHudStrip(
+                            selectedHero = uiState.selectedHero,
+                            recognizedHeroes = uiState.recognizedHeroes,
+                            selectedTribes = selectedTribes,
+                            autoDetectStatus = uiState.autoDetectStatus,
+                            tavernTierLabel = uiState.autoDetectDebugInfo.tavernTierLabel,
+                            compact = true
+                        )
+                        DrawerLandscapeSetupGrid(
+                            selectedTribes = selectedTribes,
+                            autoDetectStatus = uiState.autoDetectStatus,
+                            autoDetectDebugInfo = uiState.autoDetectDebugInfo,
+                            recognizedHeroes = uiState.recognizedHeroes,
+                            heroStatsUpdatedAtLabel = uiState.heroStatsUpdatedAtLabel,
+                            showRecognizedHeroesCard = showRecognizedHeroesCard,
+                            selectedHero = uiState.selectedHero,
+                            onSelectHero = onSelectHero,
+                            onApplySessionTribes = onApplySessionTribes,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 } else {
                     Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
+                        DrawerSetupHudStrip(
+                            selectedHero = uiState.selectedHero,
+                            recognizedHeroes = uiState.recognizedHeroes,
+                            selectedTribes = selectedTribes,
+                            autoDetectStatus = uiState.autoDetectStatus,
+                            tavernTierLabel = uiState.autoDetectDebugInfo.tavernTierLabel,
+                            compact = false
+                        )
+                        DrawerAutoDetectHeroBanner(
+                            status = uiState.autoDetectStatus,
+                            onTrigger = onTriggerAutoDetect,
+                            compact = true
+                        )
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .verticalScroll(rememberScrollState()),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
                         DrawerSelectedHeroFocusCard(
                             selectedHero = uiState.selectedHero,
                             recognizedHeroes = uiState.recognizedHeroes,
@@ -657,6 +691,7 @@ private fun DrawerSetupTab(
                         )
                         DrawerSelectedTribesCard(
                             selectedTribes = selectedTribes,
+                            tavernTierLabel = uiState.autoDetectDebugInfo.tavernTierLabel,
                             onApplySessionTribes = onApplySessionTribes,
                             modifier = Modifier.fillMaxWidth(),
                             compactHeight = compactHeight
@@ -666,6 +701,7 @@ private fun DrawerSetupTab(
                             modifier = Modifier.fillMaxWidth(),
                             compactHeight = compactHeight
                         )
+                        }
                     }
                 }
             }
@@ -686,39 +722,525 @@ private fun DrawerLandscapeSetupGrid(
     onApplySessionTribes: ((Set<Tribe>) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxSize()
-            .horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    val ignoredRecognizedHeroesCard = showRecognizedHeroesCard
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        if (ignoredRecognizedHeroesCard) {
+            Unit
+        }
+        Row(
+            modifier = Modifier
+                .weight(0.62f)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            DrawerLandscapeHeroPanel(
+                selectedHero = selectedHero,
+                recognizedHeroes = recognizedHeroes,
+                heroStatsUpdatedAtLabel = heroStatsUpdatedAtLabel,
+                onSelectHero = onSelectHero,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            )
+            DrawerLandscapeTribesPanel(
+                selectedTribes = selectedTribes,
+                tavernTierLabel = autoDetectDebugInfo.tavernTierLabel,
+                onApplySessionTribes = onApplySessionTribes,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            )
+        }
+        DrawerLandscapeAiSummaryPanel(
+            autoDetectStatus = autoDetectStatus,
+            autoDetectDebugInfo = autoDetectDebugInfo,
+            recognizedHeroes = recognizedHeroes,
+            selectedTribes = selectedTribes,
+            modifier = Modifier
+                .weight(0.38f)
+                .fillMaxWidth()
+        )
+    }
+}
+
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun DrawerSetupHudStrip(
+    selectedHero: ResolvedHeroStatOption?,
+    recognizedHeroes: List<ResolvedHeroStatOption>,
+    selectedTribes: Set<Tribe>,
+    autoDetectStatus: AutoDetectStatus,
+    tavernTierLabel: String?,
+    compact: Boolean
+) {
+    val heroLabel = selectedHero?.displayName
+        ?: recognizedHeroes.firstOrNull()?.displayName
+        ?: "未定"
+    val statusVisual = autoDetectVisualState(autoDetectStatus)
+
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = OverlayDrawerShell.copy(alpha = 0.9f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.82f))
     ) {
         Column(
             modifier = Modifier
-                .widthIn(min = 260.dp, max = 340.dp)
-                .fillMaxHeight()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .fillMaxWidth()
+                .padding(horizontal = if (compact) 7.dp else 8.dp, vertical = if (compact) 6.dp else 8.dp),
+            verticalArrangement = Arrangement.spacedBy(if (compact) 4.dp else 6.dp)
         ) {
-            DrawerSelectedHeroFocusCard(
-                selectedHero = selectedHero,
-                recognizedHeroes = recognizedHeroes,
-                onSelectHero = onSelectHero,
-                modifier = Modifier.fillMaxWidth(),
-                compactHeight = true
-            )
-            DrawerSelectedTribesCard(
-                selectedTribes = selectedTribes,
-                onApplySessionTribes = onApplySessionTribes,
-                modifier = Modifier.fillMaxWidth(),
-                compactHeight = true
-            )
-            DrawerAiResultCard(
-                debugInfo = autoDetectDebugInfo,
-                modifier = Modifier.fillMaxWidth(),
-                compactHeight = true
-            )
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(if (compact) 4.dp else 6.dp)
+            ) {
+                DrawerHudMetricChip(
+                    label = "状态",
+                    value = statusVisual.label,
+                    accent = statusVisual.color
+                )
+                DrawerHudMetricChip(
+                    label = "英雄",
+                    value = heroLabel,
+                    accent = OverlayDrawerAccent
+                )
+                DrawerHudMetricChip(
+                    label = "酒馆",
+                    value = tavernTierLabel?.substringBefore(" · ")?.ifBlank { "未同步" } ?: "未同步",
+                    accent = DashboardIce
+                )
+                DrawerHudMetricChip(
+                    label = "五族",
+                    value = if (selectedTribes.isEmpty()) "未同步" else "${selectedTribes.size}/5",
+                    accent = if (selectedTribes.isEmpty()) OverlayDrawerWarning else DashboardMint
+                )
+            }
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                if (selectedTribes.isEmpty()) {
+                    MiniMetaBadge(
+                        text = "环境未同步",
+                        accent = OverlayDrawerWarning
+                    )
+                } else {
+                    Tribe.entries
+                        .filter { it in selectedTribes }
+                        .forEach { tribe ->
+                            MiniMetaBadge(
+                                text = tribe.label,
+                                accent = tribeOverlayAccent(tribe)
+                            )
+                        }
+                }
+            }
         }
     }
+}
+
+@Composable
+private fun DrawerHudMetricChip(
+    label: String,
+    value: String,
+    accent: Color
+) {
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = accent.copy(alpha = 0.12f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.22f))
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(7.dp)
+                    .clip(CircleShape)
+                    .background(accent)
+            )
+            Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                Text(
+                    text = label,
+                    color = OverlayDrawerSubtext,
+                    style = MaterialTheme.typography.labelSmall
+                )
+                Text(
+                    text = value,
+                    color = OverlayDrawerText,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Black,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
+}
+
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun DrawerLandscapeHeroPanel(
+    selectedHero: ResolvedHeroStatOption?,
+    recognizedHeroes: List<ResolvedHeroStatOption>,
+    heroStatsUpdatedAtLabel: String?,
+    onSelectHero: ((ResolvedHeroStatOption) -> Unit)?,
+    modifier: Modifier = Modifier
+) {
+    val bestAverage = recognizedHeroes.mapNotNull { it.averagePosition }.minOrNull()
+    val hero = selectedHero ?: recognizedHeroes.firstOrNull()
+
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(18.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.94f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.56f))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            OverlayDrawerAccent.copy(alpha = 0.08f),
+                            OverlayDrawerCore.copy(alpha = 0.12f)
+                        )
+                    )
+                )
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(7.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                DrawerSectionTitle(title = "当前英雄")
+                heroStatsUpdatedAtLabel?.let {
+                    Text(
+                        text = it,
+                        color = OverlayDrawerSubtext,
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 1
+                    )
+                }
+            }
+
+            if (hero == null) {
+                Text(
+                    text = "未识别到英雄",
+                    color = OverlayDrawerSubtext,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            } else {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    HeroPortrait(
+                        hero = hero,
+                        modifier = Modifier.size(60.dp)
+                    )
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        Text(
+                            text = hero.displayName,
+                            color = OverlayDrawerText,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Black,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = heroRecommendationLabel(hero),
+                            color = recommendationTone(hero),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = buildString {
+                                append("均名")
+                                append(formatHeroAverage(hero.averagePosition))
+                                append(" · 样本")
+                                append(formatCompactCount(hero.dataPoints))
+                            },
+                            color = OverlayDrawerSubtext,
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                recognizedHeroes.take(4).forEach { candidate ->
+                    val accent = when {
+                        selectedHero?.heroCardId == candidate.heroCardId -> DashboardMint
+                        candidate.averagePosition != null && candidate.averagePosition == bestAverage -> OverlayDrawerAccent
+                        else -> OverlayDrawerStrokeSoft.copy(alpha = 0.9f)
+                    }
+                    Surface(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(999.dp))
+                            .clickable(enabled = onSelectHero != null) { onSelectHero?.invoke(candidate) },
+                        shape = RoundedCornerShape(999.dp),
+                        color = accent.copy(alpha = 0.14f),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.28f))
+                    ) {
+                        Text(
+                            text = candidate.displayName,
+                            modifier = Modifier.padding(horizontal = 9.dp, vertical = 5.dp),
+                            color = OverlayDrawerText,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun DrawerLandscapeTribesPanel(
+    selectedTribes: Set<Tribe>,
+    tavernTierLabel: String?,
+    onApplySessionTribes: ((Set<Tribe>) -> Unit)?,
+    modifier: Modifier = Modifier
+) {
+    var draftTribes by remember(selectedTribes) { mutableStateOf(selectedTribes) }
+    val canApply = draftTribes.size == 5 && draftTribes != selectedTribes
+
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(18.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.94f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.56f))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            DashboardIce.copy(alpha = 0.08f),
+                            OverlayDrawerCore.copy(alpha = 0.12f)
+                        )
+                    )
+                )
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(7.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                DrawerSectionTitle(title = "当前环境")
+                MiniMetaBadge(
+                    text = tavernTierLabel?.substringBefore(" · ")?.ifBlank { "未同步" } ?: "未同步",
+                    accent = DashboardIce
+                )
+            }
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                if (selectedTribes.isEmpty()) {
+                    MiniMetaBadge(text = "未同步", accent = OverlayDrawerWarning)
+                } else {
+                    selectedTribes.forEach { tribe ->
+                        MiniMetaBadge(text = tribe.label, accent = tribeOverlayAccent(tribe))
+                    }
+                }
+            }
+
+            onApplySessionTribes?.let { applySessionTribes ->
+                Text(
+                    text = "手动校正",
+                    color = OverlayDrawerSubtext,
+                    style = MaterialTheme.typography.labelSmall
+                )
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    Tribe.entries.forEach { tribe ->
+                        val selected = tribe in draftTribes
+                        Surface(
+                            modifier = Modifier.clickable {
+                                draftTribes = when {
+                                    selected -> draftTribes - tribe
+                                    draftTribes.size >= 5 -> draftTribes
+                                    else -> draftTribes + tribe
+                                }
+                            },
+                            shape = RoundedCornerShape(999.dp),
+                            color = if (selected) tribeOverlayAccent(tribe).copy(alpha = 0.20f) else OverlayDrawerCore.copy(alpha = 0.72f),
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                if (selected) tribeOverlayAccent(tribe).copy(alpha = 0.40f) else OverlayDrawerStrokeSoft.copy(alpha = 0.44f)
+                            )
+                        ) {
+                            Text(
+                                text = tribe.shortLabel,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                color = if (selected) tribeOverlayAccent(tribe) else OverlayDrawerSubtext,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${draftTribes.size}/5",
+                        color = if (draftTribes.size == 5) DashboardMint else OverlayDrawerWarning,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        MiniActionPill(text = "重置", active = true, onClick = { draftTribes = selectedTribes })
+                        MiniActionPill(
+                            text = "应用",
+                            active = canApply,
+                            onClick = { if (canApply) applySessionTribes(draftTribes) }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun DrawerLandscapeAiSummaryPanel(
+    autoDetectStatus: AutoDetectStatus,
+    autoDetectDebugInfo: AutoDetectDebugInfo,
+    recognizedHeroes: List<ResolvedHeroStatOption>,
+    selectedTribes: Set<Tribe>,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(18.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.94f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.56f))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            OverlayDrawerWarning.copy(alpha = 0.07f),
+                            OverlayDrawerCore.copy(alpha = 0.12f)
+                        )
+                    )
+                )
+                .padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(7.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                DrawerSectionTitle(title = "识别摘要")
+                DrawerAutoDetectMicroLamp(status = autoDetectStatus)
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                DrawerRecognitionMetric(
+                    label = "环境",
+                    value = if (selectedTribes.isEmpty()) "未同步" else "${selectedTribes.size}/5",
+                    highlight = OverlayDrawerAccent,
+                    modifier = Modifier.weight(1f)
+                )
+                DrawerRecognitionMetric(
+                    label = "英雄",
+                    value = if (recognizedHeroes.isEmpty()) "--" else recognizedHeroes.size.toString(),
+                    highlight = DashboardIce,
+                    modifier = Modifier.weight(1f)
+                )
+                DrawerRecognitionMetric(
+                    label = "酒馆",
+                    value = autoDetectDebugInfo.tavernTier?.let { "${it}本" } ?: "--",
+                    highlight = DashboardMint,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                autoDetectDebugInfo.aiSourceLabel?.takeIf { it.isNotBlank() }?.let {
+                    MiniMetaBadge(text = it, accent = DashboardMint)
+                }
+                autoDetectDebugInfo.aiModelLabel?.takeIf { it.isNotBlank() }?.let {
+                    MiniMetaBadge(text = it, accent = DashboardIce)
+                }
+                autoDetectDebugInfo.aiScreenTypeLabel?.takeIf { it.isNotBlank() }?.let {
+                    MiniMetaBadge(text = it, accent = OverlayDrawerWarning)
+                }
+            }
+
+            autoDetectDebugInfo.recognizedTribesLabel?.takeIf { it.isNotBlank() }?.let {
+                DrawerSingleLineInfo(label = "本轮识别", value = it, maxLines = 1)
+            }
+            (autoDetectDebugInfo.aiSummaryLabel ?: autoDetectDebugInfo.rawText)
+                ?.takeIf { it.isNotBlank() }
+                ?.let {
+                    DrawerSingleLineInfo(label = "判断", value = it, maxLines = 2)
+                }
+        }
+    }
+}
+
+@Composable
+private fun MiniActionPill(
+    text: String,
+    active: Boolean,
+    onClick: () -> Unit
+) {
+    Text(
+        text = text,
+        modifier = Modifier
+            .clip(RoundedCornerShape(999.dp))
+            .clickable(enabled = active, onClick = onClick)
+            .background(
+                if (active) OverlayDrawerAccent.copy(alpha = 0.18f)
+                else OverlayDrawerCore.copy(alpha = 0.64f)
+            )
+            .padding(horizontal = 9.dp, vertical = 4.dp),
+        color = if (active) OverlayDrawerText else OverlayDrawerSubtext.copy(alpha = 0.56f),
+        style = MaterialTheme.typography.labelSmall,
+        fontWeight = FontWeight.Black
+    )
 }
 
 @Composable
@@ -1026,26 +1548,31 @@ private fun DrawerSelectedHeroFocusCard(
     modifier: Modifier = Modifier,
     compactHeight: Boolean = false
 ) {
+    val heroAccent = selectedHero?.let(::recommendationTone) ?: OverlayDrawerAccent
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        color = OverlayDrawerInset.copy(alpha = 0.34f),
+        shape = RoundedCornerShape(18.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.92f),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            if (selectedHero != null) recommendationTone(selectedHero).copy(alpha = 0.34f) else OverlayDrawerStrokeSoft.copy(alpha = 0.68f)
+            heroAccent.copy(alpha = 0.34f)
         )
     ) {
         if (selectedHero == null) {
             Column(
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = if (compactHeight) 10.dp else 12.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+                modifier = Modifier
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                OverlayDrawerAccent.copy(alpha = 0.08f),
+                                OverlayDrawerCore.copy(alpha = 0.10f)
+                            )
+                        )
+                    )
+                    .padding(horizontal = 14.dp, vertical = if (compactHeight) 11.dp else 13.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(
-                    text = "当前选择的英雄",
-                    color = OverlayDrawerText,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Black
-                )
+                DrawerSectionTitle(title = "当前英雄")
                 Text(
                     text = if (recognizedHeroes.isEmpty()) "未识别到英雄" else "点一个作为当前英雄",
                     color = OverlayDrawerSubtext,
@@ -1062,13 +1589,13 @@ private fun DrawerSelectedHeroFocusCard(
                                     .clip(RoundedCornerShape(999.dp))
                                     .clickable(enabled = onSelectHero != null) { onSelectHero?.invoke(hero) },
                                 shape = RoundedCornerShape(999.dp),
-                                color = OverlayDrawerAccent.copy(alpha = 0.12f),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerAccent.copy(alpha = 0.24f))
+                                color = OverlayDrawerAccent.copy(alpha = 0.14f),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerAccent.copy(alpha = 0.28f))
                             ) {
                                 Text(
                                     text = hero.displayName,
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                                    color = OverlayDrawerAccent,
+                                    modifier = Modifier.padding(horizontal = 11.dp, vertical = 7.dp),
+                                    color = OverlayDrawerText,
                                     style = MaterialTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -1081,17 +1608,26 @@ private fun DrawerSelectedHeroFocusCard(
         }
 
         Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = if (compactHeight) 10.dp else 12.dp),
+            modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            heroAccent.copy(alpha = 0.10f),
+                            OverlayDrawerCore.copy(alpha = 0.12f)
+                        )
+                    )
+                )
+                .padding(horizontal = 14.dp, vertical = if (compactHeight) 11.dp else 13.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.Top
         ) {
             HeroPortrait(
                 hero = selectedHero,
-                modifier = Modifier.size(if (compactHeight) 72.dp else 84.dp)
+                modifier = Modifier.size(if (compactHeight) 78.dp else 92.dp)
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+                verticalArrangement = Arrangement.spacedBy(7.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -1103,14 +1639,14 @@ private fun DrawerSelectedHeroFocusCard(
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
                         Text(
-                            text = "当前选择的英雄",
+                            text = "当前英雄",
                             color = OverlayDrawerSubtext,
                             style = MaterialTheme.typography.labelMedium
                         )
                         Text(
                             text = selectedHero.displayName,
                             color = OverlayDrawerText,
-                            style = if (compactHeight) MaterialTheme.typography.titleSmall else MaterialTheme.typography.titleMedium,
+                            style = if (compactHeight) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Black,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -1118,7 +1654,7 @@ private fun DrawerSelectedHeroFocusCard(
                     }
                     Surface(
                         shape = RoundedCornerShape(999.dp),
-                        color = recommendationTone(selectedHero).copy(alpha = 0.14f),
+                        color = recommendationTone(selectedHero).copy(alpha = 0.16f),
                         border = androidx.compose.foundation.BorderStroke(
                             1.dp,
                             recommendationTone(selectedHero).copy(alpha = 0.32f)
@@ -1132,6 +1668,14 @@ private fun DrawerSelectedHeroFocusCard(
                             fontWeight = FontWeight.Bold
                         )
                     }
+                }
+
+                selectedHero.recommendation?.tier?.let { tier ->
+                    DrawerActionStrip(
+                        title = "推荐等级",
+                        body = heroRecommendationLabel(selectedHero),
+                        accent = recommendationTone(selectedHero)
+                    )
                 }
 
                 selectedHero.recommendation?.recommendedCompName?.takeIf { it.isNotBlank() }?.let { compName ->
@@ -1160,7 +1704,7 @@ private fun DrawerSelectedHeroFocusCard(
                         append(formatCompactCount(selectedHero.dataPoints))
                     },
                     color = OverlayDrawerSubtext,
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -1172,6 +1716,7 @@ private fun DrawerSelectedHeroFocusCard(
 @Composable
 private fun DrawerSelectedTribesCard(
     selectedTribes: Set<Tribe>,
+    tavernTierLabel: String? = null,
     onApplySessionTribes: ((Set<Tribe>) -> Unit)? = null,
     modifier: Modifier = Modifier,
     compactHeight: Boolean = false
@@ -1180,19 +1725,48 @@ private fun DrawerSelectedTribesCard(
 
     Surface(
         modifier = modifier.heightIn(min = if (compactHeight) 110.dp else 138.dp),
-        shape = RoundedCornerShape(12.dp),
-        color = OverlayDrawerInset.copy(alpha = 0.34f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.68f))
+        shape = RoundedCornerShape(18.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.94f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.54f))
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = if (compactHeight) 9.dp else 11.dp),
+            modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            OverlayDrawerAccent.copy(alpha = 0.07f),
+                            OverlayDrawerCore.copy(alpha = 0.10f)
+                        )
+                    )
+                )
+                .padding(horizontal = 14.dp, vertical = if (compactHeight) 10.dp else 12.dp),
             verticalArrangement = Arrangement.spacedBy(if (compactHeight) 6.dp else 8.dp)
         ) {
-            Text(
-                text = if (selectedTribes.isEmpty()) "当前环境" else "当前环境 ${selectedTribes.size}/5",
-                color = OverlayDrawerSubtext,
-                style = MaterialTheme.typography.labelMedium
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                DrawerSectionTitle(
+                    title = if (selectedTribes.isEmpty()) "当前环境" else "当前环境 ${selectedTribes.size}/5"
+                )
+                Surface(
+                    shape = RoundedCornerShape(999.dp),
+                    color = OverlayDrawerAccent.copy(alpha = 0.14f),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerAccent.copy(alpha = 0.30f))
+                ) {
+                    Text(
+                        text = buildString {
+                            append("酒馆等级 ")
+                            append(tavernTierLabel?.substringBefore(" · ")?.ifBlank { "未同步" } ?: "未同步")
+                        },
+                        modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
+                        color = OverlayDrawerText,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Black
+                    )
+                }
+            }
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -1215,7 +1789,7 @@ private fun DrawerSelectedTribesCard(
                     selectedTribes.forEach { tribe ->
                         Surface(
                             shape = RoundedCornerShape(999.dp),
-                            color = tribeOverlayAccent(tribe).copy(alpha = 0.16f),
+                            color = tribeOverlayAccent(tribe).copy(alpha = 0.18f),
                             border = androidx.compose.foundation.BorderStroke(
                                 1.dp,
                                 tribeOverlayAccent(tribe).copy(alpha = 0.38f)
@@ -1237,7 +1811,7 @@ private fun DrawerSelectedTribesCard(
                 Text(
                     text = "手动校正",
                     color = OverlayDrawerSubtext,
-                    style = MaterialTheme.typography.labelMedium
+                    style = MaterialTheme.typography.labelSmall
                 )
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -1255,9 +1829,9 @@ private fun DrawerSelectedTribesCard(
                             },
                             shape = RoundedCornerShape(999.dp),
                             color = if (selected) {
-                                tribeOverlayAccent(tribe).copy(alpha = 0.18f)
+                                tribeOverlayAccent(tribe).copy(alpha = 0.20f)
                             } else {
-                                OverlayDrawerInset.copy(alpha = 0.55f)
+                                OverlayDrawerCore.copy(alpha = 0.72f)
                             },
                             border = androidx.compose.foundation.BorderStroke(
                                 1.dp,
@@ -1293,9 +1867,10 @@ private fun DrawerSelectedTribesCard(
                         Text(
                             text = "重置",
                             modifier = Modifier
-                                .clip(RoundedCornerShape(6.dp))
+                                .clip(RoundedCornerShape(10.dp))
                                 .clickable { draftTribes = selectedTribes }
-                                .padding(horizontal = 6.dp, vertical = 4.dp),
+                                .background(OverlayDrawerCore.copy(alpha = 0.64f))
+                                .padding(horizontal = 8.dp, vertical = 5.dp),
                             color = OverlayDrawerSubtext,
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold
@@ -1303,13 +1878,20 @@ private fun DrawerSelectedTribesCard(
                         Text(
                             text = "应用",
                             modifier = Modifier
-                                .clip(RoundedCornerShape(6.dp))
+                                .clip(RoundedCornerShape(10.dp))
                                 .clickable(enabled = draftTribes.size == 5 && draftTribes != selectedTribes) {
                                     applySessionTribes(draftTribes)
                                 }
-                                .padding(horizontal = 6.dp, vertical = 4.dp),
+                                .background(
+                                    if (draftTribes.size == 5 && draftTribes != selectedTribes) {
+                                        OverlayDrawerAccent.copy(alpha = 0.18f)
+                                    } else {
+                                        OverlayDrawerCore.copy(alpha = 0.64f)
+                                    }
+                                )
+                                .padding(horizontal = 8.dp, vertical = 5.dp),
                             color = if (draftTribes.size == 5 && draftTribes != selectedTribes) {
-                                OverlayDrawerAccent
+                                OverlayDrawerText
                             } else {
                                 OverlayDrawerSubtext.copy(alpha = 0.5f)
                             },
@@ -2119,26 +2701,20 @@ private fun DrawerCompListTab(
         badge = strategies.size.toString(),
         showHeader = false
     ) { bodyModifier ->
-        BoxWithConstraints(modifier = bodyModifier.fillMaxSize()) {
-            val columns = if (maxWidth >= 620.dp) 2 else 1
-
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(columns),
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                gridItems(sortedStrategies, key = { it.id }) { strategy ->
-                    DrawerCompItem(
-                        strategy = strategy,
-                        selected = strategy.id == selectedStrategyId,
-                        selectedTribes = selectedTribes,
-                        cardRules = cardRules,
-                        cardMetadata = cardMetadata,
-                        onClick = { onSelectStrategy(strategy.id) }
-                    )
-                }
+        LazyColumn(
+            modifier = bodyModifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            lazyItems(sortedStrategies, key = { it.id }) { strategy ->
+                DrawerCompItem(
+                    strategy = strategy,
+                    selected = strategy.id == selectedStrategyId,
+                    selectedTribes = selectedTribes,
+                    cardRules = cardRules,
+                    cardMetadata = cardMetadata,
+                    onClick = { onSelectStrategy(strategy.id) }
+                )
             }
         }
     }
@@ -2156,60 +2732,99 @@ private fun DrawerCompItem(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(18.dp))
             .clickable(onClick = onClick),
-        color = if (selected) OverlayDrawerActive.copy(alpha = 0.88f) else OverlayDrawerInset,
+        color = if (selected) OverlayDrawerActive.copy(alpha = 0.94f) else OverlayDrawerInset.copy(alpha = 0.94f),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
             if (selected) OverlayDrawerAccent else OverlayDrawerStrokeSoft
         )
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        colors = if (selected) {
+                            listOf(OverlayDrawerAccent.copy(alpha = 0.10f), OverlayDrawerCore.copy(alpha = 0.18f))
+                        } else {
+                            listOf(OverlayDrawerAccent.copy(alpha = 0.05f), OverlayDrawerCore.copy(alpha = 0.12f))
+                        }
+                    )
+                )
+                .padding(horizontal = 10.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = strategy.name,
+                Column(
                     modifier = Modifier.weight(1f),
-                    color = OverlayDrawerText,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Black,
-                    maxLines = 1
-                )
-                RatingBadge(
-                    rating = drawerStrategyRatingLabel(strategy.tier),
-                    accent = if (selected) OverlayDrawerAccent else drawerRatingColor(strategy.tier)
-                )
-                if (selected) {
-                    Icon(
-                        imageVector = Icons.Outlined.Check,
-                        contentDescription = null,
-                        tint = OverlayDrawerAccent,
-                        modifier = Modifier.size(14.dp)
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = strategy.name,
+                            modifier = Modifier.weight(1f, fill = false),
+                            color = OverlayDrawerText,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Black,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        if (selected) {
+                            MiniMetaBadge(
+                                text = "当前",
+                                accent = OverlayDrawerAccent
+                            )
+                        }
+                    }
+
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        MiniMetaBadge(
+                            text = "评级 ${drawerStrategyRatingLabel(strategy.tier)}",
+                            accent = if (selected) OverlayDrawerAccent else drawerRatingColor(strategy.tier)
+                        )
+                        strategy.requiredTribes.takeIf { it.isNotEmpty() }?.firstOrNull()?.let {
+                            MiniMetaBadge(
+                                text = localizedRequiredTribes(listOf(it)),
+                                accent = DashboardIce
+                            )
+                        }
+                        strategy.difficulty.takeIf { it.isNotBlank() }?.let {
+                            MiniMetaBadge(
+                                text = "难度${it}",
+                                accent = OverlayDrawerWarning
+                            )
+                        }
+                    }
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    RatingBadge(
+                        rating = drawerStrategyRatingLabel(strategy.tier),
+                        accent = if (selected) OverlayDrawerAccent else drawerRatingColor(strategy.tier)
                     )
-                } else {
-                    Spacer(modifier = Modifier.size(14.dp))
+                    CoreMinionStrip(
+                        minions = strategy.keyMinions,
+                        selectedTribes = selectedTribes,
+                        cardRules = cardRules,
+                        cardMetadata = cardMetadata,
+                        iconSize = 24.dp,
+                        borderColor = if (selected) OverlayDrawerAccent else OverlayDrawerStroke
+                    )
                 }
             }
-            StrategyMinionLanes(
-                strategy = strategy,
-                selectedTribes = selectedTribes,
-                cardRules = cardRules,
-                cardMetadata = cardMetadata,
-                coreLabel = null,
-                addOnLabel = null,
-                coreIconSize = 34.dp,
-                addOnIconSize = 24.dp,
-                coreBorderColor = if (selected) OverlayDrawerAccent else OverlayDrawerStroke,
-                addOnBorderColor = OverlayDrawerStrokeSoft,
-                textColor = OverlayDrawerText,
-                mutedColor = OverlayDrawerSubtext
-            )
         }
     }
 }
@@ -2314,54 +2929,35 @@ private fun DrawerHeaderBar(
     status: AutoDetectStatus,
     selectedTab: Int
 ) {
-    val title = when (selectedTab) {
-        0 -> "识别柜台"
-        1 -> "流派柜台"
-        else -> "战术柜台"
+    val sectionLabel = when (selectedTab) {
+        0 -> "设置"
+        1 -> "流派"
+        else -> "战术"
     }
-    val subtitle = when (selectedTab) {
-        0 -> "英雄与种族同步"
-        1 -> "当前局推荐方向"
-        else -> "核心节奏与关键牌"
-    }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 10.dp)
-            .clip(RoundedCornerShape(18.dp))
+            .padding(horizontal = 10.dp, vertical = 6.dp)
+            .clip(RoundedCornerShape(14.dp))
             .background(
                 Brush.horizontalGradient(
                     colors = listOf(
-                        OverlayDrawerAccent.copy(alpha = 0.12f),
+                        OverlayDrawerAccent.copy(alpha = 0.08f),
                         OverlayDrawerShell.copy(alpha = 0.92f)
                     )
                 )
             )
-            .border(1.dp, OverlayDrawerStrokeSoft, RoundedCornerShape(18.dp))
-            .padding(horizontal = 14.dp, vertical = 12.dp),
+            .border(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.8f), RoundedCornerShape(14.dp))
+            .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Text(
-                text = title,
-                color = OverlayDrawerText,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Black
-            )
-            Text(
-                text = subtitle,
-                color = OverlayDrawerSubtext,
-                style = MaterialTheme.typography.bodySmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-        Spacer(modifier = Modifier.width(12.dp))
+        Text(
+            text = sectionLabel,
+            color = OverlayDrawerSubtext,
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.Bold
+        )
         DrawerAutoDetectMicroLamp(status = status)
     }
 }
@@ -2720,7 +3316,7 @@ private fun DrawerFramedSection(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(18.dp),
-        color = OverlayDrawerInset.copy(alpha = 0.82f),
+        color = OverlayDrawerInset,
         border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStroke.copy(alpha = 0.38f))
     ) {
         Box(
@@ -2730,7 +3326,7 @@ private fun DrawerFramedSection(
                     Brush.verticalGradient(
                         colors = listOf(
                             OverlayDrawerAccent.copy(alpha = 0.08f),
-                            Color.Transparent
+                            OverlayDrawerCore.copy(alpha = 0.14f)
                         )
                     )
                 )
@@ -2757,7 +3353,7 @@ private fun DrawerGlassSection(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(22.dp),
-        color = OverlayDrawerInset.copy(alpha = 0.56f),
+        color = OverlayDrawerInset.copy(alpha = 0.96f),
         border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStroke.copy(alpha = 0.32f))
     ) {
         Box(
@@ -2767,8 +3363,8 @@ private fun DrawerGlassSection(
                     Brush.verticalGradient(
                         colors = listOf(
                             OverlayDrawerAccent.copy(alpha = 0.08f),
-                            OverlayDrawerInset.copy(alpha = 0.10f),
-                            Color.Transparent
+                            OverlayDrawerCore.copy(alpha = 0.22f),
+                            OverlayDrawerInset.copy(alpha = 0.18f)
                         )
                     )
                 )
@@ -2806,7 +3402,7 @@ private fun DrawerTabShell(
                         Brush.horizontalGradient(
                             colors = listOf(
                                 OverlayDrawerAccent.copy(alpha = 0.10f),
-                                OverlayDrawerShell.copy(alpha = 0.90f)
+                                OverlayDrawerShell
                             )
                         )
                     )
@@ -2853,7 +3449,7 @@ private fun DrawerTabShell(
         Surface(
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(18.dp),
-            color = OverlayDrawerInset.copy(alpha = 0.28f),
+            color = OverlayDrawerInset.copy(alpha = 0.86f),
             border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.44f))
         ) {
             Box(
@@ -2863,7 +3459,7 @@ private fun DrawerTabShell(
                         Brush.verticalGradient(
                             colors = listOf(
                                 OverlayDrawerAccent.copy(alpha = 0.05f),
-                                Color.Transparent
+                                OverlayDrawerCore.copy(alpha = 0.20f)
                             )
                         )
                     )
@@ -3343,10 +3939,47 @@ private fun cycleMinions(
         .take(limit)
 }
 
+private fun tacticalNextTierTargets(
+    strategy: StrategyComp?,
+    selectedTribes: Set<Tribe>,
+    cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
+    currentTavernTier: Int?,
+    selectedHeroCardId: String?
+): List<KeyMinion> {
+    strategy ?: return emptyList()
+    val targetTier = ((currentTavernTier ?: return emptyList()) + 1).coerceAtMost(6)
+    return MinionLobbyFilter.filterMinionsForLobby(
+        minions = strategy.keyMinions,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        selectedHeroCardId = selectedHeroCardId
+    )
+        .filter { it.techLevel == targetTier }
+        .filter { it.statusRaw == "CORE" || it.statusRaw == "RECOMMENDED" || it.statusRaw == "ADDON" }
+        .distinctBy { it.cardId ?: it.name }
+        .sortedWith(
+            compareBy<KeyMinion>(
+                { when (it.statusRaw?.uppercase()) {
+                    "CORE" -> 0
+                    "RECOMMENDED" -> 1
+                    "ADDON" -> 2
+                    else -> 3
+                } },
+                { -(it.finalBoardWeight ?: 0) },
+                { it.name }
+            )
+        )
+        .take(4)
+}
+
 @Composable
 private fun DrawerTacticalTab(
     strategy: StrategyComp?,
     selectedTribes: Set<Tribe>,
+    selectedHero: ResolvedHeroStatOption?,
+    autoDetectDebugInfo: AutoDetectDebugInfo,
     cardRules: CardRulesCatalog,
     cardMetadata: BattlegroundCardMetadataCatalog
 ) {
@@ -3368,32 +4001,102 @@ private fun DrawerTacticalTab(
     DrawerTabShell(
         title = strategy.name,
         subtitle = strategy.requiredTribes.takeIf { it.isNotEmpty() }?.let(::localizedRequiredTribes) ?: "通用",
-        badge = "难度 ${strategy.difficulty}"
+        badge = autoDetectDebugInfo.tavernTier?.let { "${it}本" } ?: "酒馆未同步"
     ) { bodyModifier ->
+        val liveRecommendations = remember(
+            strategy,
+            selectedTribes,
+            cardRules,
+            cardMetadata,
+            autoDetectDebugInfo.tavernTier,
+            selectedHero?.heroCardId
+        ) {
+            RealtimeMinionRecommendationEngine.recommend(
+                strategy = strategy,
+                selectedTribes = selectedTribes,
+                cardRules = cardRules,
+                cardMetadata = cardMetadata,
+                tavernTier = autoDetectDebugInfo.tavernTier,
+                selectedHeroCardId = selectedHero?.heroCardId
+            )
+        }
+        val nextTierTargets = remember(
+            strategy,
+            selectedTribes,
+            cardRules,
+            cardMetadata,
+            autoDetectDebugInfo.tavernTier,
+            selectedHero?.heroCardId
+        ) {
+            tacticalNextTierTargets(
+                strategy = strategy,
+                selectedTribes = selectedTribes,
+                cardRules = cardRules,
+                cardMetadata = cardMetadata,
+                currentTavernTier = autoDetectDebugInfo.tavernTier,
+                selectedHeroCardId = selectedHero?.heroCardId
+            )
+        }
         Column(
             modifier = bodyModifier
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            DrawerDecisionSummaryCard(
-                summary = drawerDecisionSummary(strategy),
-                strategy = strategy
+            DrawerTacticalShopHeader(
+                strategy = strategy,
+                selectedTribes = selectedTribes,
+                tavernTier = autoDetectDebugInfo.tavernTier,
+                tavernTierLabel = autoDetectDebugInfo.tavernTierLabel,
+                selectedHero = selectedHero,
+                primaryCount = liveRecommendations.primaryChoices.size,
+                secondaryCount = liveRecommendations.secondaryChoices.size
             )
-            strategy.overview.takeIf { it.isNotBlank() }?.let { overview ->
-                DrawerActionStrip(
-                    title = "先记住",
-                    body = localizedStrategyText(overview, strategy),
-                    accent = OverlayDrawerSubtext
+
+            DrawerSectionTitle(title = "当前酒馆先买")
+            if (liveRecommendations.primaryChoices.isEmpty()) {
+                DrawerEmptyStateCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = "当前没有可直接买的主目标",
+                    body = if (autoDetectDebugInfo.tavernTier == null) {
+                        "先同步酒馆等级，再给你更准的买牌清单。"
+                    } else {
+                        "这套在当前本数没有明确主抓牌，先稳经济或等升本。"
+                    }
+                )
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    liveRecommendations.primaryChoices.forEachIndexed { index, minion ->
+                        DrawerShopBuyRow(
+                            minion = minion,
+                            rank = index + 1,
+                            accent = tacticalMinionAccent(minion),
+                            badge = if (index == 0) "首抓" else "优先",
+                            currentTavernTier = autoDetectDebugInfo.tavernTier
+                        )
+                    }
+                }
+            }
+
+            if (liveRecommendations.secondaryChoices.isNotEmpty()) {
+                DrawerSectionTitle(title = "补强候选")
+                DrawerShopAvatarShelf(
+                    minions = liveRecommendations.secondaryChoices,
+                    emptyLabel = "当前没有补强牌",
+                    badgeLabel = { if (isGenericSupportMinion(it)) "功能" else "补强" }
                 )
             }
-            strategy.whenToCommit?.takeIf { it.isNotBlank() }?.let { signal ->
-                DrawerActionStrip(
-                    title = "等这些牌",
-                    body = localizedStrategyText(signal, strategy),
-                    accent = OverlayDrawerAccent
+
+            if (nextTierTargets.isNotEmpty()) {
+                DrawerSectionTitle(title = "下本盯牌")
+                DrawerShopAvatarShelf(
+                    minions = nextTierTargets,
+                    emptyLabel = "下本还没有明确目标",
+                    badgeLabel = { "下本" }
                 )
             }
+
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 DrawerActionCard(
@@ -3411,82 +4114,332 @@ private fun DrawerTacticalTab(
                     emphasize = false
                 )
             }
-            DrawerSectionChip(label = "优先找牌")
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+
+            strategy.whenToCommit?.takeIf { it.isNotBlank() }?.let { signal ->
+                DrawerActionStrip(
+                    title = "成型信号",
+                    body = localizedStrategyText(signal, strategy),
+                    accent = OverlayDrawerWarning
+                )
+            }
+        }
+    }
+}
+
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun DrawerShopAvatarShelf(
+    minions: List<KeyMinion>,
+    emptyLabel: String,
+    badgeLabel: (KeyMinion) -> String
+) {
+    if (minions.isEmpty()) {
+        DrawerEmptyStateCard(
+            modifier = Modifier.fillMaxWidth(),
+            title = emptyLabel,
+            body = "当前先按上面的主抓顺序买牌。"
+        )
+        return
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        minions.forEach { minion ->
+            DrawerAvatarShelfCard(
+                minion = minion,
+                badge = badgeLabel(minion),
+                accent = tacticalMinionAccent(minion)
+            )
+        }
+    }
+}
+
+@Composable
+private fun DrawerAvatarShelfCard(
+    minion: KeyMinion,
+    badge: String,
+    accent: Color
+) {
+    val displayName = localizedMinionTitle(minion) ?: minion.name
+    Surface(
+        modifier = Modifier.width(104.dp),
+        shape = RoundedCornerShape(16.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.94f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.34f))
+    ) {
+        Column(
+            modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(accent.copy(alpha = 0.10f), OverlayDrawerCore.copy(alpha = 0.14f))
+                    )
+                )
+                .padding(horizontal = 8.dp, vertical = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Box(contentAlignment = Alignment.TopEnd) {
+                MinionHeadshot(
+                    minion = minion,
+                    modifier = Modifier.size(64.dp),
+                    borderColor = accent
+                )
+                Surface(
+                    modifier = Modifier.offset(x = 4.dp, y = (-4).dp),
+                    shape = RoundedCornerShape(999.dp),
+                    color = accent.copy(alpha = 0.18f),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.28f))
+                ) {
+                    Text(
+                        text = badge,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                        color = accent,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Black
+                    )
+                }
+            }
+            Text(
+                text = displayName,
+                color = OverlayDrawerText,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Black,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+            MiniMetaBadge(
+                text = "${minion.techLevel}本",
+                accent = DashboardIce
+            )
+        }
+    }
+}
+
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun DrawerTacticalShopHeader(
+    strategy: StrategyComp,
+    selectedTribes: Set<Tribe>,
+    tavernTier: Int?,
+    tavernTierLabel: String?,
+    selectedHero: ResolvedHeroStatOption?,
+    primaryCount: Int,
+    secondaryCount: Int
+) {
+    Surface(
+        shape = RoundedCornerShape(18.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.94f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.58f))
+    ) {
+        Column(
+            modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            OverlayDrawerAccent.copy(alpha = 0.08f),
+                            OverlayDrawerCore.copy(alpha = 0.12f)
+                        )
+                    )
+                )
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
             ) {
-                val tacticalFocusMinions = (
-                    directionalCoreMinions(
-                        minions = strategy.keyMinions,
-                        selectedTribes = selectedTribes,
-                        cardRules = cardRules,
-                        cardMetadata = cardMetadata,
-                        limit = 3
-                    ) +
-                        genericSupportMinions(
-                            minions = strategy.keyMinions,
-                            selectedTribes = selectedTribes,
-                            cardRules = cardRules,
-                            cardMetadata = cardMetadata,
-                            limit = 2
-                        )
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    Text(
+                        text = "当前该买什么",
+                        color = OverlayDrawerText,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Black
                     )
-                    .distinctBy { it.cardId ?: it.name }
-                    .ifEmpty {
-                        filterMinionsForLobby(
-                            minions = strategy.keyMinions,
-                            selectedTribes = selectedTribes,
-                            cardRules = cardRules,
-                            cardMetadata = cardMetadata
-                        ).take(5)
-                    }
-                tacticalFocusMinions.forEach { minion ->
-                    DrawerMinionThumb(
-                        modifier = Modifier.width(78.dp),
-                        minion = minion
+                    Text(
+                        text = buildString {
+                            append(strategy.name)
+                            selectedHero?.displayName?.takeIf { it.isNotBlank() }?.let {
+                                append(" · ")
+                                append(it)
+                            }
+                        },
+                        color = OverlayDrawerSubtext,
+                        style = MaterialTheme.typography.bodySmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Surface(
+                    shape = RoundedCornerShape(999.dp),
+                    color = OverlayDrawerAccent.copy(alpha = 0.14f),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerAccent.copy(alpha = 0.30f))
+                ) {
+                    Text(
+                        text = tavernTier?.let { "${it}本商店" } ?: "酒馆未同步",
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                        color = OverlayDrawerText,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Black
                     )
                 }
             }
-            val recommended = recommendedMinions(
-                minions = strategy.keyMinions,
-                selectedTribes = selectedTribes,
-                cardRules = cardRules,
-                cardMetadata = cardMetadata,
-                limit = Int.MAX_VALUE
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                MiniMetaBadge(
+                    text = "主抓 $primaryCount",
+                    accent = OverlayDrawerAccent
+                )
+                MiniMetaBadge(
+                    text = "补强 $secondaryCount",
+                    accent = DashboardMint
+                )
+                MiniMetaBadge(
+                    text = strategy.requiredTribes.takeIf { it.isNotEmpty() }?.let(::localizedRequiredTribes) ?: "通用",
+                    accent = DashboardIce
+                )
+                selectedTribes.takeIf { it.isNotEmpty() }?.let { tribes ->
+                    MiniMetaBadge(
+                        text = tribes.joinToString(" ") { it.shortLabel },
+                        accent = OverlayDrawerWarning
+                    )
+                }
+            }
+
+            Text(
+                text = tavernTierLabel?.takeIf { it.isNotBlank() }
+                    ?: "当前战术页会按酒馆等级和本局五族筛出可直接拿的随从。",
+                color = OverlayDrawerSubtext,
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
-            if (recommended.isNotEmpty()) {
-                DrawerSectionChip(label = "推荐拿牌")
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+        }
+    }
+}
+
+@Composable
+private fun DrawerShopBuyRow(
+    minion: KeyMinion,
+    rank: Int,
+    accent: Color,
+    badge: String,
+    currentTavernTier: Int?
+) {
+    val displayName = localizedMinionTitle(minion) ?: minion.name
+    val reason = tacticalMinionReason(
+        minion = minion,
+        currentTavernTier = currentTavernTier,
+        rank = rank
+    )
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.94f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.38f))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(accent.copy(alpha = 0.10f), OverlayDrawerCore.copy(alpha = 0.14f))
+                    )
+                )
+                .padding(horizontal = 12.dp, vertical = 9.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Surface(
+                shape = RoundedCornerShape(999.dp),
+                color = accent.copy(alpha = 0.14f),
+                border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.28f))
+            ) {
+                Text(
+                    text = rank.toString(),
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
+                    color = accent,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Black
+                )
+            }
+            Box(contentAlignment = Alignment.BottomEnd) {
+                MinionHeadshot(
+                    minion = minion,
+                    modifier = Modifier.size(66.dp),
+                    borderColor = accent
+                )
+                Surface(
+                    modifier = Modifier.offset(x = 4.dp, y = 2.dp),
+                    shape = RoundedCornerShape(999.dp),
+                    color = OverlayDrawerShell.copy(alpha = 0.92f),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, DashboardIce.copy(alpha = 0.34f))
                 ) {
-                    recommended.forEach { minion ->
-                        DrawerMinionThumb(
-                            modifier = Modifier.width(78.dp),
-                            minion = minion
+                    Text(
+                        text = "${minion.techLevel}本",
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                        color = DashboardIce,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Black
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = displayName,
+                        color = OverlayDrawerText,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Black,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Surface(
+                        shape = RoundedCornerShape(999.dp),
+                        color = accent.copy(alpha = 0.14f),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.26f))
+                    ) {
+                        Text(
+                            text = badge,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            color = accent,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Black
                         )
                     }
                 }
-            }
-            val cycle = cycleMinions(
-                minions = strategy.keyMinions,
-                selectedTribes = selectedTribes,
-                cardRules = cardRules,
-                cardMetadata = cardMetadata,
-                limit = Int.MAX_VALUE
-            )
-            if (cycle.isNotEmpty()) {
-                DrawerSectionChip(label = "循环牌")
+                Text(
+                    text = reason,
+                    color = OverlayDrawerSubtext,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
                 FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    cycle.forEach { minion ->
-                        DrawerMinionThumb(
-                            modifier = Modifier.width(78.dp),
-                            minion = minion
-                        )
+                    MiniMetaBadge(text = minionStatusLabel(minion.statusRaw), accent = accent)
+                    if (minion.phase.isNotBlank()) {
+                        MiniMetaBadge(text = minion.phase, accent = DashboardMint)
                     }
                 }
             }
@@ -3519,30 +4472,32 @@ private fun DrawerActionStrip(
 ) {
     Surface(
         shape = RoundedCornerShape(16.dp),
-        color = accent.copy(alpha = 0.10f),
+        color = accent.copy(alpha = 0.12f),
         border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.28f))
     ) {
         Column(
             modifier = Modifier
                 .background(
                     Brush.horizontalGradient(
-                        colors = listOf(accent.copy(alpha = 0.10f), Color.Transparent)
+                        colors = listOf(accent.copy(alpha = 0.14f), OverlayDrawerCore.copy(alpha = 0.18f))
                     )
                 )
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalArrangement = Arrangement.spacedBy(3.dp)
+                .padding(horizontal = 12.dp, vertical = 11.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
                 text = title,
                 color = accent,
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Black
             )
             Text(
                 text = body,
                 color = OverlayDrawerText,
                 style = MaterialTheme.typography.bodySmall,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -3559,7 +4514,7 @@ private fun DrawerActionCard(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(18.dp),
-        color = if (emphasize) accent.copy(alpha = 0.12f) else OverlayDrawerInset.copy(alpha = 0.78f),
+        color = if (emphasize) accent.copy(alpha = 0.13f) else OverlayDrawerInset.copy(alpha = 0.94f),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
             if (emphasize) accent.copy(alpha = 0.30f) else OverlayDrawerStrokeSoft.copy(alpha = 0.56f)
@@ -3567,29 +4522,32 @@ private fun DrawerActionCard(
     ) {
         Column(
             modifier = Modifier
+                .heightIn(min = 156.dp)
                 .background(
                     Brush.verticalGradient(
                         colors = if (emphasize) {
-                            listOf(accent.copy(alpha = 0.09f), Color.Transparent)
+                            listOf(accent.copy(alpha = 0.12f), OverlayDrawerCore.copy(alpha = 0.18f))
                         } else {
-                            listOf(OverlayDrawerAccent.copy(alpha = 0.04f), Color.Transparent)
+                            listOf(OverlayDrawerAccent.copy(alpha = 0.05f), OverlayDrawerCore.copy(alpha = 0.12f))
                         }
                     )
                 )
-                .padding(horizontal = 12.dp, vertical = 11.dp),
+                .padding(horizontal = 12.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(
                 text = title,
                 color = accent,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Black
             )
             Text(
                 text = body,
                 color = if (emphasize) OverlayDrawerText else OverlayDrawerSubtext,
                 style = MaterialTheme.typography.bodySmall,
-                fontWeight = if (emphasize) FontWeight.Bold else FontWeight.Medium
+                fontWeight = if (emphasize) FontWeight.Bold else FontWeight.Medium,
+                maxLines = 8,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -3638,6 +4596,12 @@ private fun DrawerMinionThumb(
                 horizontalArrangement = Arrangement.Center,
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
+                minion.techLevel.let { tier ->
+                    MiniMetaBadge(
+                        text = "${tier}本",
+                        accent = DashboardIce
+                    )
+                }
                 MiniMetaBadge(
                     text = minionStatusLabel(minion.statusRaw),
                     accent = if (isGenericSupportMinion(minion)) DashboardMint else OverlayDrawerAccent
@@ -5455,6 +6419,35 @@ private fun minionStatusLabel(status: String?): String = when (status?.uppercase
     "RECOMMENDED" -> "推荐"
     "CYCLE" -> "经济"
     else -> "功能牌"
+}
+
+private fun tacticalMinionAccent(minion: KeyMinion): Color = when (minion.statusRaw?.uppercase()) {
+    "CORE" -> OverlayDrawerAccent
+    "RECOMMENDED" -> DashboardMint
+    "ADDON" -> DashboardIce
+    "CYCLE" -> OverlayDrawerWarning
+    else -> OverlayDrawerSubtext
+}
+
+private fun tacticalMinionReason(
+    minion: KeyMinion,
+    currentTavernTier: Int?,
+    rank: Int
+): String = when {
+    rank == 1 && minion.statusRaw?.uppercase() == "CORE" -> "当前最先抓的主核"
+    minion.statusRaw?.uppercase() == "CORE" && currentTavernTier != null && minion.techLevel == currentTavernTier ->
+        "本层已经到点，看到就拿"
+    minion.statusRaw?.uppercase() == "RECOMMENDED" ->
+        "当前最顺的节奏补强"
+    minion.statusRaw?.uppercase() == "ADDON" && isGenericSupportMinion(minion) ->
+        "功能件先留，后面放大主核"
+    minion.statusRaw?.uppercase() == "ADDON" ->
+        "先补战力，再接主核"
+    minion.statusRaw?.uppercase() == "CYCLE" ->
+        "过渡兼经济，继续找牌"
+    isGenericSupportMinion(minion) ->
+        "功能位可先留一张"
+    else -> "适合当前回合先拿"
 }
 
 private fun StrategyDataSource.label(): String = when (this) {

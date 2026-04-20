@@ -114,21 +114,21 @@ fun MiniOverlayDetectChip(
 
     Box(
         modifier = Modifier
-            .widthIn(min = 74.dp)
-            .shadow(12.dp, RoundedCornerShape(16.dp))
-            .clip(RoundedCornerShape(16.dp))
+            .widthIn(min = 66.dp)
+            .shadow(8.dp, RoundedCornerShape(14.dp))
+            .clip(RoundedCornerShape(14.dp))
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(visual.background, BubbleNight)
                 )
             )
-            .border(1.dp, BubbleTrim, RoundedCornerShape(16.dp))
-            .padding(horizontal = 8.dp, vertical = 6.dp),
+            .border(1.dp, BubbleTrim.copy(alpha = 0.82f), RoundedCornerShape(14.dp))
+            .padding(horizontal = 7.dp, vertical = 5.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            verticalArrangement = Arrangement.spacedBy(1.dp)
         ) {
             RowStatus(visual = visual)
             tavernTierLabel?.takeIf(String::isNotBlank)?.let {
@@ -153,7 +153,7 @@ private fun RowStatus(
             .clip(RoundedCornerShape(99.dp))
             .background(visual.signal.copy(alpha = 0.12f))
             .border(1.dp, visual.border.copy(alpha = 0.36f), RoundedCornerShape(99.dp))
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = 7.dp, vertical = 3.dp)
     ) {
         androidx.compose.foundation.layout.Row(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -168,7 +168,7 @@ private fun RowStatus(
             Text(
                 text = visual.text,
                 color = BubbleIvory,
-                fontSize = 10.sp,
+                fontSize = 9.sp,
                 fontWeight = FontWeight.Black,
                 maxLines = 1
             )

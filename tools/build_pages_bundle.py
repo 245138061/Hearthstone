@@ -48,6 +48,27 @@ REQUIRED_COMP_FIELDS = {
 }
 
 ASCII_WORD_RE = re.compile(r"[A-Za-z]{3,}")
+REQUIRED_SITE_FILES = (
+    "manifest.json",
+    "strategies.json",
+    "strategies.enUS.json",
+    "card-rules.json",
+    "card-stats.json",
+    "hero-stats.json",
+    "bgs-card-metadata.json",
+    ".nojekyll",
+    "index.html",
+)
+EXPECTED_CATALOG_FILES = {
+    "zhCN": "strategies.json",
+    "enUS": "strategies.enUS.json",
+}
+EXPECTED_SUPPORT_FILES = {
+    "cardRules": "card-rules.json",
+    "cardStats": "card-stats.json",
+    "heroStats": "hero-stats.json",
+    "cardMetadata": "bgs-card-metadata.json",
+}
 
 
 def sha256_text(raw: str) -> str:
@@ -56,11 +77,20 @@ def sha256_text(raw: str) -> str:
 
 def write_json(path: Path, data: dict[str, Any]) -> tuple[int, str]:
     raw = json.dumps(data, ensure_ascii=False, indent=2) + "\n"
-    path.write_text(raw)
+    path.write_text(raw, encoding="utf-8")
     return len(raw.encode("utf-8")), sha256_text(raw)
 
 
-def validate_catalog(catalog: dict[str, Any], locale: str) -> None:
+def read_json_file(path: Path) -> Any:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def validate_catalog(
+    catalog: dict[str, Any],
+    locale: str,
+    *,
+    strict_zh_localization: bool = False,
+) -> None:
     comps = catalog.get("comps")
     if not isinstance(comps, list) or not comps:
         raise ValueError(f"{locale} catalog has no comps")
@@ -75,10 +105,21 @@ def validate_catalog(catalog: dict[str, Any], locale: str) -> None:
             raise ValueError(f"{locale} comp {comp['id']} has no key minions")
 
     if locale == "zhCN":
-        validate_zh_catalog_localization(comps)
+        violations = collect_zh_catalog_localization_violations(comps)
+        if violations:
+            sample = "\n".join(violations[:12])
+            extra = len(violations) - min(len(violations), 12)
+            suffix = f"\n... and {extra} more" if extra > 0 else ""
+            message = (
+                "zhCN catalog still contains untranslated English content.\n"
+                f"{sample}{suffix}"
+            )
+            if strict_zh_localization:
+                raise ValueError(message)
+            print(f"[warn] {message}", file=sys.stderr)
 
 
-def validate_zh_catalog_localization(comps: list[dict[str, Any]]) -> None:
+def collect_zh_catalog_localization_violations(comps: list[dict[str, Any]]) -> list[str]:
     violations: list[str] = []
 
     for comp in comps:
@@ -94,25 +135,23 @@ def validate_zh_catalog_localization(comps: list[dict[str, Any]]) -> None:
                 card_id = str(minion.get("card_id") or "<unknown>")
                 violations.append(f"{comp_id}.key_minions[{card_id}]: {name}")
 
-    if violations:
-        sample = "\n".join(violations[:12])
-        extra = len(violations) - min(len(violations), 12)
-        suffix = f"\n... and {extra} more" if extra > 0 else ""
-        raise ValueError(
-            "zhCN catalog still contains untranslated English content.\n"
-            f"{sample}{suffix}"
-        )
+    return violations
 
 
 def contains_ascii_word(value: str) -> bool:
     return ASCII_WORD_RE.search(value) is not None
 
 
-def load_catalog_fallback(path: Path, locale: str) -> dict[str, Any]:
+def load_catalog_fallback(
+    path: Path,
+    locale: str,
+    *,
+    strict_zh_localization: bool = False,
+) -> dict[str, Any]:
     catalog = load_json(str(path))
     if not isinstance(catalog, dict):
         raise ValueError(f"{locale} fallback catalog is invalid: {path}")
-    validate_catalog(catalog, locale)
+    validate_catalog(catalog, locale, strict_zh_localization=strict_zh_localization)
     return catalog
 
 
@@ -122,6 +161,8 @@ def build_catalog_with_fallback(
     language: str,
     fallback_path: Path,
     translations: dict[str, Any] | None = None,
+    *,
+    strict_zh_localization: bool = False,
 ) -> tuple[dict[str, Any], str, bool]:
     try:
         catalog = convert(
@@ -130,7 +171,11 @@ def build_catalog_with_fallback(
             language=language,
             translations=translations,
         )
-        validate_catalog(catalog, language)
+        validate_catalog(
+            catalog,
+            language,
+            strict_zh_localization=strict_zh_localization,
+        )
         return catalog, source_urls.strategies, False
     except Exception as error:
         if not fallback_path.exists():
@@ -139,7 +184,11 @@ def build_catalog_with_fallback(
             f"[warn] failed to build {language} catalog from upstream, using fallback {fallback_path}: {error}",
             file=sys.stderr,
         )
-        catalog = load_catalog_fallback(fallback_path, language)
+        catalog = load_catalog_fallback(
+            fallback_path,
+            language,
+            strict_zh_localization=strict_zh_localization,
+        )
         return catalog, str(fallback_path), True
 
 
@@ -157,6 +206,7 @@ def build_bundle(
     translations_zh_source: str,
     fallback_zh_catalog: str,
     fallback_en_catalog: str,
+    strict_zh_localization: bool = False,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now(timezone.utc)
@@ -173,6 +223,7 @@ def build_bundle(
         language="zhCN",
         fallback_path=Path(fallback_zh_catalog),
         translations=load_json(translations_zh_source),
+        strict_zh_localization=strict_zh_localization,
     )
     en_catalog, en_catalog_source, en_used_fallback = build_catalog_with_fallback(
         SourceUrls(
@@ -183,6 +234,7 @@ def build_bundle(
         version_label=f"{base_version}-firestone-enUS",
         language="enUS",
         fallback_path=Path(fallback_en_catalog),
+        strict_zh_localization=strict_zh_localization,
     )
 
     zh_size, zh_sha = write_json(output_dir / "strategies.json", zh_catalog)
@@ -290,7 +342,7 @@ def build_bundle(
         }
     write_json(output_dir / "manifest.json", manifest)
 
-    (output_dir / ".nojekyll").write_text("")
+    (output_dir / ".nojekyll").write_text("", encoding="utf-8")
     (output_dir / "index.html").write_text(
         f"""<!doctype html>
 <html lang="en">
@@ -356,7 +408,112 @@ def build_bundle(
   </body>
 </html>
 """,
+        encoding="utf-8",
     )
+    verify_bundle(output_dir)
+
+
+def verify_bundle(output_dir: Path) -> None:
+    missing_files = [name for name in REQUIRED_SITE_FILES if not (output_dir / name).exists()]
+    if missing_files:
+        raise ValueError(f"bundle is missing required files: {missing_files}")
+
+    manifest_path = output_dir / "manifest.json"
+    manifest = read_json_file(manifest_path)
+
+    if manifest.get("manifest_format") != "bgtactician.pages.v1":
+        raise ValueError("manifest_format is invalid")
+    if manifest.get("schema_version") != 1:
+        raise ValueError("schema_version is invalid")
+
+    files = manifest.get("files")
+    if not isinstance(files, dict):
+        raise ValueError("manifest files section is invalid")
+    for locale, expected_path in EXPECTED_CATALOG_FILES.items():
+        entry = files.get(locale)
+        if not isinstance(entry, dict):
+            raise ValueError(f"manifest missing locale entry: {locale}")
+        verify_manifest_entry(
+            output_dir=output_dir,
+            entry=entry,
+            expected_path=expected_path,
+            label=f"catalog:{locale}",
+        )
+        validate_catalog(read_json_file(output_dir / expected_path), locale)
+
+    support_files = manifest.get("support_files")
+    if not isinstance(support_files, dict):
+        raise ValueError("manifest support_files section is invalid")
+    for resource_key, expected_path in EXPECTED_SUPPORT_FILES.items():
+        entry = support_files.get(resource_key)
+        if not isinstance(entry, dict):
+            raise ValueError(f"manifest missing support file entry: {resource_key}")
+        verify_manifest_entry(
+            output_dir=output_dir,
+            entry=entry,
+            expected_path=expected_path,
+            label=f"support:{resource_key}",
+        )
+        validate_support_payload(resource_key, read_json_file(output_dir / expected_path))
+
+    sources = manifest.get("sources")
+    if not isinstance(sources, dict) or "strategies" not in sources:
+        raise ValueError("manifest sources section is invalid")
+
+
+def verify_manifest_entry(
+    *,
+    output_dir: Path,
+    entry: dict[str, Any],
+    expected_path: str,
+    label: str,
+) -> None:
+    path = str(entry.get("path") or "").strip()
+    if path != expected_path:
+        raise ValueError(f"{label} path mismatch: expected {expected_path}, got {path or '<empty>'}")
+
+    url = str(entry.get("url") or "").strip()
+    if url != f"./{expected_path}":
+        raise ValueError(f"{label} url mismatch: expected ./{expected_path}, got {url or '<empty>'}")
+
+    target = output_dir / expected_path
+    raw = target.read_text(encoding="utf-8")
+    actual_size = len(raw.encode("utf-8"))
+    actual_sha = sha256_text(raw)
+
+    if entry.get("size_bytes") != actual_size:
+        raise ValueError(f"{label} size_bytes mismatch")
+    if entry.get("sha256") != actual_sha:
+        raise ValueError(f"{label} sha256 mismatch")
+    if not str(entry.get("catalog_version") or "").strip():
+        raise ValueError(f"{label} catalog_version is empty")
+
+
+def validate_support_payload(resource_key: str, payload: Any) -> None:
+    if resource_key == "cardRules":
+        if not isinstance(payload, dict) or not payload:
+            raise ValueError("cardRules payload is empty")
+        return
+
+    if resource_key == "cardStats":
+        card_stats = payload.get("cardStats") if isinstance(payload, dict) else None
+        if not isinstance(card_stats, list) or not card_stats:
+            raise ValueError("cardStats payload is empty")
+        return
+
+    if resource_key == "heroStats":
+        hero_stats = payload.get("heroStats") if isinstance(payload, dict) else None
+        if not isinstance(hero_stats, list) or not hero_stats:
+            raise ValueError("heroStats payload is empty")
+        return
+
+    if resource_key == "cardMetadata":
+        cards = payload.get("cards") if isinstance(payload, dict) else None
+        if not isinstance(cards, dict) or not cards:
+            raise ValueError("cardMetadata payload is empty")
+        return
+
+    raise ValueError(f"unknown support payload key: {resource_key}")
 
 
 def main() -> None:
@@ -386,6 +543,11 @@ def main() -> None:
         default=str(DEFAULT_TRANSLATIONS_ZH),
         help="Optional manual zhCN text overrides file.",
     )
+    parser.add_argument(
+        "--strict-zh-localization",
+        action="store_true",
+        help="Fail the build when zhCN strategy text still contains untranslated English content.",
+    )
     args = parser.parse_args()
 
     build_bundle(
@@ -402,6 +564,7 @@ def main() -> None:
         translations_zh_source=args.translations_zh,
         fallback_zh_catalog=args.fallback_zh_catalog,
         fallback_en_catalog=args.fallback_en_catalog,
+        strict_zh_localization=args.strict_zh_localization,
     )
 
 

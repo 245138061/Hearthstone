@@ -137,9 +137,9 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 22.dp),
+                .padding(horizontal = 16.dp, vertical = 18.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+            verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
             HeroSignboardCard(
                 modifier = Modifier.widthIn(max = 560.dp),
@@ -196,21 +196,21 @@ private fun HeroSignboardCard(
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             SignboardOrnaments()
 
             Text(
                 text = "酒馆助手",
                 color = TavernIvory,
-                style = MaterialTheme.typography.displaySmall.copy(letterSpacing = 1.4.sp),
+                style = MaterialTheme.typography.headlineLarge.copy(letterSpacing = 1.1.sp),
                 fontWeight = FontWeight.Black,
                 textAlign = TextAlign.Center
             )
             Text(
                 text = "BATTLEGROUNDS TACTICIAN",
                 color = TavernGold,
-                style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 1.4.sp),
+                style = MaterialTheme.typography.labelMedium.copy(letterSpacing = 1.2.sp),
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
@@ -230,7 +230,9 @@ private fun HeroSignboardCard(
                     text = message,
                     color = TavernBlueHint,
                     style = MaterialTheme.typography.bodySmall,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
@@ -241,10 +243,10 @@ private fun HeroSignboardCard(
                 contentPadding = PaddingValues(horizontal = 18.dp, vertical = 10.dp)
             ) {
                 Text(
-                text = if (refreshing) "牌库同步中" else "刷新牌库",
-                color = TavernIvory,
-                fontWeight = FontWeight.Bold
-            )
+                    text = if (refreshing) "牌库同步中" else "刷新牌库",
+                    color = TavernIvory,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
@@ -261,26 +263,20 @@ private fun LaunchCoinCard(
 ) {
     PlaqueCard(
         modifier = modifier,
-        capTitle = "鲍勃的柜台",
+        capTitle = null,
         capAccent = if (overlayRunning) TavernFire else TavernGold,
         glowColor = TavernGold
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "点亮硬币，让柜台开门",
+                text = "点亮柜台",
                 color = TavernIvory,
-                style = MaterialTheme.typography.headlineMedium.copy(letterSpacing = 0.9.sp),
+                style = MaterialTheme.typography.headlineSmall.copy(letterSpacing = 0.8.sp),
                 fontWeight = FontWeight.Black,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "首页只保留这一枚主按钮，进入对局后由悬浮侧栏继续接管。",
-                color = TavernMuted,
-                style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center
             )
 
@@ -309,7 +305,7 @@ private fun PermissionPlaqueCard(
 ) {
     PlaqueCard(
         modifier = modifier,
-        capTitle = "入场许可",
+        capTitle = null,
         capAccent = TavernBlueHint,
         glowColor = TavernBlueHint
     ) {
@@ -318,7 +314,7 @@ private fun PermissionPlaqueCard(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Text(
-                text = "先确认两项许可，再让酒馆侧栏稳稳进场。",
+                text = "先补齐两项许可，再让侧栏进场。",
                 color = TavernMuted,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
@@ -349,7 +345,7 @@ private fun PermissionPlaqueCard(
 @Composable
 private fun PlaqueCard(
     modifier: Modifier = Modifier,
-    capTitle: String,
+    capTitle: String? = null,
     capAccent: Color,
     glowColor: Color,
     content: @Composable ColumnScope.() -> Unit
@@ -357,7 +353,7 @@ private fun PlaqueCard(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 14.dp)
+            .padding(top = 10.dp)
     ) {
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -378,13 +374,13 @@ private fun PlaqueCard(
                         )
                     )
                     .border(1.dp, TavernTrim.copy(alpha = 0.92f), RoundedCornerShape(34.dp))
-                    .padding(horizontal = 18.dp, vertical = 18.dp)
+                    .padding(horizontal = 16.dp, vertical = 14.dp)
             ) {
                 Box(
                     modifier = Modifier
                         .matchParentSize()
-                        .padding(6.dp)
-                        .border(1.dp, TavernGoldSoft.copy(alpha = 0.24f), RoundedCornerShape(28.dp))
+                        .padding(5.dp)
+                        .border(1.dp, TavernGoldSoft.copy(alpha = 0.18f), RoundedCornerShape(28.dp))
                 )
                 Rivet(
                     modifier = Modifier
@@ -410,7 +406,7 @@ private fun PlaqueCard(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 4.dp),
+                        .padding(top = 2.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(0.dp),
                     content = content
@@ -418,11 +414,13 @@ private fun PlaqueCard(
             }
         }
 
-        TopCap(
-            title = capTitle,
-            accent = capAccent,
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
+        if (!capTitle.isNullOrBlank()) {
+            TopCap(
+                title = capTitle,
+                accent = capAccent,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+        }
     }
 }
 
@@ -434,15 +432,15 @@ private fun TopCap(
 ) {
     Row(
         modifier = modifier
-            .offset(y = (-14).dp)
-            .clip(RoundedCornerShape(18.dp))
+            .offset(y = (-10).dp)
+            .clip(RoundedCornerShape(16.dp))
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(TavernGoldDeep, accent.copy(alpha = 0.96f), TavernGoldDeep)
                 )
             )
-            .border(1.dp, TavernGold.copy(alpha = 0.75f), RoundedCornerShape(18.dp))
-            .padding(horizontal = 20.dp, vertical = 7.dp),
+            .border(1.dp, TavernGold.copy(alpha = 0.68f), RoundedCornerShape(16.dp))
+            .padding(horizontal = 16.dp, vertical = 6.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -505,11 +503,11 @@ private fun SignboardOrnaments() {
         OrnamentLine(modifier = Modifier.weight(1f))
         Box(
             modifier = Modifier
-                .padding(horizontal = 12.dp)
-                .size(18.dp)
+                .padding(horizontal = 10.dp)
+                .size(14.dp)
                 .clip(CircleShape)
-                .background(TavernGold.copy(alpha = 0.18f))
-                .border(1.dp, TavernGoldSoft.copy(alpha = 0.62f), CircleShape)
+                .background(TavernGold.copy(alpha = 0.15f))
+                .border(1.dp, TavernGoldSoft.copy(alpha = 0.48f), CircleShape)
         )
         OrnamentLine(modifier = Modifier.weight(1f))
     }
@@ -529,17 +527,17 @@ private fun OrnamentLine(
             color = TavernGoldSoft.copy(alpha = 0.86f),
             start = Offset(0f, centerY),
             end = Offset(size.width, centerY),
-            strokeWidth = 2.2f,
+            strokeWidth = 1.8f,
             cap = StrokeCap.Round
         )
         drawCircle(
             color = TavernGold.copy(alpha = 0.7f),
-            radius = 2.8f,
+            radius = 2.3f,
             center = Offset(size.width * 0.18f, centerY)
         )
         drawCircle(
             color = TavernGold.copy(alpha = 0.7f),
-            radius = 2.8f,
+            radius = 2.3f,
             center = Offset(size.width * 0.82f, centerY)
         )
     }
@@ -759,14 +757,14 @@ private fun LedgerPlate(
             textAlign = TextAlign.Center
         )
         Text(
-            text = detail,
-            color = TavernMuted,
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
+        text = detail,
+        color = TavernMuted,
+        style = MaterialTheme.typography.bodySmall,
+        textAlign = TextAlign.Center,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis
+    )
+}
 }
 
 @Composable
