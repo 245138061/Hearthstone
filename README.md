@@ -43,6 +43,8 @@ The workflow runs every day and can also be triggered manually. It pulls the lat
 
 It then publishes them to GitHub Pages.
 
+If the upstream strategy conversion fails temporarily, the bundle builder falls back to the bundled `strategies_zerotoheroes_zhCN.json` / `strategies_zerotoheroes_enUS.json` assets so the Pages deployment can still complete.
+
 To give the Android app a fixed production update source, set a Gradle property before building:
 
 ```bash

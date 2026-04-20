@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Rect
 import android.media.projection.MediaProjectionManager
 import android.net.Uri
 import android.os.Bundle
@@ -27,7 +28,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bgtactician.app.autodetect.CapturedFrame
+import com.bgtactician.app.autodetect.HeroNameOcrDetector
 import com.bgtactician.app.autodetect.ScreenCapturePermissionStore
+import com.bgtactician.app.autodetect.TavernTierDetector
 import com.bgtactician.app.data.local.VisionApiSettings
 import com.bgtactician.app.data.local.VisionRoutingMode
 import com.bgtactician.app.data.model.HeroSelectionVisionResult
@@ -37,9 +40,11 @@ import com.bgtactician.app.data.model.VisionScreenType
 import com.bgtactician.app.data.model.Tribe
 import com.bgtactician.app.overlay.OverlayPermissionHelper
 import com.bgtactician.app.overlay.OverlayService
+import com.bgtactician.app.data.repository.StrategyRepository
 import com.bgtactician.app.ui.screen.HomeScreen
 import com.bgtactician.app.ui.theme.BGTacticianTheme
 import com.bgtactician.app.viewmodel.MainViewModel
+import com.bgtactician.app.vision.HeroSelectionVisionSemanticValidator
 import com.bgtactician.app.vision.HeroSelectionVisionValidator
 import com.bgtactician.app.vision.HeroSelectionVisionRequest
 import com.bgtactician.app.vision.OpenAiCompatibleVisionConfig
@@ -90,6 +95,7 @@ private fun MainRoute(viewModel: MainViewModel) {
     var imageDebugPreviewAspectRatio by remember { mutableStateOf<Float?>(null) }
     var imageDebugPreviewOverlayVisible by remember { mutableStateOf(false) }
     var imageDebugPreviewHeroes by remember { mutableStateOf<List<ResolvedHeroStatOption>>(emptyList()) }
+    var imageDebugPreviewOcrSlots by remember { mutableStateOf<List<ImageDebugOcrSlotPreview>>(emptyList()) }
     val mediaProjectionManager = remember(context) {
         context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
     }
@@ -114,12 +120,13 @@ private fun MainRoute(viewModel: MainViewModel) {
     ) { uri ->
         if (uri == null) return@rememberLauncherForActivityResult
         imageDebugLoading = true
-        imageDebugTitle = "正在请求 AI 识图"
+        imageDebugTitle = "正在执行图片识别"
         imageDebugLines = emptyList()
         imageDebugPreviewUri = uri
         imageDebugPreviewAspectRatio = null
         imageDebugPreviewOverlayVisible = false
         imageDebugPreviewHeroes = emptyList()
+        imageDebugPreviewOcrSlots = emptyList()
         coroutineScope.launch {
             val snapshot = analyzeVisionImage(
                 context = context,
@@ -141,6 +148,7 @@ private fun MainRoute(viewModel: MainViewModel) {
             imageDebugTitle = snapshot.title
             imageDebugPreviewAspectRatio = snapshot.previewAspectRatio
             imageDebugPreviewOverlayVisible = imageDebugPreviewHeroes.isNotEmpty()
+            imageDebugPreviewOcrSlots = snapshot.ocrSlots
             imageDebugLines = buildList {
                 addAll(snapshot.lines)
                 if (imageDebugPreviewHeroes.isNotEmpty()) {
@@ -188,17 +196,6 @@ private fun MainRoute(viewModel: MainViewModel) {
         },
         onRefreshData = {
             viewModel.refreshCatalog(silent = false)
-        },
-        onUpdateVisionRoutingMode = viewModel::updateVisionRoutingMode,
-        imageDebugLoading = imageDebugLoading,
-        imageDebugTitle = imageDebugTitle,
-        imageDebugLines = imageDebugLines,
-        imageDebugPreviewImage = imageDebugPreviewUri,
-        imageDebugPreviewAspectRatio = imageDebugPreviewAspectRatio,
-        imageDebugPreviewOverlayVisible = imageDebugPreviewOverlayVisible,
-        imageDebugPreviewHeroes = imageDebugPreviewHeroes,
-        onPickAiVisionImage = {
-            imagePickerLauncher.launch("image/*")
         }
     )
 }
@@ -211,16 +208,8 @@ private suspend fun analyzeVisionImage(
     val startAt = System.currentTimeMillis()
     val decodeStartedAt = System.currentTimeMillis()
     val endpoints = settings.toVisionEndpoints()
-    if (endpoints.isEmpty()) {
-        return@withContext ImageDebugSnapshot(
-            title = "AI 识图配置不完整",
-            lines = listOf(
-                "未配置可用的主模型或备用模型",
-                "耗时: ${System.currentTimeMillis() - startAt} ms"
-            ),
-            previewAspectRatio = 1f
-        )
-    }
+    val heroNameIndex = StrategyRepository().loadHeroNameIndex(context)
+    val heroNameOcrDetector = HeroNameOcrDetector()
 
     val bitmap = context.contentResolver.openInputStream(uri)?.use { stream ->
         BitmapFactory.decodeStream(stream)
@@ -245,12 +234,26 @@ private suspend fun analyzeVisionImage(
         height = bitmap.height,
         timestampMillis = System.currentTimeMillis()
     )
+    // 首页 AI 视觉测试只用于验证模板匹配命中率，不混其它本地推断。
+    val tavernTierDetection = TavernTierDetector.detectTemplateOnly(
+        context = context,
+        frame = frame
+    )
+    val ocrResult = heroNameOcrDetector.detect(frame, heroNameIndex)
     val snapshot = analyzeWithFailover(
         frame = frame,
         decodeMillis = decodeMillis,
         startAt = startAt,
-        endpoints = endpoints
-    ).copy(previewAspectRatio = bitmap.width.toFloat() / bitmap.height.toFloat())
+        endpoints = endpoints,
+        tavernTierDetection = tavernTierDetection,
+        ocrResult = ocrResult,
+        heroNameIndex = heroNameIndex
+    ).copy(
+        previewAspectRatio = bitmap.width.toFloat() / bitmap.height.toFloat(),
+        ocrSlots = ocrResult.slotResults.map { slot ->
+            slot.toPreview(bitmap.width, bitmap.height)
+        }
+    )
 
     bitmap.recycle()
     return@withContext snapshot
@@ -260,105 +263,165 @@ private suspend fun analyzeWithFailover(
     frame: CapturedFrame,
     decodeMillis: Long,
     startAt: Long,
-    endpoints: List<VisionEndpoint>
+    endpoints: List<VisionEndpoint>,
+    tavernTierDetection: com.bgtactician.app.autodetect.TavernTierDetection,
+    ocrResult: HeroNameOcrDetector.HeroNameOcrResult,
+    heroNameIndex: com.bgtactician.app.data.model.BattlegroundHeroNameIndex
 ): ImageDebugSnapshot {
-    return when (
-        val outcome = executeVisionFailover(
-            endpoints = endpoints,
-            attempt = { endpoint ->
-                val provider = OpenAiCompatibleVisionProvider(
-                    OpenAiCompatibleVisionConfig(
-                        baseUrl = endpoint.baseUrl,
-                        apiKey = endpoint.apiKey,
-                        model = endpoint.model
-                    )
-                )
-                provider.analyzeVisionFrameDetailed(frame)
-            },
-            validate = { execution ->
-                val validation = HeroSelectionVisionValidator.validate(
-                    execution.result,
-                    requireCompleteTribes = false
-                )
-                validation.errors.takeIf { !validation.isValid }?.joinToString("；", prefix = "校验失败: ")
-            }
+    if (endpoints.isEmpty()) {
+        val localVision = HeroSelectionVisionResult(
+            screenType = if (ocrResult.heroOptions.isNotEmpty()) VisionScreenType.HERO_SELECTION else VisionScreenType.UNKNOWN,
+            heroOptions = ocrResult.heroOptions
         )
-    ) {
-        is VisionFailoverOutcome.Success -> {
-            val execution = outcome.value
-            val endpoint = outcome.endpoint
-            val tribeRecovery = if (HeroSelectionVisionValidator.hasCompleteTribes(execution.result)) {
-                null
-            } else {
-                recoverTribes(frame = frame, endpoints = endpoints)
+        return ImageDebugSnapshot(
+            title = "本地 OCR 识图结果",
+            lines = buildList {
+                add(formatTavernTierLine(tavernTierDetection))
+                add("来源: 英雄=本地OCR；种族=沿用当前环境")
+                add("耗时: ${System.currentTimeMillis() - startAt} ms")
+                add("图片解码: ${decodeMillis} ms")
+                ocrResult.slotResults.sortedBy { it.slot }.forEach { add(it.debugLabel) }
+                add("未配置 AI 5族补识别，当前只验证本地英雄 OCR")
+            },
+            visionResult = localVision
+        )
+    }
+
+    val aiDetailed = recoverVisionDetailed(
+        frame = frame,
+        endpoints = endpoints,
+        heroNameIndex = heroNameIndex
+    )
+    if (aiDetailed != null) {
+        val mergedVision = aiDetailed.result.mergeTribesFrom(
+            HeroSelectionVisionResult(heroOptions = ocrResult.heroOptions)
+        )
+        val validation = HeroSelectionVisionValidator.validate(
+            mergedVision,
+            requireCompleteTribes = false
+        )
+        return ImageDebugSnapshot(
+            title = "AI 视觉识图结果",
+            lines = buildList {
+                add(formatTavernTierLine(tavernTierDetection))
+                add("来源: 英雄/种族=${aiDetailed.sourceLabel}")
+                add("耗时: ${System.currentTimeMillis() - startAt} ms")
+                add("图片解码: ${decodeMillis} ms")
+                if (mergedVision.availableTribes.isNotEmpty()) {
+                    add("种族: ${mergedVision.availableTribes.joinToString(" / ") { it.label }}")
+                }
+                mergedVision.selectableHeroOptions
+                    .sortedBy(HeroSelectionVisionHeroOption::slot)
+                    .forEach { option ->
+                        add(
+                            buildString {
+                                append("AI槽")
+                                append(option.slot + 1)
+                                append(":")
+                                append(option.name?.trim()?.ifBlank { "未命名" } ?: "未命名")
+                                option.heroCardId?.takeIf(String::isNotBlank)?.let {
+                                    append(" [")
+                                    append(it)
+                                    append("]")
+                                }
+                            }
+                        )
+                    }
+                ocrResult.slotResults.sortedBy { it.slot }.forEach { add("OCR${it.debugLabel}") }
+                add("校验: ${if (validation.isValid) "通过" else "失败"}")
+                if (!validation.isValid) {
+                    add("错误: ${validation.errors.joinToString("；")}")
+                }
+                aiDetailed.failures.forEach { add("回退失败: $it") }
+                mergedVision.modelName?.takeIf { it.isNotBlank() }?.let { add("model: $it") }
+                mergedVision.rawSummary?.takeIf { it.isNotBlank() }?.let { add("summary: $it") }
+            },
+            visionResult = mergedVision
+        )
+    }
+
+    val tribeRecovery = recoverTribes(frame = frame, endpoints = endpoints)
+    val vision = HeroSelectionVisionResult(
+        screenType = if (ocrResult.heroOptions.isNotEmpty()) {
+            VisionScreenType.HERO_SELECTION
+        } else {
+            tribeRecovery?.result?.screenType ?: VisionScreenType.UNKNOWN
+        },
+        availableTribes = tribeRecovery?.result?.availableTribes.orEmpty(),
+        heroOptions = ocrResult.heroOptions,
+        modelName = tribeRecovery?.result?.modelName,
+        requestId = tribeRecovery?.result?.requestId,
+        rawSummary = tribeRecovery?.result?.rawSummary
+    )
+    val validation = HeroSelectionVisionValidator.validate(
+        vision,
+        requireCompleteTribes = false
+    )
+    return if (tribeRecovery != null) {
+        ImageDebugSnapshot(
+            title = if (ocrResult.heroOptions.isNotEmpty()) "本地 OCR + AI 环境识别" else "AI 环境识别结果",
+            lines = buildList {
+                add(formatTavernTierLine(tavernTierDetection))
+                add("来源: 英雄=本地OCR；种族=${tribeRecovery.sourceLabel}")
+                add("耗时: ${System.currentTimeMillis() - startAt} ms")
+                add("图片解码: ${decodeMillis} ms")
+                if (vision.availableTribes.isNotEmpty()) {
+                    add("种族: ${vision.availableTribes.joinToString(" / ") { it.label }}")
+                }
+                ocrResult.slotResults.sortedBy { it.slot }.forEach { add(it.debugLabel) }
+                add("校验: ${if (validation.isValid) "通过" else "失败"}")
+                if (!validation.isValid) {
+                    add("错误: ${validation.errors.joinToString("；")}")
+                }
+                tribeRecovery.failures.forEach { add("补识别失败: $it") }
+                tribeRecovery.result.modelName?.takeIf { it.isNotBlank() }?.let { add("model: $it") }
+                tribeRecovery.result.rawSummary?.takeIf { it.isNotBlank() }?.let { add("summary: $it") }
+            },
+            visionResult = vision
+        )
+    } else {
+        ImageDebugSnapshot(
+            title = if (ocrResult.heroOptions.isNotEmpty()) "本地 OCR 识图结果（5族未稳定）" else "识图失败",
+            lines = buildList {
+                add(formatTavernTierLine(tavernTierDetection))
+                add("来源: 英雄=本地OCR；种族=AI补识别失败")
+                add("耗时: ${System.currentTimeMillis() - startAt} ms")
+                add("图片解码: ${decodeMillis} ms")
+                ocrResult.slotResults.sortedBy { it.slot }.forEach { add(it.debugLabel) }
+                add("AI 5族补识别未拿到稳定结果")
+            },
+            visionResult = vision.takeIf { ocrResult.heroOptions.isNotEmpty() }
+        )
+    }
+}
+
+private fun formatTavernTierLine(
+    detection: com.bgtactician.app.autodetect.TavernTierDetection
+): String {
+    return buildString {
+        append("本地酒馆等级: ")
+        val tier = detection.tier
+        if (tier != null) {
+            append("${tier}本")
+            detection.sourceLabel?.let {
+                append(" · ")
+                append(it)
             }
-            val vision = execution.result.mergeTribesFrom(tribeRecovery?.result)
-            val validation = HeroSelectionVisionValidator.validate(vision)
-            val hasHeroes = vision.selectableHeroOptions.isNotEmpty()
-            val title = when {
-                !validation.isValid && hasHeroes -> "AI 识图结果（5族未稳定）"
-                outcome.previousFailures.isEmpty() -> "AI 识图结果"
-                else -> "AI 识图结果（已切换备用模型）"
+            append(" · 置信 ")
+            append(String.format("%.2f", detection.confidence))
+            detection.debugLabel?.takeIf { it.isNotBlank() }?.let {
+                append(" · ")
+                append(it)
             }
-            ImageDebugSnapshot(
-                title = title,
-                lines = buildList {
-                    add("来源: ${endpoint.label}")
-                    add("耗时: ${System.currentTimeMillis() - startAt} ms")
-                    add("图片解码: ${decodeMillis} ms")
-                    addAll(execution.metrics.toDebugLines())
-                    add("screen_type: ${vision.screenType}")
-                    if (vision.availableTribes.isNotEmpty()) {
-                        add("种族: ${vision.availableTribes.joinToString(" / ") { it.label }}")
-                    }
-                    if (vision.selectableHeroOptions.isNotEmpty()) {
-                        add("可用英雄: ${vision.selectableHeroOptions.joinToString(" / ") { option -> option.name ?: "未知英雄" }}")
-                    }
-                    tribeRecovery?.sourceLabel?.let { add("种族补识别: $it") }
-                    add("校验: ${if (validation.isValid) "通过" else "失败"}")
-                    if (!validation.isValid) {
-                        add("错误: ${validation.errors.joinToString("；")}")
-                        if (hasHeroes) {
-                            add("已保留英雄识别结果，5族暂未稳定")
-                        }
-                    }
-                    outcome.previousFailures.forEach { add("前序失败: $it") }
-                    tribeRecovery?.failures?.forEach { add("补识别失败: $it") }
-                    vision.modelName?.let { add("model: $it") }
-                    vision.confidence?.let { add("confidence: $it") }
-                    vision.rawSummary?.takeIf { it.isNotBlank() }?.let { add("summary: $it") }
-                },
-                visionResult = vision.takeIf { validation.isValid || hasHeroes }
-            )
+        } else {
+            append("未识别")
+            detection.debugLabel?.takeIf { it.isNotBlank() }?.let {
+                append(" · ")
+                append(it)
+            }
         }
-        is VisionFailoverOutcome.Failure -> {
-            val tribeRecovery = recoverTribes(frame = frame, endpoints = endpoints)
-            if (tribeRecovery != null) {
-                ImageDebugSnapshot(
-                    title = "AI 识图结果（只识别到环境）",
-                    lines = buildList {
-                        add("来源: ${tribeRecovery.sourceLabel}")
-                        add("耗时: ${System.currentTimeMillis() - startAt} ms")
-                        add("图片解码: ${decodeMillis} ms")
-                        outcome.failures.forEach { add("模型失败: $it") }
-                        tribeRecovery.failures.forEach { add("补识别失败: $it") }
-                        add("种族: ${tribeRecovery.result.availableTribes.joinToString(" / ") { it.label }}")
-                        add("英雄未稳定识别到，可继续测试环境识别")
-                    },
-                    visionResult = tribeRecovery.result
-                )
-            } else {
-                ImageDebugSnapshot(
-                    title = "AI 识图失败",
-                    lines = buildList {
-                        add("耗时: ${System.currentTimeMillis() - startAt} ms")
-                        add("图片解码: ${decodeMillis} ms")
-                        outcome.failures.forEach { add("失败: $it") }
-                        add("AI 5族补识别也未拿到稳定结果")
-                    }
-                )
-            }
-        }
+        append(" · 模式 TEMPLATE_ONLY")
+        append(" · 非AI")
     }
 }
 
@@ -367,6 +430,53 @@ private data class TribeRecoverySnapshot(
     val sourceLabel: String,
     val failures: List<String> = emptyList()
 )
+
+private data class DetailedVisionRecoverySnapshot(
+    val result: HeroSelectionVisionResult,
+    val sourceLabel: String,
+    val failures: List<String> = emptyList()
+)
+
+private suspend fun recoverVisionDetailed(
+    frame: CapturedFrame,
+    endpoints: List<VisionEndpoint>,
+    heroNameIndex: com.bgtactician.app.data.model.BattlegroundHeroNameIndex
+): DetailedVisionRecoverySnapshot? {
+    val aiOutcome = executeVisionFailover(
+        endpoints = endpoints,
+        attempt = { endpoint ->
+            OpenAiCompatibleVisionProvider(
+                OpenAiCompatibleVisionConfig(
+                    baseUrl = endpoint.baseUrl,
+                    apiKey = endpoint.apiKey,
+                    model = endpoint.model
+                )
+            ).analyzeVisionFrameDetailed(frame)
+        },
+        validate = { execution ->
+            val structural = HeroSelectionVisionValidator.validate(
+                execution.result,
+                requireCompleteTribes = false
+            ).errors
+            val semantic = HeroSelectionVisionSemanticValidator.validate(
+                execution.result,
+                heroNameIndex
+            ).errors
+            (structural + semantic)
+                .takeIf { it.isNotEmpty() }
+                ?.joinToString("；", prefix = "校验失败: ")
+        }
+    )
+
+    if (aiOutcome is VisionFailoverOutcome.Success) {
+        return DetailedVisionRecoverySnapshot(
+            result = aiOutcome.value.result,
+            sourceLabel = "${aiOutcome.endpoint.label} / 全量识别",
+            failures = aiOutcome.previousFailures
+        )
+    }
+    return null
+}
 
 private suspend fun recoverTribes(
     frame: CapturedFrame,
@@ -465,8 +575,62 @@ private data class ImageDebugSnapshot(
     val title: String,
     val lines: List<String>,
     val visionResult: HeroSelectionVisionResult? = null,
-    val previewAspectRatio: Float? = null
+    val previewAspectRatio: Float? = null,
+    val ocrSlots: List<ImageDebugOcrSlotPreview> = emptyList()
 )
+
+data class ImageDebugOcrSlotPreview(
+    val slot: Int,
+    val leftRatio: Float,
+    val topRatio: Float,
+    val rightRatio: Float,
+    val bottomRatio: Float,
+    val label: String,
+    val matched: Boolean
+)
+
+private fun HeroNameOcrDetector.HeroNameOcrSlotResult.toPreview(
+    imageWidth: Int,
+    imageHeight: Int
+): ImageDebugOcrSlotPreview {
+    return ImageDebugOcrSlotPreview(
+        slot = slot,
+        leftRatio = debugRoi.left.toFloat() / imageWidth.coerceAtLeast(1),
+        topRatio = debugRoi.top.toFloat() / imageHeight.coerceAtLeast(1),
+        rightRatio = debugRoi.right.toFloat() / imageWidth.coerceAtLeast(1),
+        bottomRatio = debugRoi.bottom.toFloat() / imageHeight.coerceAtLeast(1),
+        label = buildSlotPreviewLabel(slot, rawName, matchedHeroCardId, score, debugRoi),
+        matched = option != null
+    )
+}
+
+private fun buildSlotPreviewLabel(
+    slot: Int,
+    rawName: String?,
+    matchedHeroCardId: String?,
+    score: Float,
+    roi: Rect
+): String {
+    return buildString {
+        append("槽")
+        append(slot + 1)
+        append(" ")
+        append(rawName ?: "未识别")
+        if (!matchedHeroCardId.isNullOrBlank()) {
+            append(" @")
+            append(String.format("%.2f", score))
+        }
+        append(" (")
+        append(roi.left)
+        append(",")
+        append(roi.top)
+        append(")-(")
+        append(roi.right)
+        append(",")
+        append(roi.bottom)
+        append(")")
+    }
+}
 
 private fun Throwable.toDebugLines(): List<String> {
     val lines = mutableListOf<String>()

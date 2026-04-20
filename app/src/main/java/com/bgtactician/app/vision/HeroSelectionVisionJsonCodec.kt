@@ -9,6 +9,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.floatOrNull
 import kotlinx.serialization.json.intOrNull
@@ -63,8 +64,31 @@ object HeroSelectionVisionJsonCodec {
         return array?.mapIndexedNotNull { index, element ->
             when (element) {
                 is JsonObject -> {
-                    val selectable = element.boolean("selectable")
-                    val locked = element.boolean("locked")
+                    val selectable = element.flag(
+                        "selectable",
+                        "is_selectable",
+                        "isSelectable",
+                        "can_pick",
+                        "canPick",
+                        "pickable",
+                        "clickable",
+                        "enabled",
+                        truthyTokens = SELECTABLE_TRUE_TOKENS,
+                        falsyTokens = SELECTABLE_FALSE_TOKENS
+                    )
+                    val locked = element.flag(
+                        "locked",
+                        "is_locked",
+                        "isLocked",
+                        "disabled",
+                        "is_disabled",
+                        "isDisabled",
+                        "unavailable",
+                        "is_unavailable",
+                        "isUnavailable",
+                        truthyTokens = LOCKED_TRUE_TOKENS,
+                        falsyTokens = LOCKED_FALSE_TOKENS
+                    )
                     val isSelectable = selectable ?: locked?.not() ?: true
                     if (!isSelectable) return@mapIndexedNotNull null
 
@@ -137,12 +161,20 @@ object HeroSelectionVisionJsonCodec {
         return element(*keys)?.jsonPrimitive?.floatOrNull
     }
 
-    private fun JsonObject.boolean(vararg keys: String): Boolean? {
-        return element(*keys)?.jsonPrimitive?.contentOrNull?.trim()?.lowercase()?.let {
-            when (it) {
-                "true" -> true
-                "false" -> false
-                else -> null
+    private fun JsonObject.flag(
+        vararg keys: String,
+        truthyTokens: Set<String>,
+        falsyTokens: Set<String>
+    ): Boolean? {
+        return element(*keys)?.jsonPrimitive?.let { primitive ->
+            primitive.booleanOrNull?.let { return@let it }
+            primitive.intOrNull?.let { return@let it != 0 }
+            primitive.contentOrNull?.trim()?.lowercase()?.let { value ->
+                when (value) {
+                    in truthyTokens -> true
+                    in falsyTokens -> false
+                    else -> null
+                }
             }
         }
     }
@@ -150,4 +182,41 @@ object HeroSelectionVisionJsonCodec {
     private fun JsonObject.array(vararg keys: String): JsonArray? {
         return element(*keys) as? JsonArray
     }
+
+    private val COMMON_TRUE_TOKENS = setOf("true", "1", "yes", "y", "on", "是")
+    private val COMMON_FALSE_TOKENS = setOf("false", "0", "no", "n", "off", "否")
+    private val SELECTABLE_TRUE_TOKENS = COMMON_TRUE_TOKENS + setOf(
+        "可选",
+        "可点击",
+        "enabled",
+        "selectable",
+        "pickable",
+        "clickable",
+        "available"
+    )
+    private val SELECTABLE_FALSE_TOKENS = COMMON_FALSE_TOKENS + setOf(
+        "不可选",
+        "不可点击",
+        "disabled",
+        "locked",
+        "unavailable"
+    )
+    private val LOCKED_TRUE_TOKENS = COMMON_TRUE_TOKENS + setOf(
+        "locked",
+        "disabled",
+        "unavailable",
+        "不可选",
+        "不可点击",
+        "锁定",
+        "已锁定",
+        "禁用"
+    )
+    private val LOCKED_FALSE_TOKENS = COMMON_FALSE_TOKENS + setOf(
+        "unlocked",
+        "enabled",
+        "selectable",
+        "可选",
+        "可点击",
+        "未锁定"
+    )
 }

@@ -3,6 +3,7 @@ package com.bgtactician.app.data.repository
 import android.content.Context
 import com.bgtactician.app.BuildConfig
 import com.bgtactician.app.data.local.AppPreferences
+import com.bgtactician.app.data.model.BattlegroundCardMetadataCatalog
 import com.bgtactician.app.data.model.BattlegroundCardStatsCatalog
 import com.bgtactician.app.data.model.CardRuleEntry
 import com.bgtactician.app.data.model.CardRulesCatalog
@@ -32,6 +33,7 @@ class StrategyRepository {
     }
 
     private var cachedSnapshot: CatalogSnapshot? = null
+    private var cachedCardMetadata: BattlegroundCardMetadataCatalog? = null
     private var cachedCardRules: CardRulesCatalog? = null
     private var cachedCardStats: BattlegroundCardStatsCatalog? = null
     private var cachedHeroStats: BattlegroundHeroStatsCatalog? = null
@@ -84,6 +86,29 @@ class StrategyRepository {
                 emptyMap()
             }
             snapshot.also { cachedCardRules = it }
+        }
+    }
+
+    suspend fun loadBattlegroundCardMetadata(
+        context: Context,
+        ignoreMemoryCache: Boolean = false
+    ): BattlegroundCardMetadataCatalog {
+        if (!ignoreMemoryCache) {
+            cachedCardMetadata?.let { return it }
+        }
+
+        return withContext(Dispatchers.IO) {
+            val cacheFile = cardMetadataCacheFile(context)
+            val snapshot = when {
+                cacheFile.exists() -> runCatching {
+                    decodeCardMetadata(cacheFile.readText())
+                }.getOrElse {
+                    bundledCardMetadata(context)
+                }
+
+                else -> bundledCardMetadata(context)
+            }
+            snapshot.also { cachedCardMetadata = it }
         }
     }
 
@@ -244,6 +269,8 @@ class StrategyRepository {
 
     private fun cardRulesCacheFile(context: Context): File = File(context.filesDir, CARD_RULES_CACHE_FILE)
 
+    private fun cardMetadataCacheFile(context: Context): File = File(context.filesDir, CARD_METADATA_CACHE_FILE)
+
     private fun cardStatsCacheFile(context: Context): File = File(context.filesDir, CARD_STATS_CACHE_FILE)
 
     private fun heroStatsCacheFile(context: Context): File = File(context.filesDir, HERO_STATS_CACHE_FILE)
@@ -255,9 +282,18 @@ class StrategyRepository {
         )
     }
 
+    private fun bundledCardMetadata(context: Context): BattlegroundCardMetadataCatalog {
+        return decodeCardMetadata(
+            context.assets.open(CARD_METADATA_ASSET_FILE).bufferedReader().use { it.readText() }
+        )
+    }
+
     private fun decode(raw: String): StrategyCatalog = json.decodeFromString<StrategyCatalog>(raw)
 
     private fun decodeCardRules(raw: String): CardRulesCatalog = json.decodeFromString<Map<String, CardRuleEntry>>(raw)
+
+    private fun decodeCardMetadata(raw: String): BattlegroundCardMetadataCatalog =
+        json.decodeFromString<BattlegroundCardMetadataCatalog>(raw)
 
     private fun decodeCardStats(raw: String): BattlegroundCardStatsCatalog =
         json.decodeFromString<BattlegroundCardStatsCatalog>(raw)
@@ -333,6 +369,30 @@ class StrategyRepository {
                 cachedCardRules = runCatching {
                     decodeCardRules(cardRulesCacheFile(context).readText())
                 }.getOrDefault(emptyMap())
+            }
+        }
+
+        manifest.supportFiles[CARD_METADATA_RESOURCE_KEY]?.let { supportFile ->
+            val result = syncSupportFile(
+                cacheFile = cardMetadataCacheFile(context),
+                manifestUrl = manifestUrl,
+                supportFile = supportFile,
+                resourceLabel = "战棋卡牌元数据"
+            )
+            warnings += result.warnings
+            if (result.raw != null) {
+                cachedCardMetadata = decodeCardMetadata(result.raw)
+                updated = updated || result.updated
+            } else if (cachedCardMetadata == null) {
+                cachedCardMetadata = runCatching {
+                    if (cardMetadataCacheFile(context).exists()) {
+                        decodeCardMetadata(cardMetadataCacheFile(context).readText())
+                    } else {
+                        bundledCardMetadata(context)
+                    }
+                }.getOrElse {
+                    bundledCardMetadata(context)
+                }
             }
         }
 
@@ -485,12 +545,15 @@ class StrategyRepository {
 
     companion object {
         private const val ASSET_FILE = "strategies_zerotoheroes_zhCN.json"
+        private const val CARD_METADATA_ASSET_FILE = "bgs_card_metadata.json"
         private const val HERO_NAME_INDEX_ASSET = "bgs_hero_name_index.json"
         private const val CACHE_FILE = "strategies_cache.json"
         private const val CARD_RULES_CACHE_FILE = "card_rules_cache.json"
+        private const val CARD_METADATA_CACHE_FILE = "bgs_card_metadata_cache.json"
         private const val CARD_STATS_CACHE_FILE = "card_stats_cache.json"
         private const val HERO_STATS_CACHE_FILE = "hero_stats_cache.json"
         private const val CARD_RULES_RESOURCE_KEY = "cardRules"
+        private const val CARD_METADATA_RESOURCE_KEY = "cardMetadata"
         private const val CARD_STATS_RESOURCE_KEY = "cardStats"
         private const val HERO_STATS_RESOURCE_KEY = "heroStats"
         private const val HERO_STATS_URL =

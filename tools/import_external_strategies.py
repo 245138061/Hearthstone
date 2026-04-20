@@ -4,9 +4,12 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import time
+from datetime import datetime, timezone
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+from urllib.error import URLError
 from urllib.request import Request, urlopen
 import re
 
@@ -180,6 +183,7 @@ class SourceUrls:
     strategies: str
     locale: str
     card_names: str | None = None
+    card_metadata: str | None = None
 
 
 def load_json(source: str) -> Any:
@@ -192,8 +196,16 @@ def load_json(source: str) -> Any:
                 "Accept-Language": "en-US,en;q=0.9,zh-CN;q=0.8",
             },
         )
-        with urlopen(request, timeout=30) as response:
-            return json.loads(response.read().decode("utf-8"))
+        last_error: Exception | None = None
+        for attempt in range(3):
+            try:
+                with urlopen(request, timeout=30) as response:
+                    return json.loads(response.read().decode("utf-8"))
+            except (TimeoutError, URLError, OSError, json.JSONDecodeError) as error:
+                last_error = error
+                if attempt < 2:
+                    time.sleep(0.8 * (attempt + 1))
+        raise RuntimeError(f"download failed: {source}") from last_error
     return json.loads(Path(source).read_text())
 
 
@@ -201,7 +213,7 @@ def infer_required_tribes(comp_id: str, cards: list[dict[str, Any]]) -> list[str
     if comp_id in COMP_TRIBE_OVERRIDES:
         return COMP_TRIBE_OVERRIDES[comp_id]
 
-    tokens = re.split(r"[_\\-\\s]+", comp_id.lower())
+    tokens = re.split(r"[_\-\s]+", comp_id.lower())
     tribes: list[str] = []
     for token in tokens:
         mapped = TRIBE_TOKEN_MAP.get(token)
@@ -232,6 +244,24 @@ def load_card_name_map(source: str | None) -> dict[str, str]:
         if card_id and name:
             localized[card_id] = name
     return localized
+
+
+def load_card_metadata_map(source: str | None) -> dict[str, dict[str, Any]]:
+    if not source:
+        return {}
+    payload = load_json(source)
+    if not isinstance(payload, list):
+        return {}
+
+    metadata_by_id: dict[str, dict[str, Any]] = {}
+    for card in payload:
+        if not isinstance(card, dict):
+            continue
+        card_id = str(card.get("id") or "").strip()
+        if not card_id:
+            continue
+        metadata_by_id[card_id] = card
+    return metadata_by_id
 
 
 def build_name_replacements(
@@ -309,6 +339,7 @@ def normalize_cards(
     primary_tribe: str | None,
     language: str,
     localized_card_names: dict[str, str],
+    card_metadata_by_id: dict[str, dict[str, Any]],
 ) -> list[dict[str, Any]]:
     prioritized = sorted(
         cards,
@@ -322,13 +353,18 @@ def normalize_cards(
     for index, card in enumerate(prioritized, start=1):
         status = card.get("status", "")
         final_board_weight = to_int(card.get("finalBoardWeight"))
-        phase, star = STATUS_PHASE_MAP.get(status, ("补位", min(6, 2 + index // 2)))
         card_id = card.get("cardId")
+        metadata = card_metadata_by_id.get(str(card_id or "").strip())
+        if metadata is not None and str(metadata.get("type") or "").strip() != "MINION":
+            continue
+
+        phase, fallback_star = STATUS_PHASE_MAP.get(status, ("补位", min(6, 2 + index // 2)))
+        star = to_int(metadata.get("techLevel")) if metadata is not None else None
         normalized.append(
             {
-                "id": index,
+                "id": len(normalized) + 1,
                 "name": localized_card_names.get(card_id) or card.get("name", card.get("cardId", "Unknown Card")),
-                "star": star,
+                "star": star or fallback_star,
                 "phase": phase,
                 "status_raw": status or None,
                 "final_board_weight": final_board_weight,
@@ -385,6 +421,7 @@ def convert(
     raw_comps = load_json(source_urls.strategies)
     locale = load_json(source_urls.locale)
     localized_card_names = load_card_name_map(source_urls.card_names)
+    card_metadata_by_id = load_card_metadata_map(source_urls.card_metadata)
     localized_names = locale.get("bgs-comp", {})
     translations = translations or {}
 
@@ -443,11 +480,17 @@ def convert(
                 "late_strategy": late_strategy,
                 "upgrade_turns": DIFFICULTY_TO_TURNS.get(difficulty, DIFFICULTY_TO_TURNS[""]),
                 "positioning_hints": build_positioning_hints(required_tribes),
-                "key_minions": normalize_cards(raw.get("cards", []), primary_tribe, language, localized_card_names),
+                "key_minions": normalize_cards(
+                    raw.get("cards", []),
+                    primary_tribe,
+                    language,
+                    localized_card_names,
+                    card_metadata_by_id,
+                ),
             }
         )
 
-    version = version_label or "2026.04.07-import"
+    version = version_label or datetime.now(timezone.utc).strftime("%Y.%m.%d-import")
     return {
         "version": version,
         "comps": comps,
@@ -461,13 +504,20 @@ def main() -> None:
     parser.add_argument("--output", required=True, help="Output JSON path.")
     parser.add_argument("--version", default=None, help="Optional explicit version label.")
     parser.add_argument("--language", default="enUS", help="Display language for generated text, e.g. enUS or zhCN.")
+    parser.add_argument("--card-names", default=None, help="Optional localized cards JSON URL or local file used to replace displayed names.")
+    parser.add_argument("--card-metadata", default=None, help="Optional cards JSON URL or local file used to correct tavern tier and filter non-minions.")
     parser.add_argument("--translations", default=None, help="Optional JSON file with per-comp translated text overrides.")
     args = parser.parse_args()
 
     manual_translations = load_json(args.translations) if args.translations else None
 
     result = convert(
-        SourceUrls(strategies=args.strategies, locale=args.locale),
+        SourceUrls(
+            strategies=args.strategies,
+            locale=args.locale,
+            card_names=args.card_names,
+            card_metadata=args.card_metadata,
+        ),
         version_label=args.version,
         language=args.language,
         translations=manual_translations,

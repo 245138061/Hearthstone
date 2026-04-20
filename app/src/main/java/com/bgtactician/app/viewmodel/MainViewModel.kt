@@ -6,10 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.bgtactician.app.BuildConfig
 import com.bgtactician.app.data.local.AppPreferences
 import com.bgtactician.app.data.local.HeroSelectionSessionStore
+import com.bgtactician.app.data.local.HeroSelectionSessionState
 import com.bgtactician.app.data.local.VisionApiSettings
 import com.bgtactician.app.data.local.VisionRoutingMode
 import com.bgtactician.app.data.model.AutoDetectDebugInfo
 import com.bgtactician.app.data.model.AutoDetectStatus
+import com.bgtactician.app.data.model.BattlegroundCardMetadataCatalog
 import com.bgtactician.app.data.model.BattlegroundCardStatsCatalog
 import com.bgtactician.app.data.model.BattlegroundHeroNameIndex
 import com.bgtactician.app.data.model.BattlegroundHeroStatsCatalog
@@ -58,17 +60,31 @@ data class DashboardUiState(
     val visionBackupModel: String = "",
     val visionRoutingMode: VisionRoutingMode = VisionRoutingMode.AUTO,
     val cardRules: CardRulesCatalog = emptyMap(),
+    val cardMetadata: BattlegroundCardMetadataCatalog = BattlegroundCardMetadataCatalog(),
     val recognizedHeroes: List<ResolvedHeroStatOption> = emptyList(),
     val heroStatsUpdatedAtLabel: String? = null,
     val selectedHeroCardId: String? = null,
     val selectedHeroName: String? = null,
     val selectedHeroSlot: Int? = null,
+    val manualSelectedStrategyId: String? = null,
     val allStrategies: List<StrategyComp> = emptyList(),
     val strategies: List<StrategyComp> = emptyList(),
     val selectedStrategyId: String? = null
 ) {
     val selectedStrategy: StrategyComp?
         get() = strategies.firstOrNull { it.id == selectedStrategyId }
+
+    val liveStrategy: StrategyComp?
+        get() {
+            manualSelectedStrategyId?.let { id ->
+                strategies.firstOrNull { it.id == id }?.let { return it }
+            }
+            val heroRecommendedId = selectedHero?.recommendation?.recommendedCompId
+            return heroRecommendedId?.let { id -> strategies.firstOrNull { it.id == id } }
+        }
+
+    val currentTavernTier: Int?
+        get() = autoDetectDebugInfo.tavernTier
 
     val selectedHero: ResolvedHeroStatOption?
         get() = recognizedHeroes.firstOrNull { hero ->
@@ -95,6 +111,7 @@ class MainViewModel(
         val syncMessage: String?,
         val manifestVersion: String?,
         val cardRules: CardRulesCatalog,
+        val cardMetadata: BattlegroundCardMetadataCatalog,
         val visionApiSettings: VisionApiSettings,
         val recognizedHeroOptions: List<HeroSelectionVisionHeroOption>,
         val heroStatsCatalog: BattlegroundHeroStatsCatalog,
@@ -114,6 +131,13 @@ class MainViewModel(
         val heroNameIndex: BattlegroundHeroNameIndex
     )
 
+    private data class CatalogMetaInputs(
+        val syncMessage: String?,
+        val manifestVersion: String?,
+        val cardRules: CardRulesCatalog,
+        val cardMetadata: BattlegroundCardMetadataCatalog
+    )
+
     private val catalogFlow = MutableStateFlow<CatalogSnapshot?>(null)
     private val selectedTribesFlow = MutableStateFlow(
         setOf(Tribe.MECH, Tribe.DEMON, Tribe.UNDEAD, Tribe.PIRATE, Tribe.ELEMENTAL)
@@ -124,6 +148,7 @@ class MainViewModel(
     private val syncMessageFlow = MutableStateFlow<String?>(null)
     private val manifestVersionFlow = MutableStateFlow<String?>(null)
     private val cardRulesFlow = MutableStateFlow<CardRulesCatalog>(emptyMap())
+    private val cardMetadataFlow = MutableStateFlow(BattlegroundCardMetadataCatalog())
     private val visionApiSettingsFlow = MutableStateFlow(VisionApiSettings())
     private val recognizedHeroOptionsFlow = MutableStateFlow<List<HeroSelectionVisionHeroOption>>(emptyList())
     private val heroStatsCatalogFlow = MutableStateFlow(BattlegroundHeroStatsCatalog())
@@ -137,11 +162,12 @@ class MainViewModel(
     private val filterInputsFlow = combine(
         catalogFlow,
         selectedTribesFlow,
-        manifestUrlOverrideFlow
-    ) { snapshot, tribes, manifestUrlOverride ->
+        manifestUrlOverrideFlow,
+        heroSelectionSessionFlow
+    ) { snapshot, tribes, manifestUrlOverride, heroSession ->
         FilterInputs(
             snapshot = snapshot,
-            selectedTribes = tribes,
+            selectedTribes = heroSession.selectedTribes.takeIf { it.size == 5 } ?: tribes,
             manifestUrlOverride = manifestUrlOverride
         )
     }
@@ -156,9 +182,15 @@ class MainViewModel(
     private val uiCatalogMetaFlow = combine(
         syncMessageFlow,
         manifestVersionFlow,
-        cardRulesFlow
-    ) { syncMessage, manifestVersion, cardRules ->
-        Triple(syncMessage, manifestVersion, cardRules)
+        cardRulesFlow,
+        cardMetadataFlow
+    ) { syncMessage, manifestVersion, cardRules, cardMetadata ->
+        CatalogMetaInputs(
+            syncMessage = syncMessage,
+            manifestVersion = manifestVersion,
+            cardRules = cardRules,
+            cardMetadata = cardMetadata
+        )
     }
 
     private val uiHeroMetaFlow = combine(
@@ -185,9 +217,10 @@ class MainViewModel(
         UiMetaInputs(
             selectedStrategyId = null,
             isRefreshing = false,
-            syncMessage = catalogMeta.first,
-            manifestVersion = catalogMeta.second,
-            cardRules = catalogMeta.third,
+            syncMessage = catalogMeta.syncMessage,
+            manifestVersion = catalogMeta.manifestVersion,
+            cardRules = catalogMeta.cardRules,
+            cardMetadata = catalogMeta.cardMetadata,
             visionApiSettings = visionApiSettings,
             recognizedHeroOptions = heroMeta.recognizedHeroOptions,
             heroStatsCatalog = heroMeta.heroStatsCatalog,
@@ -206,9 +239,15 @@ class MainViewModel(
         uiSupportMetaFlow,
         heroSelectionSessionFlow
     ) { selection, support, heroSession ->
+        val useSessionSnapshot = heroSession.hasSharedSnapshot()
         support.copy(
             selectedStrategyId = selection.first,
             isRefreshing = selection.second,
+            recognizedHeroOptions = if (useSessionSnapshot) {
+                heroSession.recognizedHeroOptions
+            } else {
+                support.recognizedHeroOptions
+            },
             selectedHeroCardId = heroSession.selectedHeroCardId,
             selectedHeroName = heroSession.selectedHeroName,
             selectedHeroSlot = heroSession.selectedHeroSlot
@@ -262,11 +301,13 @@ class MainViewModel(
             visionBackupModel = uiMeta.visionApiSettings.backupModel,
             visionRoutingMode = uiMeta.visionApiSettings.routingMode,
             cardRules = uiMeta.cardRules,
+            cardMetadata = uiMeta.cardMetadata,
             recognizedHeroes = recognizedHeroes,
             heroStatsUpdatedAtLabel = formatIsoTimestamp(uiMeta.heroStatsCatalog.lastUpdateDate),
             selectedHeroCardId = uiMeta.selectedHeroCardId,
             selectedHeroName = uiMeta.selectedHeroName,
             selectedHeroSlot = uiMeta.selectedHeroSlot,
+            manualSelectedStrategyId = uiMeta.selectedStrategyId,
             allStrategies = snapshot?.catalog?.comps.orEmpty(),
             strategies = orderedStrategies,
             selectedStrategyId = resolvedId
@@ -292,6 +333,7 @@ class MainViewModel(
         viewModelScope.launch {
             val snapshot = repository.loadCatalog(context.applicationContext)
             cardRulesFlow.value = repository.loadCardRules(context.applicationContext)
+            cardMetadataFlow.value = repository.loadBattlegroundCardMetadata(context.applicationContext)
             heroNameIndexFlow.value = repository.loadHeroNameIndex(context.applicationContext)
             heroStatsCatalogFlow.value = repository.loadHeroStats(context.applicationContext)
             cardStatsCatalogFlow.value = repository.loadCardStats(context.applicationContext)
@@ -334,6 +376,7 @@ class MainViewModel(
             }.onSuccess { result ->
                 catalogFlow.value = result.snapshot
                 cardRulesFlow.value = repository.loadCardRules(context, ignoreMemoryCache = true)
+                cardMetadataFlow.value = repository.loadBattlegroundCardMetadata(context, ignoreMemoryCache = true)
                 runCatching {
                     repository.loadHeroStats(context, ignoreMemoryCache = true)
                 }.onSuccess { heroStats ->
@@ -410,6 +453,7 @@ class MainViewModel(
         recognizedHeroOptionsFlow.value = result.selectableHeroOptions
         HeroSelectionSessionStore.updateVisionResult(
             selectedTribes = effectiveSelectedTribes,
+            recognizedHeroOptions = result.selectableHeroOptions,
             recognizedHeroes = resolvedHeroes
         )
         selectedStrategyFlow.value = null
@@ -487,6 +531,15 @@ class MainViewModel(
             selectedTribes = selectedTribes,
             allStrategies = allStrategies
         )
+    }
+
+    private fun HeroSelectionSessionState.hasSharedSnapshot(): Boolean {
+        return selectedTribes.isNotEmpty() ||
+            recognizedHeroOptions.isNotEmpty() ||
+            recognizedHeroes.isNotEmpty() ||
+            !selectedHeroCardId.isNullOrBlank() ||
+            !selectedHeroName.isNullOrBlank() ||
+            selectedHeroSlot != null
     }
 
     private fun sortStrategiesForSelectedHero(

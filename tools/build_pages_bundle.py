@@ -5,10 +5,16 @@ import argparse
 import hashlib
 import json
 import re
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from build_bgs_card_metadata import (
+    DEFAULT_CARDS_EN_URL,
+    DEFAULT_CARDS_ZH_URL,
+    build_battleground_card_metadata,
+)
 from import_external_strategies import SourceUrls, convert, load_json
 
 
@@ -19,7 +25,11 @@ DEFAULT_CARD_RULES_URL = "https://static.firestoneapp.com/data/cards/card-rules.
 DEFAULT_CARD_STATS_URL = "https://static.zerotoheroes.com/api/bgs/card-stats/mmr-100/all-time/overview-from-hourly.gz.json"
 DEFAULT_HERO_STATS_URL = "https://static.zerotoheroes.com/api/bgs/hero-stats/mmr-100/all-time/overview-from-hourly.gz.json"
 DEFAULT_CARD_NAMES_ZH_URL = "https://api.hearthstonejson.com/v1/latest/zhCN/cards.json"
+DEFAULT_CARD_METADATA_EN_URL = DEFAULT_CARDS_EN_URL
+DEFAULT_CARD_METADATA_ZH_URL = DEFAULT_CARDS_ZH_URL
 DEFAULT_TRANSLATIONS_ZH = Path(__file__).with_name("strategy_translations_zhCN.json")
+DEFAULT_FALLBACK_ZH_CATALOG = Path(__file__).resolve().parents[1] / "app/src/main/assets/strategies_zerotoheroes_zhCN.json"
+DEFAULT_FALLBACK_EN_CATALOG = Path(__file__).resolve().parents[1] / "app/src/main/assets/strategies_zerotoheroes_enUS.json"
 
 REQUIRED_COMP_FIELDS = {
     "id",
@@ -98,6 +108,41 @@ def contains_ascii_word(value: str) -> bool:
     return ASCII_WORD_RE.search(value) is not None
 
 
+def load_catalog_fallback(path: Path, locale: str) -> dict[str, Any]:
+    catalog = load_json(str(path))
+    if not isinstance(catalog, dict):
+        raise ValueError(f"{locale} fallback catalog is invalid: {path}")
+    validate_catalog(catalog, locale)
+    return catalog
+
+
+def build_catalog_with_fallback(
+    source_urls: SourceUrls,
+    version_label: str,
+    language: str,
+    fallback_path: Path,
+    translations: dict[str, Any] | None = None,
+) -> tuple[dict[str, Any], str, bool]:
+    try:
+        catalog = convert(
+            source_urls,
+            version_label=version_label,
+            language=language,
+            translations=translations,
+        )
+        validate_catalog(catalog, language)
+        return catalog, source_urls.strategies, False
+    except Exception as error:
+        if not fallback_path.exists():
+            raise
+        print(
+            f"[warn] failed to build {language} catalog from upstream, using fallback {fallback_path}: {error}",
+            file=sys.stderr,
+        )
+        catalog = load_catalog_fallback(fallback_path, language)
+        return catalog, str(fallback_path), True
+
+
 def build_bundle(
     output_dir: Path,
     strategies_source: str,
@@ -107,26 +152,38 @@ def build_bundle(
     card_stats_source: str,
     hero_stats_source: str,
     card_names_zh_source: str,
+    card_metadata_en_source: str,
+    card_metadata_zh_source: str,
     translations_zh_source: str,
+    fallback_zh_catalog: str,
+    fallback_en_catalog: str,
 ) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now(timezone.utc)
     base_version = timestamp.strftime("%Y.%m.%d")
 
-    zh_catalog = convert(
-        SourceUrls(strategies=strategies_source, locale=locale_zh_source, card_names=card_names_zh_source),
+    zh_catalog, zh_catalog_source, zh_used_fallback = build_catalog_with_fallback(
+        SourceUrls(
+            strategies=strategies_source,
+            locale=locale_zh_source,
+            card_names=card_names_zh_source,
+            card_metadata=card_metadata_zh_source,
+        ),
         version_label=f"{base_version}-firestone-zhCN",
         language="zhCN",
+        fallback_path=Path(fallback_zh_catalog),
         translations=load_json(translations_zh_source),
     )
-    en_catalog = convert(
-        SourceUrls(strategies=strategies_source, locale=locale_en_source),
+    en_catalog, en_catalog_source, en_used_fallback = build_catalog_with_fallback(
+        SourceUrls(
+            strategies=strategies_source,
+            locale=locale_en_source,
+            card_metadata=card_metadata_en_source,
+        ),
         version_label=f"{base_version}-firestone-enUS",
         language="enUS",
+        fallback_path=Path(fallback_en_catalog),
     )
-
-    validate_catalog(zh_catalog, "zhCN")
-    validate_catalog(en_catalog, "enUS")
 
     zh_size, zh_sha = write_json(output_dir / "strategies.json", zh_catalog)
     en_size, en_sha = write_json(output_dir / "strategies.enUS.json", en_catalog)
@@ -142,6 +199,15 @@ def build_bundle(
     if not isinstance(hero_stats, dict) or not isinstance(hero_stats.get("heroStats"), list) or not hero_stats["heroStats"]:
         raise ValueError("hero stats payload is empty")
     hero_stats_size, hero_stats_sha = write_json(output_dir / "hero-stats.json", hero_stats)
+    card_metadata = build_battleground_card_metadata(
+        cards_en_source=card_metadata_en_source,
+        cards_zh_source=card_metadata_zh_source,
+        version_label=f"{base_version}-hsjson-bgs-card-metadata",
+    )
+    cards = card_metadata.get("cards")
+    if not isinstance(cards, dict) or not cards:
+        raise ValueError("card metadata payload is empty")
+    card_metadata_size, card_metadata_sha = write_json(output_dir / "bgs-card-metadata.json", card_metadata)
 
     manifest = {
         "manifest_format": "bgtactician.pages.v1",
@@ -187,19 +253,41 @@ def build_bundle(
                 "catalog_version": f"{base_version}-zerotoheroes-hero-stats",
                 "sha256": hero_stats_sha,
                 "size_bytes": hero_stats_size,
+            },
+            "cardMetadata": {
+                "path": "bgs-card-metadata.json",
+                "url": "./bgs-card-metadata.json",
+                "catalog_version": card_metadata["version"],
+                "sha256": card_metadata_sha,
+                "size_bytes": card_metadata_size,
             }
         },
         "sources": {
-            "strategies": strategies_source,
+            "strategies": {
+                "primary": strategies_source,
+                "zhCN": zh_catalog_source,
+                "enUS": en_catalog_source,
+            },
             "card_rules": card_rules_source,
             "card_stats": card_stats_source,
             "hero_stats": hero_stats_source,
+            "card_metadata": {
+                "enUS": card_metadata_en_source,
+                "zhCN": card_metadata_zh_source,
+            },
             "locales": {
                 "zhCN": locale_zh_source,
                 "enUS": locale_en_source,
             },
         },
     }
+    if zh_used_fallback or en_used_fallback:
+        manifest["build_notes"] = {
+            "strategy_catalog_fallback": {
+                "zhCN": zh_used_fallback,
+                "enUS": en_used_fallback,
+            }
+        }
     write_json(output_dir / "manifest.json", manifest)
 
     (output_dir / ".nojekyll").write_text("")
@@ -260,6 +348,7 @@ def build_bundle(
         <p><strong>Card rules</strong>: <a href="./card-rules.json">card-rules.json</a></p>
         <p><strong>Card stats</strong>: <a href="./card-stats.json">card-stats.json</a></p>
         <p><strong>Hero stats</strong>: <a href="./hero-stats.json">hero-stats.json</a></p>
+        <p><strong>BG card metadata</strong>: <a href="./bgs-card-metadata.json">bgs-card-metadata.json</a></p>
         <p><strong>Version</strong>: <code>{manifest["version"]}</code></p>
         <p><strong>Schema</strong>: <code>{manifest["schema_version"]}</code></p>
       </div>
@@ -280,6 +369,18 @@ def main() -> None:
     parser.add_argument("--card-stats", default=DEFAULT_CARD_STATS_URL, help="Card stats JSON URL or local file.")
     parser.add_argument("--hero-stats", default=DEFAULT_HERO_STATS_URL, help="Hero stats JSON URL or local file.")
     parser.add_argument("--card-names-zh", default=DEFAULT_CARD_NAMES_ZH_URL, help="zhCN card names JSON URL or local file.")
+    parser.add_argument("--card-metadata-en", default=DEFAULT_CARD_METADATA_EN_URL, help="enUS cards JSON URL or local file.")
+    parser.add_argument("--card-metadata-zh", default=DEFAULT_CARD_METADATA_ZH_URL, help="zhCN cards JSON URL or local file.")
+    parser.add_argument(
+        "--fallback-zh-catalog",
+        default=str(DEFAULT_FALLBACK_ZH_CATALOG),
+        help="Fallback zhCN strategy catalog used when upstream conversion fails.",
+    )
+    parser.add_argument(
+        "--fallback-en-catalog",
+        default=str(DEFAULT_FALLBACK_EN_CATALOG),
+        help="Fallback enUS strategy catalog used when upstream conversion fails.",
+    )
     parser.add_argument(
         "--translations-zh",
         default=str(DEFAULT_TRANSLATIONS_ZH),
@@ -296,7 +397,11 @@ def main() -> None:
         card_stats_source=args.card_stats,
         hero_stats_source=args.hero_stats,
         card_names_zh_source=args.card_names_zh,
+        card_metadata_en_source=args.card_metadata_en,
+        card_metadata_zh_source=args.card_metadata_zh,
         translations_zh_source=args.translations_zh,
+        fallback_zh_catalog=args.fallback_zh_catalog,
+        fallback_en_catalog=args.fallback_en_catalog,
     )
 
 

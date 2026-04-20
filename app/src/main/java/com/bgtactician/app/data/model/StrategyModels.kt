@@ -44,7 +44,8 @@ data class StrategyComp(
 data class KeyMinion(
     val id: Int,
     val name: String,
-    val star: Int,
+    @SerialName("star")
+    val techLevel: Int,
     val phase: String,
     @SerialName("status_raw")
     val statusRaw: String? = null,
@@ -79,6 +80,20 @@ enum class Tribe(val wireName: String, val label: String, val shortLabel: String
 
     companion object {
         fun fromWireName(value: String): Tribe? = entries.firstOrNull { it.wireName == value }
+
+        fun fromMetadataRace(value: String): Tribe? = when (value.uppercase()) {
+            "BEAST" -> BEAST
+            "DEMON" -> DEMON
+            "DRAGON" -> DRAGON
+            "ELEMENTAL" -> ELEMENTAL
+            "MECH" -> MECH
+            "MURLOC" -> MURLOC
+            "NAGA" -> NAGA
+            "PIRATE" -> PIRATE
+            "QUILBOAR" -> QUILBOAR
+            "UNDEAD" -> UNDEAD
+            else -> null
+        }
 
         fun fromStatsRaceId(value: Int): Tribe? = when (value) {
             20 -> BEAST

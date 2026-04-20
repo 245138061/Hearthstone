@@ -52,6 +52,8 @@ data class HeroSelectionVisionHeroOption(
     val name: String? = null,
     @SerialName("hero_card_id")
     val heroCardId: String? = null,
+    @SerialName("prefer_name_match_source")
+    val preferNameMatchSource: Boolean = false,
     val locked: Boolean = false,
     val armor: Int? = null,
     val confidence: Float? = null

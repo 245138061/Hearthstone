@@ -85,7 +85,8 @@ object HeroSelectionRecommendationEngine {
             .sortedBy(HeroSelectionVisionHeroOption::slot)
             .map { option ->
                 val directCardId = option.heroCardId?.takeIf { statsById.containsKey(it) }
-                val matchedCardId = directCardId ?: option.name?.let { resolveHeroCardIdByName(it, heroNameIndex) }
+                val resolvedByName = option.name?.let { resolveHeroCardIdByName(it, heroNameIndex) }
+                val matchedCardId = directCardId ?: resolvedByName
                 val stats = matchedCardId?.let(statsById::get)
                 val nameEntry = matchedCardId?.let(namesById::get)
                 val relevantTribeImpacts = stats?.tribeStats
@@ -117,6 +118,7 @@ object HeroSelectionRecommendationEngine {
                     localizedName = nameEntry?.localizedName?.takeIf(String::isNotBlank),
                     armor = option.armor,
                     matchSource = when {
+                        option.preferNameMatchSource && matchedCardId != null -> HeroStatsMatchSource.HERO_NAME_ALIAS
                         directCardId != null -> HeroStatsMatchSource.HERO_CARD_ID
                         matchedCardId != null -> HeroStatsMatchSource.HERO_NAME_ALIAS
                         else -> HeroStatsMatchSource.NONE

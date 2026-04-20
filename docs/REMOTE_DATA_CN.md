@@ -26,6 +26,8 @@ GitHub Actions 工作流会在两个场景执行：
 1. 手动触发 `workflow_dispatch`
 2. 每天定时执行一次
 
+如果上游策略源临时超时，或者中文转换结果没有通过本地化校验，构建脚本会回退到仓库内置的 `strategies_zerotoheroes_zhCN.json` / `strategies_zerotoheroes_enUS.json`，保证 GitHub Pages 仍然能发布上一版可用策略。
+
 当前定时配置：
 
 ```yaml

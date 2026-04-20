@@ -12,7 +12,7 @@ object HeroSelectionVisionPromptFactory {
             }
 
             VisionRecognitionScope.FULL -> {
-                "hero_options 返回当前屏幕可见的全部 4 个英雄槽位，按从左到右输出。slot 必须固定使用 0,1,2,3，分别对应最左到最右的 4 个英雄位。每项只包含 slot、name、locked、armor。name 返回当前界面可见名称；locked 表示该槽位当前是否不可点击。"
+                "hero_options 只返回当前可点击、可选择的英雄槽位，按从左到右输出；不可点击或灰掉的槽位不要返回。slot 仍使用 0,1,2,3 对应最左到最右原始位置。每项只包含 slot、name、locked、armor。可选择槽位 locked 必须是 false。"
             }
         }
         return buildString {

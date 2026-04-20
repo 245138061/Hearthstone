@@ -91,6 +91,7 @@ import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import com.bgtactician.app.data.model.AutoDetectDebugInfo
 import com.bgtactician.app.data.model.AutoDetectStatus
+import com.bgtactician.app.data.model.BattlegroundCardMetadataCatalog
 import com.bgtactician.app.data.model.CardRulesCatalog
 import com.bgtactician.app.data.model.HeroRecommendationTier
 import com.bgtactician.app.data.model.HeroStatsMatchSource
@@ -101,6 +102,7 @@ import com.bgtactician.app.data.model.StrategyCatalog
 import com.bgtactician.app.data.model.StrategyDataSource
 import com.bgtactician.app.data.model.Tribe
 import com.bgtactician.app.data.repository.MinionImageCache
+import com.bgtactician.app.data.repository.MinionLobbyFilter
 import com.bgtactician.app.viewmodel.DashboardUiState
 import kotlinx.serialization.json.Json
 import kotlin.math.roundToInt
@@ -114,19 +116,23 @@ private val DashboardGold = Color(0xFFF3C86B)
 private val DashboardMint = Color(0xFF6FD6C2)
 private val DashboardIce = Color(0xFF7DDCFF)
 private val DashboardCoral = Color(0xFFFF8A69)
-private val OverlayDrawerShell = Color(0x88080D15)
-private val OverlayDrawerCore = Color(0xA6101722)
-private val OverlayDrawerInset = Color(0x7A111822)
-private val OverlayDrawerStroke = Color(0x4D87A4C9)
-private val OverlayDrawerStrokeSoft = Color(0x264B617F)
-private val OverlayDrawerAccent = Color(0xFFF0C56D)
-private val OverlayDrawerText = Color(0xFFF5F8FC)
-private val OverlayDrawerSubtext = Color(0xFFB2C2D4)
-private val OverlayDrawerWarning = Color(0xFFFFA27E)
-private val OverlayDrawerActive = Color(0x1E6B8DB8)
+private val OverlayDrawerShell = Color(0xC5121A29)
+private val OverlayDrawerCore = Color(0xEF213049)
+private val OverlayDrawerInset = Color(0xD91A2538)
+private val OverlayDrawerStroke = Color(0x7AFFD45B)
+private val OverlayDrawerStrokeSoft = Color(0x4D667DA1)
+private val OverlayDrawerAccent = Color(0xFFFFD45B)
+private val OverlayDrawerText = Color(0xFFFFF1C9)
+private val OverlayDrawerSubtext = Color(0xFFB3C2DA)
+private val OverlayDrawerWarning = Color(0xFFFFA36B)
+private val OverlayDrawerActive = Color(0x3D8462)
 private val DashboardJson = Json { ignoreUnknownKeys = true }
 
 private const val BUNDLED_STRATEGY_ASSET = "strategies_zerotoheroes_zhCN.json"
+private const val HERO_FRAME_IMAGE_URL =
+    "https://static.zerotoheroes.com/hearthstone/asset/firestone/images/bgs_hero_frame.png"
+private const val HERO_CARD_ART_URL_PREFIX =
+    "https://static.zerotoheroes.com/hearthstone/cardart/256x/"
 
 private val StrategyTextAliasMap = mapOf(
     "Fleet Admiral Tethys" to "舰队上将特塞斯",
@@ -252,6 +258,7 @@ fun TacticianDashboard(
     tabOnlyMode: Boolean = false,
     onSelectStrategy: (String) -> Unit,
     onSelectHero: ((ResolvedHeroStatOption) -> Unit)? = null,
+    onApplySessionTribes: ((Set<Tribe>) -> Unit)? = null,
     onTriggerAutoDetect: (() -> Unit)? = null,
     onClose: (() -> Unit)? = null
 ) {
@@ -266,6 +273,7 @@ fun TacticianDashboard(
             draggable = overlayMode,
             onSelectStrategy = onSelectStrategy,
             onSelectHero = onSelectHero,
+            onApplySessionTribes = onApplySessionTribes,
             onTriggerAutoDetect = onTriggerAutoDetect,
             onClose = onClose
         )
@@ -298,13 +306,15 @@ fun TacticianDashboard(
             selectedHero = uiState.selectedHero,
             selectedTribes = uiState.selectedTribes,
             cardRules = uiState.cardRules,
+            cardMetadata = uiState.cardMetadata,
             onSelectStrategy = onSelectStrategy
         )
 
         DetailBlock(
             strategy = selected,
             selectedTribes = uiState.selectedTribes,
-            cardRules = uiState.cardRules
+            cardRules = uiState.cardRules,
+            cardMetadata = uiState.cardMetadata
         )
     }
 }
@@ -319,6 +329,7 @@ private fun OverlaySidebarDashboard(
     draggable: Boolean,
     onSelectStrategy: (String) -> Unit,
     onSelectHero: ((ResolvedHeroStatOption) -> Unit)?,
+    onApplySessionTribes: ((Set<Tribe>) -> Unit)?,
     onTriggerAutoDetect: (() -> Unit)?,
     onClose: (() -> Unit)?
 ) {
@@ -335,6 +346,7 @@ private fun OverlaySidebarDashboard(
                 draggable = draggable,
                 onSelectStrategy = onSelectStrategy,
                 onSelectHero = onSelectHero,
+                onApplySessionTribes = onApplySessionTribes,
                 onTriggerAutoDetect = onTriggerAutoDetect,
                 onClose = onClose
             )
@@ -351,22 +363,13 @@ private fun BattlegroundsDrawerOverlay(
     draggable: Boolean,
     onSelectStrategy: (String) -> Unit,
     onSelectHero: ((ResolvedHeroStatOption) -> Unit)?,
+    onApplySessionTribes: ((Set<Tribe>) -> Unit)?,
     onTriggerAutoDetect: (() -> Unit)?,
     onClose: (() -> Unit)?
 ) {
     var isExpanded by remember { mutableStateOf(true) }
     var selectedTab by remember { mutableStateOf(0) }
     var drawerOffset by remember { mutableStateOf(IntOffset.Zero) }
-    val drawerBodyColor = if (selectedTab == 0) {
-        OverlayDrawerCore.copy(alpha = 0.56f)
-    } else {
-        OverlayDrawerCore.copy(alpha = 0.64f)
-    }
-    val drawerBorderColor = if (selectedTab == 0) {
-        OverlayDrawerStroke.copy(alpha = 0.82f)
-    } else {
-        OverlayDrawerStroke
-    }
     val dragModifier = if (draggable) {
         Modifier.pointerInput(Unit) {
             detectDragGestures { change, dragAmount ->
@@ -414,17 +417,26 @@ private fun BattlegroundsDrawerOverlay(
                     modifier = Modifier
                         .then(drawerModifier)
                         .background(
-                            color = drawerBodyColor,
-                            shape = if (showHandle) RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp) else RoundedCornerShape(10.dp)
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    OverlayDrawerAccent.copy(alpha = 0.12f),
+                                    OverlayDrawerCore,
+                                    OverlayDrawerInset
+                                )
+                            ),
+                            shape = if (showHandle) RoundedCornerShape(topStart = 24.dp, bottomStart = 24.dp) else RoundedCornerShape(24.dp)
                         )
                         .border(
                             width = 1.dp,
-                            color = drawerBorderColor,
-                            shape = if (showHandle) RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp) else RoundedCornerShape(10.dp)
+                            color = OverlayDrawerStroke,
+                            shape = if (showHandle) RoundedCornerShape(topStart = 24.dp, bottomStart = 24.dp) else RoundedCornerShape(24.dp)
                         )
                         .padding(end = 1.dp, top = 1.dp, bottom = 1.dp)
                 ) {
-                    DrawerHeaderBar(uiState.autoDetectStatus)
+                    DrawerHeaderBar(
+                        status = uiState.autoDetectStatus,
+                        selectedTab = selectedTab
+                    )
                     DrawerTabHeader(
                         selectedTab = selectedTab,
                         onTabSelected = { selectedTab = it },
@@ -442,6 +454,7 @@ private fun BattlegroundsDrawerOverlay(
                                 selectedTribes = uiState.selectedTribes,
                                 showRecognizedHeroesCard = !showHandle,
                                 onSelectHero = onSelectHero,
+                                onApplySessionTribes = onApplySessionTribes,
                                 onTriggerAutoDetect = onTriggerAutoDetect
                             )
                             1 -> DrawerCompListTab(
@@ -450,38 +463,14 @@ private fun BattlegroundsDrawerOverlay(
                                 selectedHero = uiState.selectedHero,
                                 selectedTribes = uiState.selectedTribes,
                                 cardRules = uiState.cardRules,
+                                cardMetadata = uiState.cardMetadata,
                                 onSelectStrategy = onSelectStrategy
                             )
                             else -> DrawerTacticalTab(
                                 strategy = selected,
                                 selectedTribes = uiState.selectedTribes,
-                                cardRules = uiState.cardRules
-                            )
-                        }
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "已筛选 ${uiState.strategies.size} 套",
-                            color = OverlayDrawerSubtext,
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                        if (onClose != null) {
-                            Text(
-                                text = "退出插件",
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(6.dp))
-                                    .clickable(onClick = onClose)
-                                    .padding(horizontal = 8.dp, vertical = 6.dp),
-                                color = OverlayDrawerSubtext,
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold
+                                cardRules = uiState.cardRules,
+                                cardMetadata = uiState.cardMetadata
                             )
                         }
                     }
@@ -491,33 +480,50 @@ private fun BattlegroundsDrawerOverlay(
             if (showHandle) {
                 Box(
                     modifier = Modifier
-                        .width(18.dp)
-                        .fillMaxHeight(0.92f)
+                        .width(28.dp)
+                        .fillMaxHeight(0.88f)
                         .then(dragModifier)
                         .background(
-                            color = OverlayDrawerShell,
-                            shape = RoundedCornerShape(topStart = 9.dp, bottomStart = 9.dp)
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    OverlayDrawerAccent.copy(alpha = 0.32f),
+                                    OverlayDrawerShell,
+                                    OverlayDrawerInset
+                                )
+                            ),
+                            shape = RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)
                         )
                         .border(
                             width = 1.dp,
-                            color = OverlayDrawerStrokeSoft,
-                            shape = RoundedCornerShape(topStart = 9.dp, bottomStart = 9.dp)
+                            color = OverlayDrawerStroke,
+                            shape = RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp)
                         )
                         .clickable { isExpanded = !isExpanded },
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
                         modifier = Modifier
-                            .padding(vertical = 8.dp)
+                            .padding(vertical = 10.dp)
                             .fillMaxHeight(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("抽", color = OverlayDrawerText, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Black)
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Text(if (isExpanded) "收" else "展", color = OverlayDrawerSubtext, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Text("屉", color = OverlayDrawerText, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Black)
+                        Box(
+                            modifier = Modifier
+                                .size(18.dp)
+                                .clip(CircleShape)
+                                .background(OverlayDrawerAccent.copy(alpha = 0.24f))
+                                .border(1.dp, OverlayDrawerAccent.copy(alpha = 0.52f), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("酒", color = OverlayDrawerAccent, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Black)
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(if (isExpanded) "收" else "展", color = OverlayDrawerText, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Black)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("柜", color = OverlayDrawerSubtext, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text("台", color = OverlayDrawerSubtext, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -541,38 +547,56 @@ private fun DrawerTabHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(44.dp)
+            .height(58.dp)
             .then(dragModifier)
-            .background(Color.Black.copy(alpha = 0.26f))
-            .border(1.dp, OverlayDrawerStrokeSoft)
+            .padding(horizontal = 10.dp, vertical = 8.dp)
+            .clip(RoundedCornerShape(18.dp))
+            .background(OverlayDrawerShell.copy(alpha = 0.88f))
+            .border(1.dp, OverlayDrawerStrokeSoft, RoundedCornerShape(18.dp))
     ) {
         tabs.forEachIndexed { index, (icon, label) ->
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxHeight()
-                    .background(if (selectedTab == index) OverlayDrawerActive.copy(alpha = 0.85f) else Color.Transparent)
+                    .fillMaxSize()
+                    .padding(horizontal = 3.dp, vertical = 4.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(
+                        if (selectedTab == index) {
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    OverlayDrawerAccent.copy(alpha = 0.18f),
+                                    OverlayDrawerActive.copy(alpha = 0.88f)
+                                )
+                            )
+                        } else {
+                            Brush.verticalGradient(
+                                colors = listOf(Color.Transparent, Color.Transparent)
+                            )
+                        }
+                    )
                     .border(
                         width = if (selectedTab == index) 1.dp else 0.dp,
-                        color = if (selectedTab == index) OverlayDrawerAccent.copy(alpha = 0.5f) else Color.Transparent
+                        color = if (selectedTab == index) OverlayDrawerAccent.copy(alpha = 0.62f) else Color.Transparent,
+                        shape = RoundedCornerShape(14.dp)
                     )
                     .clickable { onTabSelected(index) },
                 contentAlignment = Alignment.Center
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = icon,
                         contentDescription = label,
                         tint = if (selectedTab == index) OverlayDrawerAccent else OverlayDrawerSubtext,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(15.dp)
                     )
                     Text(
                         text = label,
                         color = if (selectedTab == index) OverlayDrawerText else OverlayDrawerSubtext,
-                        style = MaterialTheme.typography.labelSmall,
+                        style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -587,6 +611,7 @@ private fun DrawerSetupTab(
     selectedTribes: Set<Tribe>,
     showRecognizedHeroesCard: Boolean,
     onSelectHero: ((ResolvedHeroStatOption) -> Unit)?,
+    onApplySessionTribes: ((Set<Tribe>) -> Unit)?,
     onTriggerAutoDetect: (() -> Unit)?
 ) {
     DrawerTabShell(
@@ -601,8 +626,8 @@ private fun DrawerSetupTab(
         ) {
             BoxWithConstraints(modifier = Modifier.weight(1f)) {
                 val compactHeight = maxHeight < 360.dp
-                // Overlay interactions are designed for landscape-first play sessions.
-                val useWideSummary = maxWidth > maxHeight
+                // 抽屉宽度通常不足以稳定承载双列，只有足够宽时才启用。
+                val useWideSummary = maxWidth > maxHeight && maxWidth >= 720.dp
                 if (useWideSummary) {
                     DrawerLandscapeSetupGrid(
                         selectedTribes = selectedTribes,
@@ -613,6 +638,7 @@ private fun DrawerSetupTab(
                         showRecognizedHeroesCard = showRecognizedHeroesCard,
                         selectedHero = uiState.selectedHero,
                         onSelectHero = onSelectHero,
+                        onApplySessionTribes = onApplySessionTribes,
                         modifier = Modifier.fillMaxSize()
                     )
                 } else {
@@ -622,15 +648,6 @@ private fun DrawerSetupTab(
                             .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        DrawerRecognitionOutcomeCard(
-                            selectedTribes = selectedTribes,
-                            autoDetectStatus = uiState.autoDetectStatus,
-                            autoDetectDebugInfo = uiState.autoDetectDebugInfo,
-                            recognizedHeroes = uiState.recognizedHeroes,
-                            heroStatsUpdatedAtLabel = uiState.heroStatsUpdatedAtLabel,
-                            modifier = Modifier.fillMaxWidth(),
-                            compactHeight = compactHeight
-                        )
                         DrawerSelectedHeroFocusCard(
                             selectedHero = uiState.selectedHero,
                             recognizedHeroes = uiState.recognizedHeroes,
@@ -638,25 +655,16 @@ private fun DrawerSetupTab(
                             modifier = Modifier.fillMaxWidth(),
                             compactHeight = compactHeight
                         )
-                        if (showRecognizedHeroesCard) {
-                            DrawerRecognizedHeroesCard(
-                                recognizedHeroes = uiState.recognizedHeroes,
-                                heroStatsUpdatedAtLabel = uiState.heroStatsUpdatedAtLabel,
-                                selectedHero = uiState.selectedHero,
-                                onSelectHero = onSelectHero,
-                                modifier = Modifier.fillMaxWidth(),
-                                compactHeight = compactHeight
-                            )
-                        }
                         DrawerSelectedTribesCard(
                             selectedTribes = selectedTribes,
+                            onApplySessionTribes = onApplySessionTribes,
                             modifier = Modifier.fillMaxWidth(),
                             compactHeight = compactHeight
                         )
-                        DrawerAiRecognitionTipCard(
-                            selectedTribes = selectedTribes,
-                            autoDetectStatus = uiState.autoDetectStatus,
-                            modifier = Modifier.fillMaxWidth()
+                        DrawerAiResultCard(
+                            debugInfo = uiState.autoDetectDebugInfo,
+                            modifier = Modifier.fillMaxWidth(),
+                            compactHeight = compactHeight
                         )
                     }
                 }
@@ -675,6 +683,7 @@ private fun DrawerLandscapeSetupGrid(
     showRecognizedHeroesCard: Boolean,
     selectedHero: ResolvedHeroStatOption?,
     onSelectHero: ((ResolvedHeroStatOption) -> Unit)?,
+    onApplySessionTribes: ((Set<Tribe>) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -686,18 +695,10 @@ private fun DrawerLandscapeSetupGrid(
         Column(
             modifier = Modifier
                 .widthIn(min = 260.dp, max = 340.dp)
-                .fillMaxHeight(),
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            DrawerRecognitionOutcomeCard(
-                selectedTribes = selectedTribes,
-                autoDetectStatus = autoDetectStatus,
-                autoDetectDebugInfo = autoDetectDebugInfo,
-                recognizedHeroes = recognizedHeroes,
-                heroStatsUpdatedAtLabel = heroStatsUpdatedAtLabel,
-                modifier = Modifier.fillMaxWidth(),
-                compactHeight = true
-            )
             DrawerSelectedHeroFocusCard(
                 selectedHero = selectedHero,
                 recognizedHeroes = recognizedHeroes,
@@ -707,40 +708,15 @@ private fun DrawerLandscapeSetupGrid(
             )
             DrawerSelectedTribesCard(
                 selectedTribes = selectedTribes,
+                onApplySessionTribes = onApplySessionTribes,
                 modifier = Modifier.fillMaxWidth(),
                 compactHeight = true
             )
-            DrawerAiRecognitionTipCard(
-                selectedTribes = selectedTribes,
-                autoDetectStatus = autoDetectStatus,
-                modifier = Modifier.fillMaxWidth()
+            DrawerAiResultCard(
+                debugInfo = autoDetectDebugInfo,
+                modifier = Modifier.fillMaxWidth(),
+                compactHeight = true
             )
-        }
-        Column(
-            modifier = Modifier
-                .widthIn(min = 300.dp, max = 420.dp)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            if (showRecognizedHeroesCard) {
-                DrawerRecognizedHeroesCard(
-                    recognizedHeroes = recognizedHeroes,
-                    heroStatsUpdatedAtLabel = heroStatsUpdatedAtLabel,
-                    selectedHero = selectedHero,
-                    onSelectHero = onSelectHero,
-                    modifier = Modifier.fillMaxWidth(),
-                    compactHeight = true
-                )
-            } else {
-                DrawerRecognizedHeroesCard(
-                    recognizedHeroes = recognizedHeroes,
-                    heroStatsUpdatedAtLabel = heroStatsUpdatedAtLabel,
-                    selectedHero = selectedHero,
-                    onSelectHero = onSelectHero,
-                    modifier = Modifier.fillMaxWidth(),
-                    compactHeight = true
-                )
-            }
         }
     }
 }
@@ -817,7 +793,7 @@ private fun DrawerSetupProgressCard(
                     } else {
                         "本轮识别未锁定，请使用外部入口重新发起识别"
                     }
-                    AutoDetectStatus.WAITING -> "等待外部识别入口触发后，会短时采集当前画面"
+                    AutoDetectStatus.WAITING -> "酒馆等级会后台自动同步；点击识别时才会短时采集英雄选择页"
                 },
                 color = OverlayDrawerSubtext,
                 style = MaterialTheme.typography.bodySmall,
@@ -923,6 +899,71 @@ private fun DrawerRecognitionOutcomeCard(
 }
 
 @Composable
+private fun DrawerAiResultCard(
+    debugInfo: AutoDetectDebugInfo,
+    modifier: Modifier = Modifier,
+    compactHeight: Boolean = false
+) {
+    val hasAiResult = listOf(
+        debugInfo.tavernTierLabel,
+        debugInfo.aiSourceLabel,
+        debugInfo.aiModelLabel,
+        debugInfo.aiRequestId,
+        debugInfo.aiScreenTypeLabel,
+        debugInfo.aiHeroesLabel,
+        debugInfo.aiSummaryLabel,
+        debugInfo.recognizedTribesLabel
+    ).any { !it.isNullOrBlank() }
+    if (!hasAiResult) return
+
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.34f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.68f))
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = if (compactHeight) 10.dp else 12.dp),
+            verticalArrangement = Arrangement.spacedBy(if (compactHeight) 6.dp else 8.dp)
+        ) {
+            Text(
+                text = "AI 原始结果",
+                color = OverlayDrawerText,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Black
+            )
+            debugInfo.tavernTierLabel?.let { DrawerSingleLineInfo(label = "酒馆", value = it, maxLines = 2) }
+            debugInfo.aiSourceLabel?.let { DrawerSingleLineInfo(label = "来源", value = it, maxLines = 2) }
+            debugInfo.aiModelLabel?.let { DrawerSingleLineInfo(label = "模型", value = it, maxLines = 2) }
+            debugInfo.aiRequestId?.let { DrawerSingleLineInfo(label = "请求", value = it, maxLines = 2) }
+            debugInfo.aiScreenTypeLabel?.let { DrawerSingleLineInfo(label = "页面", value = it) }
+            debugInfo.recognizedTribesLabel?.let { DrawerSingleLineInfo(label = "种族", value = it, maxLines = 2) }
+            debugInfo.aiHeroesLabel?.let {
+                DrawerSingleLineInfo(
+                    label = "英雄",
+                    value = it,
+                    maxLines = if (compactHeight) 3 else 4
+                )
+            }
+            debugInfo.roiRectLabel?.let {
+                DrawerSingleLineInfo(
+                    label = "ROI",
+                    value = it,
+                    maxLines = if (compactHeight) 4 else 6
+                )
+            }
+            debugInfo.aiSummaryLabel?.let {
+                DrawerSingleLineInfo(
+                    label = "总结",
+                    value = it,
+                    maxLines = if (compactHeight) 2 else 3
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun DrawerRecognitionMetric(
     label: String,
     value: String,
@@ -997,7 +1038,7 @@ private fun DrawerSelectedHeroFocusCard(
         if (selectedHero == null) {
             Column(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = if (compactHeight) 10.dp else 12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
                     text = "当前选择的英雄",
@@ -1006,30 +1047,33 @@ private fun DrawerSelectedHeroFocusCard(
                     fontWeight = FontWeight.Black
                 )
                 Text(
-                    text = if (recognizedHeroes.isEmpty()) {
-                        "AI 还没有稳定识别出可选英雄。"
-                    } else {
-                        "已识别到候选英雄，请在下方点选你实际选择的英雄。"
-                    },
+                    text = if (recognizedHeroes.isEmpty()) "未识别到英雄" else "点一个作为当前英雄",
                     color = OverlayDrawerSubtext,
                     style = MaterialTheme.typography.bodySmall
                 )
-                recognizedHeroes.firstOrNull()?.let { firstHero ->
-                    Surface(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(999.dp))
-                            .clickable(enabled = onSelectHero != null) { onSelectHero?.invoke(firstHero) },
-                        shape = RoundedCornerShape(999.dp),
-                        color = OverlayDrawerAccent.copy(alpha = 0.12f),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerAccent.copy(alpha = 0.24f))
+                if (recognizedHeroes.isNotEmpty()) {
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Text(
-                            text = "快速选择 ${firstHero.displayName}",
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
-                            color = OverlayDrawerAccent,
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Bold
-                        )
+                        recognizedHeroes.forEach { hero ->
+                            Surface(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(999.dp))
+                                    .clickable(enabled = onSelectHero != null) { onSelectHero?.invoke(hero) },
+                                shape = RoundedCornerShape(999.dp),
+                                color = OverlayDrawerAccent.copy(alpha = 0.12f),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerAccent.copy(alpha = 0.24f))
+                            ) {
+                                Text(
+                                    text = hero.displayName,
+                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                    color = OverlayDrawerAccent,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -1091,35 +1135,33 @@ private fun DrawerSelectedHeroFocusCard(
                 }
 
                 selectedHero.recommendation?.recommendedCompName?.takeIf { it.isNotBlank() }?.let { compName ->
-                    DrawerSingleLineInfo(label = "推荐流派", value = compName)
+                    DrawerSingleLineInfo(label = "推荐", value = compName)
+                }
+
+                selectedHeroTransitionText(selectedHero)?.let { transitionText ->
+                    DrawerSingleLineInfo(
+                        label = "过渡",
+                        value = transitionText,
+                        maxLines = if (compactHeight) 2 else 3
+                    )
                 }
 
                 DrawerSingleLineInfo(
-                    label = "选择理由",
+                    label = "理由",
                     value = selectedHeroReasonText(selectedHero),
-                    maxLines = if (compactHeight) 3 else 4
-                )
-
-                DrawerSingleLineInfo(
-                    label = "识别命中",
-                    value = heroMatchDebugLine(selectedHero) ?: "AI 已识别，缺少命中明细",
-                    maxLines = 2
+                    maxLines = if (compactHeight) 2 else 3
                 )
 
                 Text(
                     text = buildString {
-                        append("均名 ")
+                        append("均名")
                         append(formatHeroAverage(selectedHero.averagePosition))
-                        append(" · 样本 ")
+                        append(" · 样本")
                         append(formatCompactCount(selectedHero.dataPoints))
-                        heroLobbyImpactLine(selectedHero)?.let {
-                            append(" · ")
-                            append(it)
-                        }
                     },
                     color = OverlayDrawerSubtext,
                     style = MaterialTheme.typography.labelSmall,
-                    maxLines = if (compactHeight) 2 else 3,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -1130,11 +1172,14 @@ private fun DrawerSelectedHeroFocusCard(
 @Composable
 private fun DrawerSelectedTribesCard(
     selectedTribes: Set<Tribe>,
+    onApplySessionTribes: ((Set<Tribe>) -> Unit)? = null,
     modifier: Modifier = Modifier,
     compactHeight: Boolean = false
 ) {
+    var draftTribes by remember(selectedTribes) { mutableStateOf(selectedTribes) }
+
     Surface(
-        modifier = modifier.heightIn(min = if (compactHeight) 82.dp else 110.dp),
+        modifier = modifier.heightIn(min = if (compactHeight) 110.dp else 138.dp),
         shape = RoundedCornerShape(12.dp),
         color = OverlayDrawerInset.copy(alpha = 0.34f),
         border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.68f))
@@ -1144,7 +1189,7 @@ private fun DrawerSelectedTribesCard(
             verticalArrangement = Arrangement.spacedBy(if (compactHeight) 6.dp else 8.dp)
         ) {
             Text(
-                text = if (selectedTribes.isEmpty()) "当前未选择种族" else "当前已选 ${selectedTribes.size} 个",
+                text = if (selectedTribes.isEmpty()) "当前环境" else "当前环境 ${selectedTribes.size}/5",
                 color = OverlayDrawerSubtext,
                 style = MaterialTheme.typography.labelMedium
             )
@@ -1159,7 +1204,7 @@ private fun DrawerSelectedTribesCard(
                         border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.5f))
                     ) {
                         Text(
-                            text = "等待 AI 识别同步当前种族",
+                            text = "未同步",
                             modifier = Modifier.padding(horizontal = 9.dp, vertical = 5.dp),
                             color = OverlayDrawerSubtext,
                             style = MaterialTheme.typography.labelMedium,
@@ -1184,6 +1229,93 @@ private fun DrawerSelectedTribesCard(
                                 fontWeight = FontWeight.Bold
                             )
                         }
+                    }
+                }
+            }
+
+            onApplySessionTribes?.let { applySessionTribes ->
+                Text(
+                    text = "手动校正",
+                    color = OverlayDrawerSubtext,
+                    style = MaterialTheme.typography.labelMedium
+                )
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Tribe.entries.forEach { tribe ->
+                        val selected = tribe in draftTribes
+                        Surface(
+                            modifier = Modifier.clickable {
+                                draftTribes = when {
+                                    selected -> draftTribes - tribe
+                                    draftTribes.size >= 5 -> draftTribes
+                                    else -> draftTribes + tribe
+                                }
+                            },
+                            shape = RoundedCornerShape(999.dp),
+                            color = if (selected) {
+                                tribeOverlayAccent(tribe).copy(alpha = 0.18f)
+                            } else {
+                                OverlayDrawerInset.copy(alpha = 0.55f)
+                            },
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                if (selected) {
+                                    tribeOverlayAccent(tribe).copy(alpha = 0.4f)
+                                } else {
+                                    OverlayDrawerStrokeSoft.copy(alpha = 0.44f)
+                                }
+                            )
+                        ) {
+                            Text(
+                                text = tribe.label,
+                                modifier = Modifier.padding(horizontal = 9.dp, vertical = 5.dp),
+                                color = if (selected) tribeOverlayAccent(tribe) else OverlayDrawerSubtext,
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${draftTribes.size}/5",
+                        color = if (draftTribes.size == 5) DashboardMint else OverlayDrawerWarning,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Text(
+                            text = "重置",
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .clickable { draftTribes = selectedTribes }
+                                .padding(horizontal = 6.dp, vertical = 4.dp),
+                            color = OverlayDrawerSubtext,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "应用",
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .clickable(enabled = draftTribes.size == 5 && draftTribes != selectedTribes) {
+                                    applySessionTribes(draftTribes)
+                                }
+                                .padding(horizontal = 6.dp, vertical = 4.dp),
+                            color = if (draftTribes.size == 5 && draftTribes != selectedTribes) {
+                                OverlayDrawerAccent
+                            } else {
+                                OverlayDrawerSubtext.copy(alpha = 0.5f)
+                            },
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Black
+                        )
                     }
                 }
             }
@@ -1401,9 +1533,8 @@ fun HeroSelectionFloatingOverlay(
         }
         val cardWidthPx = with(density) { cardWidth.roundToPx() }
         val anchorFractions = if (isLandscape) {
-            // 按近期实机截图重新校正：
-            // 第 2 / 3 个英雄槽之前持续偏右，这里单独左移中间锚点。
-            listOf(0.226f, 0.418f, 0.612f, 0.798f)
+            // 英雄选择页 4 个框位是固定的，这里按实机截图重新校正四个槽位中心点。
+            listOf(0.229f, 0.402f, 0.598f, 0.772f)
         } else {
             listOf(0.19f, 0.395f, 0.605f, 0.81f)
         }
@@ -1501,7 +1632,7 @@ private fun HeroSelectionFloatingCard(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = hero.recommendation?.recommendedCompName ?: hero.recommendation?.reason ?: "等待推荐",
+                text = heroFloatingPrimaryLine(hero),
                 color = Color(0xFFEFE7D7),
                 style = if (previewMode) MaterialTheme.typography.bodySmall else MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Medium,
@@ -1662,14 +1793,7 @@ private fun HeroPortrait(
     val currentModel = models.getOrNull(modelIndex)
 
     Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(18.dp))
-            .background(
-                Brush.linearGradient(
-                    colors = listOf(Color(0xFF31465A), Color(0xFF121B24))
-                )
-            )
-            .border(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.72f), RoundedCornerShape(18.dp)),
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
         if (currentModel == null) {
@@ -1677,23 +1801,50 @@ private fun HeroPortrait(
             return@Box
         }
 
-        SubcomposeAsyncImage(
-            model = currentModel,
-            contentDescription = hero.displayName,
+        Box(
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-            loading = { HeroPortraitFallback(hero) },
-            error = {
-                val nextIndex = modelIndex + 1
-                if (nextIndex < models.size) {
-                    LaunchedEffect(nextIndex) {
-                        modelIndex = nextIndex
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 8.dp, vertical = 6.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(Color(0xFF31465A), Color(0xFF121B24))
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                SubcomposeAsyncImage(
+                    model = currentModel,
+                    contentDescription = hero.displayName,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .scale(1.08f),
+                    contentScale = ContentScale.Crop,
+                    loading = { HeroPortraitFallback(hero) },
+                    error = {
+                        val nextIndex = modelIndex + 1
+                        if (nextIndex < models.size) {
+                            LaunchedEffect(nextIndex) {
+                                modelIndex = nextIndex
+                            }
+                        } else {
+                            HeroPortraitFallback(hero)
+                        }
                     }
-                } else {
-                    HeroPortraitFallback(hero)
-                }
+                )
             }
-        )
+
+            AsyncImage(
+                model = HERO_FRAME_IMAGE_URL,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.FillBounds
+            )
+        }
     }
 }
 
@@ -1735,7 +1886,8 @@ private fun resolveHeroPortraitModels(hero: ResolvedHeroStatOption): List<String
     val heroCardId = hero.heroCardId?.trim().orEmpty()
     if (heroCardId.isBlank()) return emptyList()
     return buildList {
-        // 英雄头像优先走中文渲染图，失败后再降级英文和 jpg 静态图。
+        // 设置页优先使用 ZeroToHeroes 的酒馆英雄卡面，避免和边框素材风格不一致。
+        add("$HERO_CARD_ART_URL_PREFIX$heroCardId.jpg")
         add("https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/$heroCardId.png")
         add("https://art.hearthstonejson.com/v1/render/latest/enUS/256x/$heroCardId.png")
         add("https://art.hearthstonejson.com/v1/256x/$heroCardId.jpg")
@@ -1841,13 +1993,27 @@ private fun heroPivotHintLine(hero: ResolvedHeroStatOption): String? {
     return hero.recommendation?.pivotHint?.takeIf { it.isNotBlank() }?.let { "转向：$it" }
 }
 
+private fun heroFloatingPrimaryLine(hero: ResolvedHeroStatOption): String {
+    val summary = hero.recommendation?.summary?.trim().orEmpty()
+    if (summary.isNotBlank()) return summary
+
+    val reason = hero.recommendation?.reason?.trim().orEmpty()
+    if (reason.isNotBlank()) return reason
+
+    return hero.recommendation?.recommendedCompName?.takeIf { it.isNotBlank() } ?: "等待推荐"
+}
+
 private fun selectedHeroReasonText(hero: ResolvedHeroStatOption): String {
     return buildList {
         hero.recommendation?.reason?.trim()?.takeIf { it.isNotBlank() }?.let(::add)
         hero.recommendation?.summary?.trim()?.takeIf { it.isNotBlank() }?.let(::add)
-        hero.recommendation?.fallbackCompName?.takeIf { it.isNotBlank() }?.let { add("备选方案：$it") }
-        hero.recommendation?.pivotHint?.takeIf { it.isNotBlank() }?.let { add("转向提示：$it") }
     }.joinToString("；").ifBlank { "当前还没有稳定的推荐理由" }
+}
+
+private fun selectedHeroTransitionText(hero: ResolvedHeroStatOption): String? {
+    hero.recommendation?.pivotHint?.trim()?.takeIf { it.isNotBlank() }?.let { return it }
+    hero.recommendation?.fallbackCompName?.takeIf { it.isNotBlank() }?.let { return "主核不顺时转$it" }
+    return null
 }
 
 private fun heroFloatingDetailLine(hero: ResolvedHeroStatOption): String? {
@@ -1927,6 +2093,7 @@ private fun DrawerCompListTab(
     selectedHero: ResolvedHeroStatOption?,
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
     onSelectStrategy: (String) -> Unit
 ) {
     val sortedStrategies = sortStrategiesForDecision(strategies, selectedHero)
@@ -1968,6 +2135,7 @@ private fun DrawerCompListTab(
                         selected = strategy.id == selectedStrategyId,
                         selectedTribes = selectedTribes,
                         cardRules = cardRules,
+                        cardMetadata = cardMetadata,
                         onClick = { onSelectStrategy(strategy.id) }
                     )
                 }
@@ -1982,6 +2150,7 @@ private fun DrawerCompItem(
     selected: Boolean,
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
     onClick: () -> Unit
 ) {
     Surface(
@@ -2031,6 +2200,7 @@ private fun DrawerCompItem(
                 strategy = strategy,
                 selectedTribes = selectedTribes,
                 cardRules = cardRules,
+                cardMetadata = cardMetadata,
                 coreLabel = null,
                 addOnLabel = null,
                 coreIconSize = 34.dp,
@@ -2140,24 +2310,58 @@ private fun drawerRatingColor(tierOrRating: String): Color = when (drawerStrateg
 }
 
 @Composable
-private fun DrawerHeaderBar(status: AutoDetectStatus) {
+private fun DrawerHeaderBar(
+    status: AutoDetectStatus,
+    selectedTab: Int
+) {
+    val title = when (selectedTab) {
+        0 -> "识别柜台"
+        1 -> "流派柜台"
+        else -> "战术柜台"
+    }
+    val subtitle = when (selectedTab) {
+        0 -> "英雄与种族同步"
+        1 -> "当前局推荐方向"
+        else -> "核心节奏与关键牌"
+    }
+
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 10.dp)
+            .clip(RoundedCornerShape(18.dp))
+            .background(
+                Brush.horizontalGradient(
+                    colors = listOf(
+                        OverlayDrawerAccent.copy(alpha = 0.12f),
+                        OverlayDrawerShell.copy(alpha = 0.92f)
+                    )
+                )
+            )
+            .border(1.dp, OverlayDrawerStrokeSoft, RoundedCornerShape(18.dp))
+            .padding(horizontal = 14.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .height(2.dp)
-                .clip(RoundedCornerShape(99.dp))
-                .background(
-                    Brush.horizontalGradient(
-                        colors = listOf(OverlayDrawerAccent.copy(alpha = 0.78f), OverlayDrawerStroke.copy(alpha = 0.6f))
-                    )
-                )
-        )
-        Spacer(modifier = Modifier.width(8.dp))
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = title,
+                color = OverlayDrawerText,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Black
+            )
+            Text(
+                text = subtitle,
+                color = OverlayDrawerSubtext,
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Spacer(modifier = Modifier.width(12.dp))
         DrawerAutoDetectMicroLamp(status = status)
     }
 }
@@ -2172,7 +2376,7 @@ private data class AutoDetectVisualState(
 private fun autoDetectVisualState(status: AutoDetectStatus): AutoDetectVisualState = when (status) {
     AutoDetectStatus.WAITING -> AutoDetectVisualState(
         label = "等待识别",
-        hint = "点击开始识别后会短时采集",
+        hint = "酒馆等级后台同步中；点击后才会短时采集英雄选择页",
         color = DashboardIce,
         pulse = false
     )
@@ -2220,22 +2424,26 @@ private fun DrawerAutoDetectMicroLamp(status: AutoDetectStatus) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(999.dp))
-            .background(visual.color.copy(alpha = 0.12f))
-            .border(1.dp, visual.color.copy(alpha = 0.3f), RoundedCornerShape(999.dp))
-            .padding(horizontal = 6.dp, vertical = 3.dp),
+            .background(
+                Brush.horizontalGradient(
+                    colors = listOf(visual.color.copy(alpha = 0.14f), OverlayDrawerAccent.copy(alpha = 0.10f))
+                )
+            )
+            .border(1.dp, visual.color.copy(alpha = 0.34f), RoundedCornerShape(999.dp))
+            .padding(horizontal = 8.dp, vertical = 5.dp),
         horizontalArrangement = Arrangement.spacedBy(5.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(7.dp)
+                .size(8.dp)
                 .clip(CircleShape)
                 .background(visual.color.copy(alpha = alpha))
         )
         Text(
             text = visual.label,
-            color = visual.color,
-            style = MaterialTheme.typography.labelSmall,
+            color = OverlayDrawerText,
+            style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold
         )
     }
@@ -2249,9 +2457,13 @@ private fun DrawerAutoDetectStatusChip(status: AutoDetectStatus) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(999.dp))
-            .background(visual.color.copy(alpha = 0.1f))
-            .border(1.dp, visual.color.copy(alpha = 0.22f), RoundedCornerShape(999.dp))
-            .padding(horizontal = 8.dp, vertical = 5.dp),
+            .background(
+                Brush.horizontalGradient(
+                    colors = listOf(visual.color.copy(alpha = 0.12f), OverlayDrawerAccent.copy(alpha = 0.10f))
+                )
+            )
+            .border(1.dp, visual.color.copy(alpha = 0.26f), RoundedCornerShape(999.dp))
+            .padding(horizontal = 10.dp, vertical = 6.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -2263,7 +2475,7 @@ private fun DrawerAutoDetectStatusChip(status: AutoDetectStatus) {
         )
         Text(
             text = "${visual.label} · ${visual.hint}",
-            color = visual.color,
+            color = OverlayDrawerText,
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
             maxLines = 1
@@ -2280,18 +2492,41 @@ private fun DrawerAutoDetectActionButton(
     if (onTrigger == null) return
 
     if (status == AutoDetectStatus.LOCKED) {
-        IconButton(
-            onClick = onTrigger,
+        Surface(
             modifier = Modifier
-                .size(if (compact) 30.dp else 34.dp)
-                .clip(CircleShape)
-                .background(OverlayDrawerInset.copy(alpha = 0.36f))
+                .clip(RoundedCornerShape(999.dp))
+                .clickable(onClick = onTrigger),
+            shape = RoundedCornerShape(999.dp),
+            color = DashboardMint.copy(alpha = 0.16f),
+            border = androidx.compose.foundation.BorderStroke(1.dp, DashboardMint.copy(alpha = 0.42f))
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Refresh,
-                contentDescription = "重新识别",
-                tint = DashboardMint
-            )
+            Row(
+                modifier = Modifier.padding(
+                    horizontal = if (compact) 9.dp else 12.dp,
+                    vertical = if (compact) 5.dp else 6.dp
+                ),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Check,
+                    contentDescription = null,
+                    tint = DashboardMint,
+                    modifier = Modifier.size(if (compact) 14.dp else 16.dp)
+                )
+                Text(
+                    text = if (compact) "已识别" else "已识别 · 重识别",
+                    color = DashboardMint,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Icon(
+                    imageVector = Icons.Outlined.Refresh,
+                    contentDescription = "重新识别",
+                    tint = DashboardMint.copy(alpha = 0.92f),
+                    modifier = Modifier.size(if (compact) 13.dp else 15.dp)
+                )
+            }
         }
         return
     }
@@ -2439,10 +2674,12 @@ private fun AutoDetectDebugSummary(
     compact: Boolean
 ) {
     val lines = buildList {
+        debugInfo.tavernTierLabel?.let { add("酒馆: $it") }
         debugInfo.recognizedTribesLabel?.let { add("识别: $it") }
         debugInfo.rawText?.takeIf { it.isNotBlank() }?.let { add("详情: $it") }
         debugInfo.lastUpdatedLabel?.let { add("时间: $it") }
         debugInfo.viewportLabel?.let { add("视口: $it") }
+        debugInfo.roiRectLabel?.let { add("ROI: $it") }
         debugInfo.headerLabel?.let { add("头部: $it") }
         debugInfo.latestDumpPath?.let { add("Dump: $it") }
     }
@@ -2482,15 +2719,33 @@ private fun DrawerFramedSection(
 ) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(8.dp),
-        color = OverlayDrawerInset.copy(alpha = 0.68f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.8f))
+        shape = RoundedCornerShape(18.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.82f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStroke.copy(alpha = 0.38f))
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 9.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            content = content
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            OverlayDrawerAccent.copy(alpha = 0.08f),
+                            Color.Transparent
+                        )
+                    )
+                )
+                .border(
+                    1.dp,
+                    OverlayDrawerStrokeSoft.copy(alpha = 0.42f),
+                    RoundedCornerShape(18.dp)
+                )
+                .padding(horizontal = 12.dp, vertical = 11.dp)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                content = content
+            )
+        }
     }
 }
 
@@ -2501,15 +2756,34 @@ private fun DrawerGlassSection(
 ) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(10.dp),
-        color = OverlayDrawerInset.copy(alpha = 0.42f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.72f))
+        shape = RoundedCornerShape(22.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.56f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStroke.copy(alpha = 0.32f))
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 9.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            content = content
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            OverlayDrawerAccent.copy(alpha = 0.08f),
+                            OverlayDrawerInset.copy(alpha = 0.10f),
+                            Color.Transparent
+                        )
+                    )
+                )
+                .border(
+                    1.dp,
+                    OverlayDrawerStrokeSoft.copy(alpha = 0.38f),
+                    RoundedCornerShape(22.dp)
+                )
+                .padding(horizontal = 12.dp, vertical = 11.dp)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                content = content
+            )
+        }
     }
 }
 
@@ -2525,7 +2799,19 @@ private fun DrawerTabShell(
     DrawerGlassSection(modifier = modifier.fillMaxSize()) {
         if (showHeader) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(
+                        Brush.horizontalGradient(
+                            colors = listOf(
+                                OverlayDrawerAccent.copy(alpha = 0.10f),
+                                OverlayDrawerShell.copy(alpha = 0.90f)
+                            )
+                        )
+                    )
+                    .border(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.42f), RoundedCornerShape(16.dp))
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -2551,13 +2837,13 @@ private fun DrawerTabShell(
                 }
                 Surface(
                     shape = RoundedCornerShape(999.dp),
-                    color = OverlayDrawerAccent.copy(alpha = 0.12f),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerAccent.copy(alpha = 0.3f))
+                    color = OverlayDrawerAccent.copy(alpha = 0.14f),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerAccent.copy(alpha = 0.38f))
                 ) {
                     Text(
                         text = badge,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                        color = OverlayDrawerAccent,
+                        color = OverlayDrawerText,
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Black
                     )
@@ -2566,11 +2852,24 @@ private fun DrawerTabShell(
         }
         Surface(
             modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(12.dp),
-            color = OverlayDrawerInset.copy(alpha = 0.2f),
-            border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.6f))
+            shape = RoundedCornerShape(18.dp),
+            color = OverlayDrawerInset.copy(alpha = 0.28f),
+            border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.44f))
         ) {
-            content(Modifier.fillMaxSize().padding(10.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                OverlayDrawerAccent.copy(alpha = 0.05f),
+                                Color.Transparent
+                            )
+                        )
+                    )
+            ) {
+                content(Modifier.fillMaxSize().padding(12.dp))
+            }
         }
     }
 }
@@ -2594,21 +2893,26 @@ private fun DrawerDecisionSummaryCard(
     strategy: StrategyComp? = null
 ) {
     Surface(
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(18.dp),
         color = summary.accent.copy(alpha = 0.12f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, summary.accent.copy(alpha = 0.28f))
+        border = androidx.compose.foundation.BorderStroke(1.dp, summary.accent.copy(alpha = 0.32f))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp),
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(summary.accent.copy(alpha = 0.08f), Color.Transparent)
+                    )
+                )
+                .padding(horizontal = 14.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Surface(
                 shape = RoundedCornerShape(999.dp),
-                color = summary.accent.copy(alpha = 0.18f),
-                border = androidx.compose.foundation.BorderStroke(1.dp, summary.accent.copy(alpha = 0.34f))
+                color = summary.accent.copy(alpha = 0.20f),
+                border = androidx.compose.foundation.BorderStroke(1.dp, summary.accent.copy(alpha = 0.38f))
             ) {
                 Text(
                     text = summary.label,
@@ -2636,13 +2940,19 @@ private fun DrawerEmptyStateCard(
 ) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        color = OverlayDrawerInset.copy(alpha = 0.5f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.7f))
+        shape = RoundedCornerShape(18.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.64f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.5f))
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(OverlayDrawerAccent.copy(alpha = 0.06f), Color.Transparent)
+                    )
+                )
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(
                 text = title,
@@ -2885,62 +3195,80 @@ private fun isGenericSupportMinion(minion: KeyMinion): Boolean {
 private fun filterMinionsForLobby(
     minions: List<KeyMinion>,
     selectedTribes: Set<Tribe>,
-    cardRules: CardRulesCatalog
+    cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog = BattlegroundCardMetadataCatalog()
 ): List<KeyMinion> {
-    if (cardRules.isEmpty() || selectedTribes.isEmpty()) return minions
-    return minions.filter { isMinionAllowedInLobby(it, selectedTribes, cardRules) }
-}
-
-private fun isMinionAllowedInLobby(
-    minion: KeyMinion,
-    selectedTribes: Set<Tribe>,
-    cardRules: CardRulesCatalog
-): Boolean {
-    val cardId = minion.cardId ?: return true
-    val rules = cardRules[cardId]?.bgsMinionTypesRules ?: return true
-    val lobbyTypes = selectedTribes.mapTo(mutableSetOf()) { it.name }
-
-    if (rules.needTypesInLobby.any { it !in lobbyTypes }) {
-        return false
-    }
-    if (rules.bannedWithTypesInLobby.any { it in lobbyTypes }) {
-        return false
-    }
-    return true
+    return MinionLobbyFilter.filterMinionsForLobby(
+        minions = minions,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata
+    )
 }
 
 private fun directionalCoreMinions(
     minions: List<KeyMinion>,
     limit: Int
-): List<KeyMinion> = directionalCoreMinions(minions, emptySet(), emptyMap(), limit)
+): List<KeyMinion> = directionalCoreMinions(
+    minions = minions,
+    selectedTribes = emptySet(),
+    cardRules = emptyMap(),
+    cardMetadata = BattlegroundCardMetadataCatalog(),
+    limit = limit
+)
 
 private fun genericSupportMinions(
     minions: List<KeyMinion>,
     limit: Int
-): List<KeyMinion> = genericSupportMinions(minions, emptySet(), emptyMap(), limit)
+): List<KeyMinion> = genericSupportMinions(
+    minions = minions,
+    selectedTribes = emptySet(),
+    cardRules = emptyMap(),
+    cardMetadata = BattlegroundCardMetadataCatalog(),
+    limit = limit
+)
 
 private fun alternativeSupportMinions(
     minions: List<KeyMinion>,
     limit: Int
-): List<KeyMinion> = alternativeSupportMinions(minions, emptySet(), emptyMap(), limit)
+): List<KeyMinion> = alternativeSupportMinions(
+    minions = minions,
+    selectedTribes = emptySet(),
+    cardRules = emptyMap(),
+    cardMetadata = BattlegroundCardMetadataCatalog(),
+    limit = limit
+)
 
 private fun recommendedMinions(
     minions: List<KeyMinion>,
     limit: Int
-): List<KeyMinion> = recommendedMinions(minions, emptySet(), emptyMap(), limit)
+): List<KeyMinion> = recommendedMinions(
+    minions = minions,
+    selectedTribes = emptySet(),
+    cardRules = emptyMap(),
+    cardMetadata = BattlegroundCardMetadataCatalog(),
+    limit = limit
+)
 
 private fun cycleMinions(
     minions: List<KeyMinion>,
     limit: Int
-): List<KeyMinion> = cycleMinions(minions, emptySet(), emptyMap(), limit)
+): List<KeyMinion> = cycleMinions(
+    minions = minions,
+    selectedTribes = emptySet(),
+    cardRules = emptyMap(),
+    cardMetadata = BattlegroundCardMetadataCatalog(),
+    limit = limit
+)
 
 private fun directionalCoreMinions(
     minions: List<KeyMinion>,
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
     limit: Int
 ): List<KeyMinion> {
-    val available = filterMinionsForLobby(minions, selectedTribes, cardRules)
+    val available = filterMinionsForLobby(minions, selectedTribes, cardRules, cardMetadata)
     return available
         .filter { it.statusRaw == "CORE" && !isGenericSupportMinion(it) }
         .ifEmpty { available.filter { !isGenericSupportMinion(it) } }
@@ -2951,11 +3279,12 @@ private fun genericSupportMinions(
     minions: List<KeyMinion>,
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
     limit: Int
 ): List<KeyMinion> {
-    return filterMinionsForLobby(minions, selectedTribes, cardRules)
+    return filterMinionsForLobby(minions, selectedTribes, cardRules, cardMetadata)
         .filter { isGenericSupportMinion(it) }
-        .sortedWith(compareBy<KeyMinion> { it.star }.thenBy { it.name })
+        .sortedWith(compareBy<KeyMinion> { it.techLevel }.thenBy { it.name })
         .take(limit)
 }
 
@@ -2963,10 +3292,17 @@ private fun alternativeSupportMinions(
     minions: List<KeyMinion>,
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
     limit: Int
 ): List<KeyMinion> {
-    val available = filterMinionsForLobby(minions, selectedTribes, cardRules)
-    val requiredIds = directionalCoreMinions(available, selectedTribes, cardRules, limit = Int.MAX_VALUE)
+    val available = filterMinionsForLobby(minions, selectedTribes, cardRules, cardMetadata)
+    val requiredIds = directionalCoreMinions(
+        minions = available,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        limit = Int.MAX_VALUE
+    )
         .map { it.cardId ?: it.name }
         .toSet()
     return available
@@ -2975,7 +3311,7 @@ private fun alternativeSupportMinions(
         .filter { it.statusRaw == "ADDON" || it.statusRaw == "RECOMMENDED" || it.statusRaw == "CYCLE" }
         .sortedWith(
             compareByDescending<KeyMinion> { it.finalBoardWeight ?: 0 }
-                .thenBy { it.star }
+                .thenBy { it.techLevel }
                 .thenBy { it.name }
         )
         .take(limit)
@@ -2985,9 +3321,10 @@ private fun recommendedMinions(
     minions: List<KeyMinion>,
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
     limit: Int
 ): List<KeyMinion> {
-    return filterMinionsForLobby(minions, selectedTribes, cardRules)
+    return filterMinionsForLobby(minions, selectedTribes, cardRules, cardMetadata)
         .filter { it.statusRaw == "RECOMMENDED" }
         .distinctBy { it.cardId ?: it.name }
         .take(limit)
@@ -2997,9 +3334,10 @@ private fun cycleMinions(
     minions: List<KeyMinion>,
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
     limit: Int
 ): List<KeyMinion> {
-    return filterMinionsForLobby(minions, selectedTribes, cardRules)
+    return filterMinionsForLobby(minions, selectedTribes, cardRules, cardMetadata)
         .filter { it.statusRaw == "CYCLE" }
         .distinctBy { it.cardId ?: it.name }
         .take(limit)
@@ -3009,7 +3347,8 @@ private fun cycleMinions(
 private fun DrawerTacticalTab(
     strategy: StrategyComp?,
     selectedTribes: Set<Tribe>,
-    cardRules: CardRulesCatalog
+    cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog
 ) {
     if (strategy == null) {
         DrawerTabShell(
@@ -3078,11 +3417,30 @@ private fun DrawerTacticalTab(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 val tacticalFocusMinions = (
-                    directionalCoreMinions(strategy.keyMinions, selectedTribes, cardRules, limit = 3) +
-                        genericSupportMinions(strategy.keyMinions, selectedTribes, cardRules, limit = 2)
+                    directionalCoreMinions(
+                        minions = strategy.keyMinions,
+                        selectedTribes = selectedTribes,
+                        cardRules = cardRules,
+                        cardMetadata = cardMetadata,
+                        limit = 3
+                    ) +
+                        genericSupportMinions(
+                            minions = strategy.keyMinions,
+                            selectedTribes = selectedTribes,
+                            cardRules = cardRules,
+                            cardMetadata = cardMetadata,
+                            limit = 2
+                        )
                     )
                     .distinctBy { it.cardId ?: it.name }
-                    .ifEmpty { filterMinionsForLobby(strategy.keyMinions, selectedTribes, cardRules).take(5) }
+                    .ifEmpty {
+                        filterMinionsForLobby(
+                            minions = strategy.keyMinions,
+                            selectedTribes = selectedTribes,
+                            cardRules = cardRules,
+                            cardMetadata = cardMetadata
+                        ).take(5)
+                    }
                 tacticalFocusMinions.forEach { minion ->
                     DrawerMinionThumb(
                         modifier = Modifier.width(78.dp),
@@ -3090,7 +3448,13 @@ private fun DrawerTacticalTab(
                     )
                 }
             }
-            val recommended = recommendedMinions(strategy.keyMinions, selectedTribes, cardRules, limit = Int.MAX_VALUE)
+            val recommended = recommendedMinions(
+                minions = strategy.keyMinions,
+                selectedTribes = selectedTribes,
+                cardRules = cardRules,
+                cardMetadata = cardMetadata,
+                limit = Int.MAX_VALUE
+            )
             if (recommended.isNotEmpty()) {
                 DrawerSectionChip(label = "推荐拿牌")
                 FlowRow(
@@ -3105,7 +3469,13 @@ private fun DrawerTacticalTab(
                     }
                 }
             }
-            val cycle = cycleMinions(strategy.keyMinions, selectedTribes, cardRules, limit = Int.MAX_VALUE)
+            val cycle = cycleMinions(
+                minions = strategy.keyMinions,
+                selectedTribes = selectedTribes,
+                cardRules = cardRules,
+                cardMetadata = cardMetadata,
+                limit = Int.MAX_VALUE
+            )
             if (cycle.isNotEmpty()) {
                 DrawerSectionChip(label = "循环牌")
                 FlowRow(
@@ -3128,13 +3498,13 @@ private fun DrawerTacticalTab(
 private fun DrawerSectionChip(label: String) {
     Surface(
         shape = RoundedCornerShape(999.dp),
-        color = OverlayDrawerAccent.copy(alpha = 0.12f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerAccent.copy(alpha = 0.24f))
+        color = OverlayDrawerAccent.copy(alpha = 0.14f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, OverlayDrawerAccent.copy(alpha = 0.30f))
     ) {
         Text(
             text = label,
-            modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
-            color = OverlayDrawerAccent,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+            color = OverlayDrawerText,
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Black
         )
@@ -3148,12 +3518,18 @@ private fun DrawerActionStrip(
     accent: Color
 ) {
     Surface(
-        shape = RoundedCornerShape(10.dp),
-        color = accent.copy(alpha = 0.1f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.22f))
+        shape = RoundedCornerShape(16.dp),
+        color = accent.copy(alpha = 0.10f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.28f))
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+            modifier = Modifier
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(accent.copy(alpha = 0.10f), Color.Transparent)
+                    )
+                )
+                .padding(horizontal = 12.dp, vertical = 10.dp),
             verticalArrangement = Arrangement.spacedBy(3.dp)
         ) {
             Text(
@@ -3182,16 +3558,26 @@ private fun DrawerActionCard(
 ) {
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        color = if (emphasize) accent.copy(alpha = 0.12f) else OverlayDrawerInset.copy(alpha = 0.72f),
+        shape = RoundedCornerShape(18.dp),
+        color = if (emphasize) accent.copy(alpha = 0.12f) else OverlayDrawerInset.copy(alpha = 0.78f),
         border = androidx.compose.foundation.BorderStroke(
             1.dp,
-            if (emphasize) accent.copy(alpha = 0.26f) else OverlayDrawerStrokeSoft
+            if (emphasize) accent.copy(alpha = 0.30f) else OverlayDrawerStrokeSoft.copy(alpha = 0.56f)
         )
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 9.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        colors = if (emphasize) {
+                            listOf(accent.copy(alpha = 0.09f), Color.Transparent)
+                        } else {
+                            listOf(OverlayDrawerAccent.copy(alpha = 0.04f), Color.Transparent)
+                        }
+                    )
+                )
+                .padding(horizontal = 12.dp, vertical = 11.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(
                 text = title,
@@ -3263,12 +3649,38 @@ private fun DrawerMinionThumb(
 
 @Composable
 private fun DrawerSectionTitle(title: String) {
-    Text(
-        text = title,
-        color = OverlayDrawerText,
-        style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Black
-    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .height(8.dp)
+                .width(8.dp)
+                .clip(CircleShape)
+                .background(OverlayDrawerAccent.copy(alpha = 0.8f))
+        )
+        Text(
+            text = title,
+            color = OverlayDrawerText,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Black
+        )
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(1.dp)
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(
+                            OverlayDrawerAccent.copy(alpha = 0.45f),
+                            Color.Transparent
+                        )
+                    )
+                )
+        )
+    }
 }
 
 @Composable
@@ -3500,6 +3912,7 @@ private fun RecommendationBlock(
     selectedHero: ResolvedHeroStatOption?,
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
     onSelectStrategy: (String) -> Unit
 ) {
     val sortedStrategies = sortStrategiesForDecision(strategies, selectedHero)
@@ -3543,6 +3956,7 @@ private fun RecommendationBlock(
                         selected = strategy.id == selectedStrategyId,
                         selectedTribes = selectedTribes,
                         cardRules = cardRules,
+                        cardMetadata = cardMetadata,
                         onClick = { onSelectStrategy(strategy.id) }
                     )
                 }
@@ -3558,6 +3972,7 @@ private fun OverlayStrategyStack(
     selectedStrategy: StrategyComp?,
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
     onSelectStrategy: (String) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -3595,6 +4010,7 @@ private fun OverlayStrategyStack(
                 isPrimary = strategy.id == selectedStrategy?.id,
                 selectedTribes = selectedTribes,
                 cardRules = cardRules,
+                cardMetadata = cardMetadata,
                 onClick = { onSelectStrategy(strategy.id) }
             )
         }
@@ -3610,6 +4026,7 @@ private fun OverlayStrategyCard(
     isPrimary: Boolean,
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
     onClick: () -> Unit
 ) {
     Surface(
@@ -3657,6 +4074,7 @@ private fun OverlayStrategyCard(
                             minions = strategy.keyMinions,
                             selectedTribes = selectedTribes,
                             cardRules = cardRules,
+                            cardMetadata = cardMetadata,
                             iconSize = 30.dp,
                             borderColor = if (selected) DashboardGold else DashboardLine
                         )
@@ -3686,7 +4104,7 @@ private fun OverlayStrategyCard(
                 }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    filterMinionsForLobby(strategy.keyMinions, selectedTribes, cardRules)
+                    filterMinionsForLobby(strategy.keyMinions, selectedTribes, cardRules, cardMetadata)
                         .take(4)
                         .forEach { minion ->
                         OverlayMiniMinion(minion)
@@ -3711,7 +4129,8 @@ private fun OverlayStrategyCard(
 private fun DetailBlock(
     strategy: StrategyComp?,
     selectedTribes: Set<Tribe>,
-    cardRules: CardRulesCatalog
+    cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog
 ) {
     DashboardPanel(
         brush = Brush.linearGradient(colors = listOf(DashboardRaised, DashboardCard)),
@@ -3810,9 +4229,24 @@ private fun DetailBlock(
             }
 
             BattlePlanSection(strategy = strategy)
-            MinionAtlasSection(strategy = strategy, selectedTribes = selectedTribes, cardRules = cardRules)
-            RecommendedCardsSection(strategy = strategy, selectedTribes = selectedTribes, cardRules = cardRules)
-            MissingChecklistSection(strategy = strategy, selectedTribes = selectedTribes, cardRules = cardRules)
+            MinionAtlasSection(
+                strategy = strategy,
+                selectedTribes = selectedTribes,
+                cardRules = cardRules,
+                cardMetadata = cardMetadata
+            )
+            RecommendedCardsSection(
+                strategy = strategy,
+                selectedTribes = selectedTribes,
+                cardRules = cardRules,
+                cardMetadata = cardMetadata
+            )
+            MissingChecklistSection(
+                strategy = strategy,
+                selectedTribes = selectedTribes,
+                cardRules = cardRules,
+                cardMetadata = cardMetadata
+            )
         }
     }
 }
@@ -3843,11 +4277,30 @@ private fun BattlePlanSection(strategy: StrategyComp) {
 private fun MissingChecklistSection(
     strategy: StrategyComp,
     selectedTribes: Set<Tribe>,
-    cardRules: CardRulesCatalog
+    cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog
 ) {
-    val required = directionalCoreMinions(strategy.keyMinions, selectedTribes, cardRules, limit = 3)
-    val alternatives = alternativeSupportMinions(strategy.keyMinions, selectedTribes, cardRules, limit = 3)
-    val supports = genericSupportMinions(strategy.keyMinions, selectedTribes, cardRules, limit = 3)
+    val required = directionalCoreMinions(
+        minions = strategy.keyMinions,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        limit = 3
+    )
+    val alternatives = alternativeSupportMinions(
+        minions = strategy.keyMinions,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        limit = 3
+    )
+    val supports = genericSupportMinions(
+        minions = strategy.keyMinions,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        limit = 3
+    )
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         SubsectionTitle("成型检查单")
@@ -3882,11 +4335,30 @@ private fun MissingChecklistSection(
 private fun MinionAtlasSection(
     strategy: StrategyComp,
     selectedTribes: Set<Tribe>,
-    cardRules: CardRulesCatalog
+    cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog
 ) {
-    val directional = directionalCoreMinions(strategy.keyMinions, selectedTribes, cardRules, limit = 4)
-    val alternatives = alternativeSupportMinions(strategy.keyMinions, selectedTribes, cardRules, limit = 4)
-    val supports = genericSupportMinions(strategy.keyMinions, selectedTribes, cardRules, limit = 3)
+    val directional = directionalCoreMinions(
+        minions = strategy.keyMinions,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        limit = 4
+    )
+    val alternatives = alternativeSupportMinions(
+        minions = strategy.keyMinions,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        limit = 4
+    )
+    val supports = genericSupportMinions(
+        minions = strategy.keyMinions,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        limit = 3
+    )
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         SubsectionTitle("关键牌优先级")
@@ -3921,10 +4393,23 @@ private fun MinionAtlasSection(
 private fun RecommendedCardsSection(
     strategy: StrategyComp,
     selectedTribes: Set<Tribe>,
-    cardRules: CardRulesCatalog
+    cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog
 ) {
-    val recommended = recommendedMinions(strategy.keyMinions, selectedTribes, cardRules, limit = Int.MAX_VALUE)
-    val cycle = cycleMinions(strategy.keyMinions, selectedTribes, cardRules, limit = Int.MAX_VALUE)
+    val recommended = recommendedMinions(
+        minions = strategy.keyMinions,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        limit = Int.MAX_VALUE
+    )
+    val cycle = cycleMinions(
+        minions = strategy.keyMinions,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        limit = Int.MAX_VALUE
+    )
 
     if (recommended.isEmpty() && cycle.isEmpty()) return
 
@@ -4108,6 +4593,7 @@ private fun StrategyCommandCard(
     selected: Boolean,
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
     onClick: () -> Unit
 ) {
     Surface(
@@ -4164,6 +4650,7 @@ private fun StrategyCommandCard(
                 strategy = strategy,
                 selectedTribes = selectedTribes,
                 cardRules = cardRules,
+                cardMetadata = cardMetadata,
                 coreLabel = null,
                 addOnLabel = null,
                 coreIconSize = 36.dp,
@@ -4242,11 +4729,18 @@ private fun CoreMinionStrip(
     minions: List<KeyMinion>,
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
     iconSize: androidx.compose.ui.unit.Dp,
     borderColor: Color
 ) {
-    val available = filterMinionsForLobby(minions, selectedTribes, cardRules)
-    val leadMinions = directionalCoreMinions(minions, selectedTribes, cardRules, limit = 4)
+    val available = filterMinionsForLobby(minions, selectedTribes, cardRules, cardMetadata)
+    val leadMinions = directionalCoreMinions(
+        minions = minions,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        limit = 4
+    )
         .ifEmpty { available.filter { !isGenericSupportMinion(it) }.take(4) }
         .ifEmpty { available.take(4) }
 
@@ -4268,17 +4762,18 @@ private fun AddOnMinionStrip(
     minions: List<KeyMinion>,
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
     iconSize: androidx.compose.ui.unit.Dp,
     borderColor: Color
 ) {
-    val available = filterMinionsForLobby(minions, selectedTribes, cardRules)
+    val available = filterMinionsForLobby(minions, selectedTribes, cardRules, cardMetadata)
     val addOns = (
         available
             .filter { it.statusRaw == "ADDON" && isGenericSupportMinion(it) }
-            .sortedWith(compareBy<KeyMinion> { it.star }.thenBy { it.name }) +
+            .sortedWith(compareBy<KeyMinion> { it.techLevel }.thenBy { it.name }) +
             available
                 .filter { it.statusRaw == "ADDON" && !isGenericSupportMinion(it) }
-                .sortedWith(compareBy<KeyMinion> { it.star }.thenBy { it.name })
+                .sortedWith(compareBy<KeyMinion> { it.techLevel }.thenBy { it.name })
         )
 
     FlowRow(
@@ -4302,6 +4797,7 @@ private fun StrategyMinionLanes(
     strategy: StrategyComp,
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
     coreLabel: String?,
     addOnLabel: String?,
     coreIconSize: androidx.compose.ui.unit.Dp,
@@ -4332,6 +4828,7 @@ private fun StrategyMinionLanes(
                 minions = strategy.keyMinions,
                 selectedTribes = selectedTribes,
                 cardRules = cardRules,
+                cardMetadata = cardMetadata,
                 iconSize = coreIconSize,
                 borderColor = coreBorderColor
             )
@@ -4352,6 +4849,7 @@ private fun StrategyMinionLanes(
                 minions = strategy.keyMinions,
                 selectedTribes = selectedTribes,
                 cardRules = cardRules,
+                cardMetadata = cardMetadata,
                 iconSize = addOnIconSize,
                 borderColor = addOnBorderColor
             )
@@ -4390,7 +4888,7 @@ private fun KeyMinionCard(minion: KeyMinion) {
                     color = Color(0xCC08111A)
                 ) {
                     Text(
-                        text = "${minion.star}★",
+                        text = "${minion.techLevel}★",
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         color = DashboardGold,
                         style = MaterialTheme.typography.labelLarge,
@@ -4457,7 +4955,7 @@ private fun OverlayMiniMinion(minion: KeyMinion) {
                     color = Color(0xCC08111A)
                 ) {
                     Text(
-                        text = "${minion.star}★",
+                        text = "${minion.techLevel}★",
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                         color = DashboardGold,
                         style = MaterialTheme.typography.labelSmall,
@@ -5144,7 +5642,7 @@ private fun MinionArtworkFallback(minion: KeyMinion) {
                 fontWeight = FontWeight.Black
             )
             Text(
-                text = "${minion.star}★",
+                text = "${minion.techLevel}★",
                 color = DashboardGold,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold

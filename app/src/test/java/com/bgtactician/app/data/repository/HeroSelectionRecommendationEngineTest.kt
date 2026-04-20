@@ -218,7 +218,7 @@ class HeroSelectionRecommendationEngineTest {
     private fun keyMinion(cardId: String, name: String, phase: String = "主核") = KeyMinion(
         id = cardId.hashCode(),
         name = name,
-        star = 5,
+        techLevel = 5,
         phase = phase,
         cardId = cardId
     )
