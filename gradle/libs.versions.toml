@@ -10,7 +10,6 @@ coilSvg = "2.7.0"
 serializationJson = "1.9.0"
 material = "1.13.0"
 opencv = "4.9.0"
-mlkitTextRecognition = "16.0.0"
 junit4 = "4.13.2"
 
 [libraries]
@@ -34,7 +33,6 @@ coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coilSvg" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
 google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 opencv = { group = "org.opencv", name = "opencv", version.ref = "opencv" }
-mlkit-text-recognition-chinese = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition-chinese", version.ref = "mlkitTextRecognition" }
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 
 [plugins]

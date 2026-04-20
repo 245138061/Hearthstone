@@ -106,40 +106,28 @@ fun MiniOverlayDetectChip(
     tavernTierLabel: String? = null
 ) {
     val visual = when (status) {
-        AutoDetectStatus.WAITING -> DetectChipVisual(BubbleBoard, BubbleGold, "等待", BubbleWarn, 1f)
-        AutoDetectStatus.SCANNING -> DetectChipVisual(Color(0xFF4A3518), BubbleGold, "识别中", BubbleGold, 0.84f)
-        AutoDetectStatus.LOCKED -> DetectChipVisual(Color(0xFF183B31), BubbleGold, "已锁定", BubbleMint, 1f)
-        AutoDetectStatus.NEEDS_ATTENTION -> DetectChipVisual(Color(0xFF47251E), BubbleGold, "重试", BubbleDanger, 1f)
+        AutoDetectStatus.WAITING -> DetectChipVisual("等待", BubbleWarn, 1f)
+        AutoDetectStatus.SCANNING -> DetectChipVisual("识别中", BubbleGold, 0.84f)
+        AutoDetectStatus.LOCKED -> DetectChipVisual("已锁定", BubbleMint, 1f)
+        AutoDetectStatus.NEEDS_ATTENTION -> DetectChipVisual("重试", BubbleDanger, 1f)
     }
 
-    Box(
+    Column(
         modifier = Modifier
-            .widthIn(min = 66.dp)
-            .shadow(8.dp, RoundedCornerShape(14.dp))
-            .clip(RoundedCornerShape(14.dp))
-            .background(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(visual.background, BubbleNight)
-                )
-            )
-            .border(1.dp, BubbleTrim.copy(alpha = 0.82f), RoundedCornerShape(14.dp))
-            .padding(horizontal = 7.dp, vertical = 5.dp),
-        contentAlignment = Alignment.Center
+            .widthIn(min = 52.dp)
+            .padding(horizontal = 2.dp, vertical = 2.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(1.dp)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(1.dp)
-        ) {
-            RowStatus(visual = visual)
-            tavernTierLabel?.takeIf(String::isNotBlank)?.let {
-                Text(
-                    text = it.substringBefore(" · "),
-                    color = BubbleIvory,
-                    fontSize = 9.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1
-                )
-            }
+        RowStatus(visual = visual)
+        tavernTierLabel?.takeIf(String::isNotBlank)?.let {
+            Text(
+                text = it.substringBefore(" · "),
+                color = BubbleIvory.copy(alpha = 0.88f),
+                fontSize = 8.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1
+            )
         }
     }
 }
@@ -148,31 +136,23 @@ fun MiniOverlayDetectChip(
 private fun RowStatus(
     visual: DetectChipVisual
 ) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(99.dp))
-            .background(visual.signal.copy(alpha = 0.12f))
-            .border(1.dp, visual.border.copy(alpha = 0.36f), RoundedCornerShape(99.dp))
-            .padding(horizontal = 7.dp, vertical = 3.dp)
+    androidx.compose.foundation.layout.Row(
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        androidx.compose.foundation.layout.Row(
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(7.dp)
-                    .clip(CircleShape)
-                    .background(visual.signal.copy(alpha = visual.alpha))
-            )
-            Text(
-                text = visual.text,
-                color = BubbleIvory,
-                fontSize = 9.sp,
-                fontWeight = FontWeight.Black,
-                maxLines = 1
-            )
-        }
+        Box(
+            modifier = Modifier
+                .size(6.dp)
+                .clip(CircleShape)
+                .background(visual.signal.copy(alpha = visual.alpha))
+        )
+        Text(
+            text = visual.text,
+            color = BubbleIvory,
+            fontSize = 9.sp,
+            fontWeight = FontWeight.Black,
+            maxLines = 1
+        )
     }
 }
 
@@ -206,8 +186,6 @@ private fun BubbleDoorGlyph(
 }
 
 private data class DetectChipVisual(
-    val background: Color,
-    val border: Color,
     val text: String,
     val signal: Color,
     val alpha: Float

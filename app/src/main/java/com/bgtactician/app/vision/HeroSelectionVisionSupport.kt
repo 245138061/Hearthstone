@@ -58,6 +58,34 @@ data class HeroSelectionVisionSemanticValidation(
     val errors: List<String>
 )
 
+data class HeroSelectionVisionDetailedRecoveryValidation(
+    val isRecoverable: Boolean,
+    val structuralErrors: List<String>,
+    val semanticWarnings: List<String>
+)
+
+object HeroSelectionVisionDetailedRecoveryValidator {
+
+    fun validate(
+        result: HeroSelectionVisionResult,
+        heroNameIndex: BattlegroundHeroNameIndex
+    ): HeroSelectionVisionDetailedRecoveryValidation {
+        val structuralErrors = HeroSelectionVisionValidator.validate(
+            result = result,
+            requireCompleteTribes = false
+        ).errors
+        val semanticWarnings = HeroSelectionVisionSemanticValidator.validate(
+            result = result,
+            heroNameIndex = heroNameIndex
+        ).errors
+        return HeroSelectionVisionDetailedRecoveryValidation(
+            isRecoverable = structuralErrors.isEmpty(),
+            structuralErrors = structuralErrors,
+            semanticWarnings = semanticWarnings
+        )
+    }
+}
+
 object HeroSelectionVisionSemanticValidator {
 
     fun validate(

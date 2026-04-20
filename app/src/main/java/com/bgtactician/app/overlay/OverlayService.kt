@@ -37,9 +37,6 @@ import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.bgtactician.app.R
 import com.bgtactician.app.autodetect.CapturedFrame
-import com.bgtactician.app.autodetect.HeroNameOcrDetector
-import com.bgtactician.app.autodetect.HeroSelectionOcrState
-import com.bgtactician.app.autodetect.HeroSelectionOcrStabilizer
 import com.bgtactician.app.autodetect.ScreenCaptureManager
 import com.bgtactician.app.autodetect.ScreenCapturePermissionStore
 import com.bgtactician.app.autodetect.TavernTierDetection
@@ -70,8 +67,8 @@ import com.bgtactician.app.ui.components.MiniOverlayBubble
 import com.bgtactician.app.ui.screen.HeroSelectionFloatingOverlay
 import com.bgtactician.app.ui.screen.TacticianDashboard
 import com.bgtactician.app.ui.theme.BGTacticianTheme
+import com.bgtactician.app.vision.HeroSelectionVisionDetailedRecoveryValidator
 import com.bgtactician.app.vision.HeroSelectionVisionRequest
-import com.bgtactician.app.vision.HeroSelectionVisionSemanticValidator
 import com.bgtactician.app.vision.HeroSelectionVisionValidator
 import com.bgtactician.app.vision.OpenAiCompatibleVisionConfig
 import com.bgtactician.app.vision.OpenAiCompatibleVisionProvider
@@ -168,8 +165,6 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val repository = StrategyRepository()
     private val preferences by lazy { AppPreferences(applicationContext) }
-    private val heroNameOcrDetector by lazy { HeroNameOcrDetector() }
-
     private lateinit var windowManager: WindowManager
     private var bubbleView: ComposeView? = null
     private var detectChipView: ComposeView? = null
@@ -928,13 +923,12 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
         val sessionDeadline = startedAt + AUTO_DETECT_SESSION_MS
         var lastFrameTimestamp = Long.MIN_VALUE
         var attemptCount = 0
-        var ocrState = HeroSelectionOcrState()
         var latestTribeAttempt: OverlayVisionAttempt? = null
-        var latestOcrResult: HeroNameOcrDetector.HeroNameOcrResult? = null
-        var bestStableOptions = emptyList<HeroSelectionVisionHeroOption>()
+        var bestVisionResult: HeroSelectionVisionResult? = null
+        var bestHeroOptions = emptyList<HeroSelectionVisionHeroOption>()
         var bestResolvedHeroes = emptyList<ResolvedHeroStatOption>()
-        var bestUsedAiHeroes = false
-        var bestHeroSourceLabel = "本地OCR"
+        var bestHeroSourceLabel = "AI全量识别"
+        var bestResolvedTribes = selectedTribes
         var stableTribes: Set<Tribe>? = null
         var latestTavernTierDetection: TavernTierDetection? = null
         val failures = mutableListOf<String>()
@@ -968,7 +962,6 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
 
             val tavernTierDetection: TavernTierDetection
             val attempt: OverlayVisionAttempt
-            val ocrResult: HeroNameOcrDetector.HeroNameOcrResult
             try {
                 tavernTierDetection = TavernTierDetector.detect(applicationContext, frame)
                 attempt = analyzeVisionAttempt(
@@ -977,60 +970,59 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
                     tavernTierDetection = tavernTierDetection,
                     heroNameIndex = heroNameIndex
                 )
-                ocrResult = heroNameOcrDetector.detect(frame, heroNameIndex)
             } finally {
                 frame.bitmap.recycle()
             }
             latestTavernTierDetection = tavernTierDetection
 
             failures += attempt.failures
-            latestOcrResult = ocrResult
             latestTribeAttempt = attempt.result?.let { attempt } ?: latestTribeAttempt
 
-            attempt.result
+            val attemptResult = attempt.result
+            attemptResult
                 ?.toDomainTribes()
                 ?.takeIf { it.size == 5 }
                 ?.let { stableTribes = it }
 
-            val step = HeroSelectionOcrStabilizer.advance(
-                state = ocrState,
-                observations = ocrResult.slotResults.map { it.toObservation() }
-            )
-            ocrState = step.state
-
             val effectiveSelectedTribes = stableTribes?.takeIf { it.size == 5 } ?: selectedTribes
-            val blendedHeroSelection = blendHeroSelections(
-                ocrOptions = step.stableOptions,
-                aiOptions = attempt.result?.selectableHeroOptions.orEmpty(),
+            val aiHeroOptions = attemptResult
+                ?.selectableHeroOptions
+                .orEmpty()
+                .sortedBy(HeroSelectionVisionHeroOption::slot)
+                .distinctBy(HeroSelectionVisionHeroOption::slot)
+            val resolvedHeroes = resolveRecognizedHeroes(
+                heroOptions = aiHeroOptions,
                 heroStatsCatalog = heroStatsCatalog,
                 cardStatsCatalog = cardStatsCatalog,
                 heroNameIndex = heroNameIndex,
                 selectedTribes = effectiveSelectedTribes,
                 allStrategies = strategies
             )
-            val resolvedHeroes = blendedHeroSelection.resolvedHeroes
 
-            if (resolvedHeroes.size > bestResolvedHeroes.size) {
-                bestStableOptions = blendedHeroSelection.options
+            val shouldUpdateBest = effectiveSelectedTribes != bestResolvedTribes ||
+                resolvedHeroes.size > bestResolvedHeroes.size ||
+                (resolvedHeroes.size == bestResolvedHeroes.size && aiHeroOptions.size > bestHeroOptions.size)
+            if (shouldUpdateBest && attemptResult != null) {
+                bestVisionResult = attemptResult.withRecognizedHeroes(aiHeroOptions)
+                bestHeroOptions = aiHeroOptions
                 bestResolvedHeroes = resolvedHeroes
-                bestUsedAiHeroes = blendedHeroSelection.usesAiHeroes
-                bestHeroSourceLabel = blendedHeroSelection.sourceLabel
+                bestHeroSourceLabel = attempt.sourceLabel.trim().ifBlank { "AI全量识别" }
+                bestResolvedTribes = effectiveSelectedTribes
             }
 
-            if (resolvedHeroes.size >= 3 && step.duplicateHeroCardIds.isEmpty()) {
+            if (resolvedHeroes.size >= 3 && attemptResult != null) {
+                val recognizedResult = attemptResult.withRecognizedHeroes(aiHeroOptions)
                 return OverlayVisionSessionResult(
                     status = AutoDetectStatus.LOCKED,
                     selectedTribes = effectiveSelectedTribes,
-                    recognizedHeroOptions = blendedHeroSelection.options,
+                    recognizedHeroOptions = aiHeroOptions,
                     recognizedHeroes = resolvedHeroes,
-                    debugInfo = buildHeroRecognitionDebugInfo(
-                        heroSelection = blendedHeroSelection,
-                        ocrResult = ocrResult,
-                        stableOptions = blendedHeroSelection.options,
-                        tribeAttempt = latestTribeAttempt,
+                    debugInfo = buildVisionRecognitionDebugInfo(
+                        result = recognizedResult,
+                        sourceLabel = attempt.sourceLabel.trim(),
                         tavernTierDetection = tavernTierDetection,
                         summaryText = buildString {
-                            append(blendedHeroSelection.sourceLabel)
+                            append(attempt.sourceLabel.trim().ifBlank { "AI全量识别" })
                             append(" 已锁定 ")
                             append(resolvedHeroes.size)
                             append(" 个英雄")
@@ -1043,43 +1035,7 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
                                 append("；5族未稳定，沿用当前环境")
                             }
                         }.take(160),
-                        duplicateHeroCardIds = step.duplicateHeroCardIds,
-                        chaoticSlots = step.chaoticSlots
-                    )
-                )
-            }
-
-            if (attemptCount >= 5 &&
-                (step.duplicateHeroCardIds.isNotEmpty() || step.chaoticSlots.size >= 2)
-            ) {
-                return OverlayVisionSessionResult(
-                    status = AutoDetectStatus.NEEDS_ATTENTION,
-                    selectedTribes = effectiveSelectedTribes,
-                    recognizedHeroOptions = bestStableOptions,
-                    recognizedHeroes = bestResolvedHeroes,
-                    debugInfo = buildHeroRecognitionDebugInfo(
-                        heroSelection = BlendedHeroSelection(
-                            options = bestStableOptions,
-                            resolvedHeroes = bestResolvedHeroes,
-                            usesAiHeroes = bestUsedAiHeroes,
-                            sourceLabel = bestHeroSourceLabel
-                        ),
-                        ocrResult = ocrResult,
-                        stableOptions = bestStableOptions,
-                        tribeAttempt = latestTribeAttempt,
-                        tavernTierDetection = tavernTierDetection,
-                        summaryText = buildString {
-                            append("本地 OCR 结果存在冲突")
-                            if (step.duplicateHeroCardIds.isNotEmpty()) {
-                                append("；检测到重复英雄")
-                            }
-                            if (step.chaoticSlots.isNotEmpty()) {
-                                append("；槽位波动过大")
-                            }
-                            append("，请手动确认")
-                        }.take(160),
-                        duplicateHeroCardIds = step.duplicateHeroCardIds,
-                        chaoticSlots = step.chaoticSlots
+                        headerLabel = "识别槽位=${aiHeroOptions.size}"
                     )
                 )
             }
@@ -1087,48 +1043,47 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
             delay(AUTO_DETECT_SCAN_INTERVAL_MS)
         }
 
-        if (bestResolvedHeroes.isNotEmpty()) {
+        if (bestResolvedHeroes.isNotEmpty() && bestVisionResult != null) {
             return OverlayVisionSessionResult(
                 status = AutoDetectStatus.NEEDS_ATTENTION,
                 selectedTribes = stableTribes?.takeIf { it.size == 5 } ?: selectedTribes,
-                recognizedHeroOptions = bestStableOptions,
+                recognizedHeroOptions = bestHeroOptions,
                 recognizedHeroes = bestResolvedHeroes,
-                debugInfo = buildHeroRecognitionDebugInfo(
-                    heroSelection = BlendedHeroSelection(
-                        options = bestStableOptions,
-                        resolvedHeroes = bestResolvedHeroes,
-                        usesAiHeroes = bestUsedAiHeroes,
-                        sourceLabel = bestHeroSourceLabel
-                    ),
-                    ocrResult = latestOcrResult,
-                    stableOptions = bestStableOptions,
-                    tribeAttempt = latestTribeAttempt,
+                debugInfo = buildVisionRecognitionDebugInfo(
+                    result = bestVisionResult,
+                    sourceLabel = bestHeroSourceLabel,
                     tavernTierDetection = latestTavernTierDetection,
-                    summaryText = "${bestHeroSourceLabel}已识别 ${bestResolvedHeroes.size} 个英雄，其余槽位仍在波动，请手动确认".take(160)
+                    summaryText = "${bestHeroSourceLabel}已识别 ${bestResolvedHeroes.size} 个英雄，其余槽位仍在波动，请手动确认".take(160),
+                    headerLabel = "识别槽位=${bestHeroOptions.size}"
                 )
             )
         }
 
         if (latestTribeAttempt?.result != null) {
-            val latestAiHeroOptions = latestTribeAttempt.result.selectableHeroOptions
+            val latestResult = latestTribeAttempt.result.withRecognizedHeroes(
+                latestTribeAttempt.result.selectableHeroOptions
+            )
+            val latestAiHeroOptions = latestResult.selectableHeroOptions
+            val latestResolvedHeroes = resolveRecognizedHeroes(
+                heroOptions = latestAiHeroOptions,
+                heroStatsCatalog = heroStatsCatalog,
+                cardStatsCatalog = cardStatsCatalog,
+                heroNameIndex = heroNameIndex,
+                selectedTribes = stableTribes?.takeIf { it.size == 5 } ?: selectedTribes,
+                allStrategies = strategies
+            )
             if (latestAiHeroOptions.isNotEmpty()) {
                 return OverlayVisionSessionResult(
                     status = AutoDetectStatus.NEEDS_ATTENTION,
                     selectedTribes = stableTribes?.takeIf { it.size == 5 } ?: selectedTribes,
                     recognizedHeroOptions = latestAiHeroOptions,
-                    recognizedHeroes = emptyList(),
-                    debugInfo = buildHeroRecognitionDebugInfo(
-                        heroSelection = BlendedHeroSelection(
-                            options = latestAiHeroOptions,
-                            resolvedHeroes = emptyList(),
-                            usesAiHeroes = true,
-                            sourceLabel = "AI全量识别"
-                        ),
-                        ocrResult = latestOcrResult,
-                        stableOptions = latestAiHeroOptions,
-                        tribeAttempt = latestTribeAttempt,
+                    recognizedHeroes = latestResolvedHeroes,
+                    debugInfo = buildVisionRecognitionDebugInfo(
+                        result = latestResult,
+                        sourceLabel = latestTribeAttempt.sourceLabel.trim(),
                         tavernTierDetection = latestTavernTierDetection,
-                        summaryText = "${latestTribeAttempt.sourceLabel.orEmpty()}已识别 ${latestAiHeroOptions.size} 个英雄原文，但还没稳定命中本地英雄索引".take(160)
+                        summaryText = "${latestTribeAttempt.sourceLabel.orEmpty()}已识别 ${latestAiHeroOptions.size} 个英雄，正在等待进一步确认".take(160),
+                        headerLabel = "识别槽位=${latestAiHeroOptions.size}"
                     )
                 )
             }
@@ -1137,12 +1092,11 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
                 selectedTribes = stableTribes?.takeIf { it.size == 5 } ?: selectedTribes,
                 recognizedHeroOptions = emptyList(),
                 recognizedHeroes = emptyList(),
-                debugInfo = buildOcrRecognitionDebugInfo(
-                    ocrResult = latestOcrResult,
-                    stableOptions = emptyList(),
-                    tribeAttempt = latestTribeAttempt,
+                debugInfo = buildVisionRecognitionDebugInfo(
+                    result = latestResult,
+                    sourceLabel = latestTribeAttempt.sourceLabel.trim(),
                     tavernTierDetection = latestTavernTierDetection,
-                    summaryText = "${latestTribeAttempt.sourceLabel.orEmpty()}只识别到种族，英雄 OCR 未稳定锁定".take(160)
+                    summaryText = "${latestTribeAttempt.sourceLabel.orEmpty()}只识别到种族，暂未识别出可用英雄".take(160)
                 )
             )
         }
@@ -1230,15 +1184,11 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
                 )
             },
             validate = { execution ->
-                val structural = HeroSelectionVisionValidator.validate(
-                    execution.result,
-                    requireCompleteTribes = false
-                ).errors
-                val semantic = HeroSelectionVisionSemanticValidator.validate(
+                val validation = HeroSelectionVisionDetailedRecoveryValidator.validate(
                     execution.result,
                     heroNameIndex
-                ).errors
-                (structural + semantic)
+                )
+                validation.structuralErrors
                     .takeIf { it.isNotEmpty() }
                     ?.joinToString("；", prefix = "校验失败: ")
             }
@@ -1295,19 +1245,15 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
         return null
     }
 
-    private fun HeroSelectionVisionResult.mergeTribesFrom(
-        fallback: HeroSelectionVisionResult?
+    private fun HeroSelectionVisionResult.withRecognizedHeroes(
+        heroOptions: List<HeroSelectionVisionHeroOption>
     ): HeroSelectionVisionResult {
-        if (HeroSelectionVisionValidator.hasCompleteTribes(this)) return this
-        val fallbackTribes = fallback?.availableTribes?.distinct().orEmpty()
-        if (fallbackTribes.size != 5) return this
+        val normalizedOptions = heroOptions
+            .sortedBy(HeroSelectionVisionHeroOption::slot)
+            .distinctBy(HeroSelectionVisionHeroOption::slot)
         return copy(
-            screenType = if (screenType == VisionScreenType.NON_TARGET && selectableHeroOptions.isNotEmpty()) {
-                VisionScreenType.HERO_SELECTION
-            } else {
-                screenType
-            },
-            availableTribes = fallbackTribes
+            screenType = if (normalizedOptions.isNotEmpty()) VisionScreenType.HERO_SELECTION else screenType,
+            heroOptions = normalizedOptions
         )
     }
 
@@ -1326,68 +1272,6 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
             heroNameIndex = heroNameIndex,
             selectedTribes = selectedTribes,
             allStrategies = allStrategies
-        )
-    }
-
-    private fun blendHeroSelections(
-        ocrOptions: List<HeroSelectionVisionHeroOption>,
-        aiOptions: List<HeroSelectionVisionHeroOption>,
-        heroStatsCatalog: BattlegroundHeroStatsCatalog,
-        cardStatsCatalog: BattlegroundCardStatsCatalog,
-        heroNameIndex: BattlegroundHeroNameIndex,
-        selectedTribes: Set<Tribe>,
-        allStrategies: List<com.bgtactician.app.data.model.StrategyComp>
-    ): BlendedHeroSelection {
-        val ocrResolved = resolveRecognizedHeroes(
-            heroOptions = ocrOptions,
-            heroStatsCatalog = heroStatsCatalog,
-            cardStatsCatalog = cardStatsCatalog,
-            heroNameIndex = heroNameIndex,
-            selectedTribes = selectedTribes,
-            allStrategies = allStrategies
-        )
-        val aiResolved = resolveRecognizedHeroes(
-            heroOptions = aiOptions,
-            heroStatsCatalog = heroStatsCatalog,
-            cardStatsCatalog = cardStatsCatalog,
-            heroNameIndex = heroNameIndex,
-            selectedTribes = selectedTribes,
-            allStrategies = allStrategies
-        )
-        val preferAiBase = aiResolved.size > ocrResolved.size
-        val base = if (preferAiBase) aiOptions else ocrOptions
-        val supplement = if (preferAiBase) ocrOptions else aiOptions
-        val mergedBySlot = linkedMapOf<Int, HeroSelectionVisionHeroOption>()
-        base.sortedBy(HeroSelectionVisionHeroOption::slot).forEach { option ->
-            mergedBySlot[option.slot] = option
-        }
-        supplement.sortedBy(HeroSelectionVisionHeroOption::slot).forEach { option ->
-            mergedBySlot.putIfAbsent(option.slot, option)
-        }
-        val mergedOptions = mergedBySlot.values.toList()
-        val resolvedHeroes = resolveRecognizedHeroes(
-            heroOptions = mergedOptions,
-            heroStatsCatalog = heroStatsCatalog,
-            cardStatsCatalog = cardStatsCatalog,
-            heroNameIndex = heroNameIndex,
-            selectedTribes = selectedTribes,
-            allStrategies = allStrategies
-        )
-        val ocrSlots = ocrOptions.mapTo(hashSetOf(), HeroSelectionVisionHeroOption::slot)
-        val aiContribution = mergedOptions.any { it.slot !in ocrSlots } ||
-            (preferAiBase && aiOptions.isNotEmpty())
-        val sourceLabel = when {
-            mergedOptions.isEmpty() -> "本地OCR"
-            preferAiBase && ocrOptions.isNotEmpty() -> "AI全量识别为主，本地OCR补位"
-            preferAiBase -> "AI全量识别"
-            aiContribution -> "本地OCR + AI补位"
-            else -> "本地OCR"
-        }
-        return BlendedHeroSelection(
-            options = mergedOptions,
-            resolvedHeroes = resolvedHeroes,
-            usesAiHeroes = aiContribution,
-            sourceLabel = sourceLabel
         )
     }
 
@@ -1455,122 +1339,20 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
         )
     }
 
-    private fun buildHeroRecognitionDebugInfo(
-        heroSelection: BlendedHeroSelection,
-        ocrResult: HeroNameOcrDetector.HeroNameOcrResult?,
-        stableOptions: List<HeroSelectionVisionHeroOption>,
-        tribeAttempt: OverlayVisionAttempt?,
+    private fun buildVisionRecognitionDebugInfo(
+        result: HeroSelectionVisionResult,
+        sourceLabel: String,
         summaryText: String,
         tavernTierDetection: TavernTierDetection? = null,
-        duplicateHeroCardIds: Set<String> = emptySet(),
-        chaoticSlots: Set<Int> = emptySet()
+        headerLabel: String? = null
     ): AutoDetectDebugInfo {
-        val attemptResult = tribeAttempt?.result
-        return if (heroSelection.usesAiHeroes && attemptResult != null) {
-            buildAiRecognitionDebugInfo(
-                result = attemptResult.copy(heroOptions = heroSelection.options),
-                sourceLabel = buildString {
-                    append(tribeAttempt.sourceLabel.trim())
-                    append("；英雄=")
-                    append(heroSelection.sourceLabel)
-                },
-                summaryText = summaryText,
-                tavernTierDetection = tavernTierDetection
-            )
-        } else {
-            buildOcrRecognitionDebugInfo(
-                ocrResult = ocrResult,
-                stableOptions = stableOptions,
-                tribeAttempt = tribeAttempt,
-                summaryText = summaryText,
-                tavernTierDetection = tavernTierDetection,
-                duplicateHeroCardIds = duplicateHeroCardIds,
-                chaoticSlots = chaoticSlots,
-                heroSourceLabel = "英雄=${heroSelection.sourceLabel}",
-                displayHeroOptions = heroSelection.options
-            )
-        }
-    }
-
-    private fun buildOcrRecognitionDebugInfo(
-        ocrResult: HeroNameOcrDetector.HeroNameOcrResult?,
-        stableOptions: List<HeroSelectionVisionHeroOption>,
-        tribeAttempt: OverlayVisionAttempt?,
-        summaryText: String,
-        tavernTierDetection: TavernTierDetection? = null,
-        duplicateHeroCardIds: Set<String> = emptySet(),
-        chaoticSlots: Set<Int> = emptySet(),
-        heroSourceLabel: String = "英雄=本地OCR",
-        displayHeroOptions: List<HeroSelectionVisionHeroOption> = stableOptions
-    ): AutoDetectDebugInfo {
-        val sourceParts = buildList {
-            add(heroSourceLabel)
-            tribeAttempt?.sourceLabel
-                ?.trim()
-                ?.takeIf(String::isNotBlank)
-                ?.let { add("种族=$it") }
-                ?: add("种族=沿用当前环境")
-        }
-        val heroSlotsLabel = displayHeroOptions
-            .sortedBy(HeroSelectionVisionHeroOption::slot)
-            .joinToString(" / ") { option ->
-                buildString {
-                    append("槽")
-                    append(option.slot + 1)
-                    append(":")
-                    append(option.name?.trim()?.takeIf(String::isNotBlank) ?: "未命名")
-                    option.heroCardId?.trim()?.takeIf(String::isNotBlank)?.let { heroCardId ->
-                        append(" [")
-                        append(heroCardId)
-                        append("]")
-                    }
-                }
-            }
-            .takeIf(String::isNotBlank)
-            ?: ocrResult?.slotResults
-                ?.sortedBy { it.slot }
-                ?.joinToString(" / ") { it.debugLabel }
-                ?.takeIf(String::isNotBlank)
-        val roiRectLabel = ocrResult?.slotResults
-            ?.sortedBy { it.slot }
-            ?.joinToString(" / ") {
-                "槽${it.slot + 1}=${it.debugRoi.flattenToString()}"
-            }
-            ?.takeIf(String::isNotBlank)
-        val headerLabel = buildList {
-            if (stableOptions.isNotEmpty()) {
-                add("稳定槽位=${stableOptions.size}")
-            }
-            if (duplicateHeroCardIds.isNotEmpty()) {
-                add("重复英雄=${duplicateHeroCardIds.size}")
-            }
-            if (chaoticSlots.isNotEmpty()) {
-                add("波动槽位=${chaoticSlots.sorted().joinToString(",") { (it + 1).toString() }}")
-            }
-        }.joinToString("；").takeIf(String::isNotBlank)
-
-        return AutoDetectDebugInfo(
-            recognizedTribesLabel = tribeAttempt?.result
-                ?.availableTribes
-                ?.takeIf { it.isNotEmpty() }
-                ?.joinToString(" / ") { it.label },
-            rawText = summaryText,
-            tavernTier = tavernTierDetection?.tier,
-            tavernTierLabel = stableTavernTierLabel(tavernTierDetection),
-            aiSourceLabel = sourceParts.joinToString("；"),
-            aiModelLabel = tribeAttempt?.result?.modelName?.trim()?.takeIf(String::isNotBlank),
-            aiRequestId = tribeAttempt?.result?.requestId?.trim()?.takeIf(String::isNotBlank),
-            aiScreenTypeLabel = if (stableOptions.isNotEmpty() || ocrResult?.heroOptions?.isNotEmpty() == true) {
-                "hero_selection(local_ocr)"
-            } else {
-                tribeAttempt?.result?.screenType?.name?.lowercase()
-            },
-            aiHeroesLabel = heroSlotsLabel,
-            roiRectLabel = roiRectLabel,
-            aiSummaryLabel = tribeAttempt?.result?.rawSummary?.trim()?.takeIf(String::isNotBlank),
-            viewportLabel = ocrResult?.viewport?.flattenToString(),
-            headerLabel = headerLabel,
-            lastUpdatedLabel = nowLabel()
+        return buildAiRecognitionDebugInfo(
+            result = result,
+            sourceLabel = sourceLabel.ifBlank { "AI全量识别" },
+            summaryText = summaryText,
+            tavernTierDetection = tavernTierDetection
+        ).copy(
+            headerLabel = headerLabel
         )
     }
 
@@ -1633,13 +1415,6 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
         val selectedTribes: Set<Tribe>? = null,
         val recognizedHeroOptions: List<HeroSelectionVisionHeroOption>? = null,
         val recognizedHeroes: List<ResolvedHeroStatOption>? = null
-    )
-
-    private data class BlendedHeroSelection(
-        val options: List<HeroSelectionVisionHeroOption>,
-        val resolvedHeroes: List<ResolvedHeroStatOption>,
-        val usesAiHeroes: Boolean,
-        val sourceLabel: String
     )
 
     private fun persistDashboardPreferences() {

@@ -60,6 +60,59 @@ class HeroSelectionVisionValidatorTest {
     }
 
     @Test
+    fun `detailed recovery validator keeps ai hero results when only semantic warnings exist`() {
+        val result = HeroSelectionVisionResult(
+            screenType = VisionScreenType.HERO_SELECTION,
+            availableTribes = listOf(
+                VisionTribe.DEMON,
+                VisionTribe.BEAST,
+                VisionTribe.MECH,
+                VisionTribe.DRAGON,
+                VisionTribe.NAGA
+            ),
+            heroOptions = listOf(
+                HeroSelectionVisionHeroOption(slot = 0, name = "完全未知英雄A"),
+                HeroSelectionVisionHeroOption(slot = 1, name = "完全未知英雄B")
+            )
+        )
+
+        val validation = HeroSelectionVisionDetailedRecoveryValidator.validate(
+            result = result,
+            heroNameIndex = heroNameIndex()
+        )
+
+        assertTrue(validation.isRecoverable)
+        assertTrue(validation.structuralErrors.isEmpty())
+        assertEquals(listOf("英雄未命中本地索引"), validation.semanticWarnings)
+    }
+
+    @Test
+    fun `detailed recovery validator still blocks structurally invalid hero results`() {
+        val result = HeroSelectionVisionResult(
+            screenType = VisionScreenType.HERO_SELECTION,
+            availableTribes = listOf(
+                VisionTribe.DEMON,
+                VisionTribe.BEAST,
+                VisionTribe.MECH,
+                VisionTribe.DRAGON,
+                VisionTribe.NAGA
+            ),
+            heroOptions = listOf(
+                HeroSelectionVisionHeroOption(slot = 0, name = "伊瑟拉"),
+                HeroSelectionVisionHeroOption(slot = 0, name = "瓦托格尔女王")
+            )
+        )
+
+        val validation = HeroSelectionVisionDetailedRecoveryValidator.validate(
+            result = result,
+            heroNameIndex = heroNameIndex()
+        )
+
+        assertFalse(validation.isRecoverable)
+        assertEquals(listOf("hero_options.slot 存在重复"), validation.structuralErrors)
+    }
+
+    @Test
     fun `semantic validator rejects duplicate hero matches across multiple slots`() {
         val result = HeroSelectionVisionResult(
             screenType = VisionScreenType.HERO_SELECTION,

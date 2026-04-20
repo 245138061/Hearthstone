@@ -129,7 +129,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.google.material)
     implementation(libs.opencv)
-    implementation(libs.mlkit.text.recognition.chinese)
 
     testImplementation(libs.junit4)
 

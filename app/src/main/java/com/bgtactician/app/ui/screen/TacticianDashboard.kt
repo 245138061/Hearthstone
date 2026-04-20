@@ -538,35 +538,30 @@ private fun DrawerTabHeader(
     onTabSelected: (Int) -> Unit,
     dragModifier: Modifier = Modifier
 ) {
-    val tabs = listOf(
-        Icons.Outlined.FilterAlt to "设置",
-        Icons.Outlined.AutoAwesome to "流派",
-        Icons.Outlined.Star to "战术"
-    )
+    val tabs = listOf("设置", "流派", "战术")
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(58.dp)
+            .height(42.dp)
             .then(dragModifier)
-            .padding(horizontal = 10.dp, vertical = 8.dp)
-            .clip(RoundedCornerShape(18.dp))
-            .background(OverlayDrawerShell)
-            .border(1.dp, OverlayDrawerStrokeSoft, RoundedCornerShape(18.dp))
+            .padding(horizontal = 12.dp, vertical = 2.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(OverlayDrawerShell.copy(alpha = 0.64f))
     ) {
-        tabs.forEachIndexed { index, (icon, label) ->
+        tabs.forEachIndexed { index, label ->
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxSize()
-                    .padding(horizontal = 3.dp, vertical = 4.dp)
-                    .clip(RoundedCornerShape(14.dp))
+                    .padding(horizontal = 2.dp, vertical = 4.dp)
+                    .clip(RoundedCornerShape(10.dp))
                     .background(
                         if (selectedTab == index) {
                             Brush.verticalGradient(
                                 colors = listOf(
-                                    OverlayDrawerAccent.copy(alpha = 0.18f),
-                                    OverlayDrawerActive.copy(alpha = 0.88f)
+                                    OverlayDrawerAccent.copy(alpha = 0.12f),
+                                    OverlayDrawerActive.copy(alpha = 0.72f)
                                 )
                             )
                         } else {
@@ -575,31 +570,15 @@ private fun DrawerTabHeader(
                             )
                         }
                     )
-                    .border(
-                        width = if (selectedTab == index) 1.dp else 0.dp,
-                        color = if (selectedTab == index) OverlayDrawerAccent.copy(alpha = 0.62f) else Color.Transparent,
-                        shape = RoundedCornerShape(14.dp)
-                    )
                     .clickable { onTabSelected(index) },
                 contentAlignment = Alignment.Center
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = label,
-                        tint = if (selectedTab == index) OverlayDrawerAccent else OverlayDrawerSubtext,
-                        modifier = Modifier.size(15.dp)
-                    )
-                    Text(
-                        text = label,
-                        color = if (selectedTab == index) OverlayDrawerText else OverlayDrawerSubtext,
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                Text(
+                    text = label,
+                    color = if (selectedTab == index) OverlayDrawerText else OverlayDrawerSubtext,
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = if (selectedTab == index) FontWeight.Black else FontWeight.Bold
+                )
             }
         }
     }
@@ -615,96 +594,28 @@ private fun DrawerSetupTab(
     onTriggerAutoDetect: (() -> Unit)?
 ) {
     DrawerTabShell(
-        title = "AI 识别",
-        subtitle = "自动同步种族",
+        title = "种族",
+        subtitle = "点击高亮切换",
         badge = "${selectedTribes.size}/5",
         showHeader = false
     ) { bodyModifier ->
         Column(
             modifier = bodyModifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            BoxWithConstraints(modifier = Modifier.weight(1f)) {
-                val compactHeight = true
-                val useWideSummary = maxWidth > maxHeight && maxWidth >= 500.dp
-                if (useWideSummary) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        DrawerAutoDetectHeroBanner(
-                            status = uiState.autoDetectStatus,
-                            onTrigger = onTriggerAutoDetect,
-                            compact = true
-                        )
-                        DrawerSetupHudStrip(
-                            selectedHero = uiState.selectedHero,
-                            recognizedHeroes = uiState.recognizedHeroes,
-                            selectedTribes = selectedTribes,
-                            autoDetectStatus = uiState.autoDetectStatus,
-                            tavernTierLabel = uiState.autoDetectDebugInfo.tavernTierLabel,
-                            compact = true
-                        )
-                        DrawerLandscapeSetupGrid(
-                            selectedTribes = selectedTribes,
-                            autoDetectStatus = uiState.autoDetectStatus,
-                            autoDetectDebugInfo = uiState.autoDetectDebugInfo,
-                            recognizedHeroes = uiState.recognizedHeroes,
-                            heroStatsUpdatedAtLabel = uiState.heroStatsUpdatedAtLabel,
-                            showRecognizedHeroesCard = showRecognizedHeroesCard,
-                            selectedHero = uiState.selectedHero,
-                            onSelectHero = onSelectHero,
-                            onApplySessionTribes = onApplySessionTribes,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                } else {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        DrawerSetupHudStrip(
-                            selectedHero = uiState.selectedHero,
-                            recognizedHeroes = uiState.recognizedHeroes,
-                            selectedTribes = selectedTribes,
-                            autoDetectStatus = uiState.autoDetectStatus,
-                            tavernTierLabel = uiState.autoDetectDebugInfo.tavernTierLabel,
-                            compact = false
-                        )
-                        DrawerAutoDetectHeroBanner(
-                            status = uiState.autoDetectStatus,
-                            onTrigger = onTriggerAutoDetect,
-                            compact = true
-                        )
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .verticalScroll(rememberScrollState()),
-                            verticalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                        DrawerSelectedHeroFocusCard(
-                            selectedHero = uiState.selectedHero,
-                            recognizedHeroes = uiState.recognizedHeroes,
-                            onSelectHero = onSelectHero,
-                            modifier = Modifier.fillMaxWidth(),
-                            compactHeight = compactHeight
-                        )
-                        DrawerSelectedTribesCard(
-                            selectedTribes = selectedTribes,
-                            tavernTierLabel = uiState.autoDetectDebugInfo.tavernTierLabel,
-                            onApplySessionTribes = onApplySessionTribes,
-                            modifier = Modifier.fillMaxWidth(),
-                            compactHeight = compactHeight
-                        )
-                        DrawerAiResultCard(
-                            debugInfo = uiState.autoDetectDebugInfo,
-                            modifier = Modifier.fillMaxWidth(),
-                            compactHeight = compactHeight
-                        )
-                        }
-                    }
-                }
-            }
+            DrawerSimpleTribeSelector(
+                selectedTribes = selectedTribes,
+                onApplySessionTribes = onApplySessionTribes,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            )
+            DrawerSetupAiResultFooter(
+                autoDetectStatus = uiState.autoDetectStatus,
+                autoDetectDebugInfo = uiState.autoDetectDebugInfo,
+                recognizedHeroes = uiState.recognizedHeroes,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }
@@ -722,47 +633,165 @@ private fun DrawerLandscapeSetupGrid(
     onApplySessionTribes: ((Set<Tribe>) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
-    val ignoredRecognizedHeroesCard = showRecognizedHeroesCard
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+    DrawerLandscapeAiSummaryPanel(
+        autoDetectStatus = autoDetectStatus,
+        autoDetectDebugInfo = autoDetectDebugInfo,
+        recognizedHeroes = recognizedHeroes,
+        selectedTribes = selectedTribes,
+        modifier = modifier.fillMaxSize()
+    )
+}
+
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun DrawerSimpleTribeSelector(
+    selectedTribes: Set<Tribe>,
+    onApplySessionTribes: ((Set<Tribe>) -> Unit)?,
+    modifier: Modifier = Modifier
+) {
+    var draftTribes by remember(selectedTribes) { mutableStateOf(selectedTribes) }
+
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(18.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.92f)
     ) {
-        if (ignoredRecognizedHeroesCard) {
-            Unit
+        val tribeScrollState = rememberScrollState()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            DashboardIce.copy(alpha = 0.06f),
+                            OverlayDrawerCore.copy(alpha = 0.12f)
+                        )
+                    )
+                )
+                .verticalScroll(tribeScrollState)
+                .padding(horizontal = 12.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = "高亮表示已选，再点取消",
+                color = OverlayDrawerSubtext,
+                style = MaterialTheme.typography.labelSmall
+            )
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Tribe.entries.forEach { tribe ->
+                    val selected = tribe in draftTribes
+                    Surface(
+                        modifier = Modifier.clickable {
+                            val nextDraft = when {
+                                selected -> draftTribes - tribe
+                                draftTribes.size >= 5 -> draftTribes
+                                else -> draftTribes + tribe
+                            }
+                            draftTribes = nextDraft
+                            if (nextDraft.size == 5) {
+                                onApplySessionTribes?.invoke(nextDraft)
+                            }
+                        },
+                        shape = RoundedCornerShape(999.dp),
+                        color = if (selected) {
+                            tribeOverlayAccent(tribe).copy(alpha = 0.20f)
+                        } else {
+                            OverlayDrawerCore.copy(alpha = 0.78f)
+                        }
+                    ) {
+                        Text(
+                            text = tribe.label,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            color = if (selected) tribeOverlayAccent(tribe) else OverlayDrawerSubtext,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+            Text(
+                text = "${draftTribes.size}/5",
+                color = if (draftTribes.size == 5) DashboardMint else OverlayDrawerWarning,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold
+            )
         }
+    }
+}
+
+@Composable
+private fun DrawerSetupAiResultFooter(
+    autoDetectStatus: AutoDetectStatus,
+    autoDetectDebugInfo: AutoDetectDebugInfo,
+    recognizedHeroes: List<ResolvedHeroStatOption>,
+    modifier: Modifier = Modifier
+) {
+    val tribeText = autoDetectDebugInfo.recognizedTribesLabel
+        ?.takeIf { it.isNotBlank() }
+        ?: if (autoDetectStatus == AutoDetectStatus.SCANNING) {
+            "识别中"
+        } else {
+            "未识别"
+        }
+    val aiHeroText = autoDetectDebugInfo.aiHeroesLabel
+        ?.split(" / ")
+        ?.map { segment ->
+            segment
+                .substringAfter(":", segment)
+                .substringBefore(" [")
+                .trim()
+        }
+        ?.filter { it.isNotBlank() }
+        ?.joinToString(" / ")
+        ?.takeIf { it.isNotBlank() }
+    val heroText = aiHeroText
+        ?: recognizedHeroes
+        .takeIf { it.isNotEmpty() }
+        ?.joinToString(" / ") { it.displayName }
+        ?: if (autoDetectStatus == AutoDetectStatus.SCANNING) {
+            "识别中"
+        } else {
+            "未识别"
+        }
+
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        color = OverlayDrawerCore.copy(alpha = 0.34f)
+    ) {
         Row(
             modifier = Modifier
-                .weight(0.62f)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            DrawerLandscapeHeroPanel(
-                selectedHero = selectedHero,
-                recognizedHeroes = recognizedHeroes,
-                heroStatsUpdatedAtLabel = heroStatsUpdatedAtLabel,
-                onSelectHero = onSelectHero,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
+            Text(
+                text = "AI 识别",
+                color = OverlayDrawerText,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Black
             )
-            DrawerLandscapeTribesPanel(
-                selectedTribes = selectedTribes,
-                tavernTierLabel = autoDetectDebugInfo.tavernTierLabel,
-                onApplySessionTribes = onApplySessionTribes,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
+            Text(
+                text = "种族 $tribeText",
+                modifier = Modifier.weight(1f),
+                color = OverlayDrawerSubtext,
+                style = MaterialTheme.typography.labelSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = "英雄 $heroText",
+                modifier = Modifier.weight(1.2f),
+                color = OverlayDrawerSubtext,
+                style = MaterialTheme.typography.labelSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
-        DrawerLandscapeAiSummaryPanel(
-            autoDetectStatus = autoDetectStatus,
-            autoDetectDebugInfo = autoDetectDebugInfo,
-            recognizedHeroes = recognizedHeroes,
-            selectedTribes = selectedTribes,
-            modifier = Modifier
-                .weight(0.38f)
-                .fillMaxWidth()
-        )
     }
 }
 
@@ -1022,7 +1051,6 @@ private fun DrawerLandscapeTribesPanel(
     modifier: Modifier = Modifier
 ) {
     var draftTribes by remember(selectedTribes) { mutableStateOf(selectedTribes) }
-    val canApply = draftTribes.size == 5 && draftTribes != selectedTribes
 
     Surface(
         modifier = modifier,
@@ -1071,7 +1099,7 @@ private fun DrawerLandscapeTribesPanel(
 
             onApplySessionTribes?.let { applySessionTribes ->
                 Text(
-                    text = "手动校正",
+                    text = "点击高亮表示选择，再点一次取消；选满 5 个会直接生效",
                     color = OverlayDrawerSubtext,
                     style = MaterialTheme.typography.labelSmall
                 )
@@ -1083,10 +1111,14 @@ private fun DrawerLandscapeTribesPanel(
                         val selected = tribe in draftTribes
                         Surface(
                             modifier = Modifier.clickable {
-                                draftTribes = when {
+                                val nextDraft = when {
                                     selected -> draftTribes - tribe
                                     draftTribes.size >= 5 -> draftTribes
                                     else -> draftTribes + tribe
+                                }
+                                draftTribes = nextDraft
+                                if (nextDraft.size == 5) {
+                                    applySessionTribes(nextDraft)
                                 }
                             },
                             shape = RoundedCornerShape(999.dp),
@@ -1118,12 +1150,11 @@ private fun DrawerLandscapeTribesPanel(
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        MiniActionPill(text = "重置", active = true, onClick = { draftTribes = selectedTribes })
+                    if (draftTribes != selectedTribes) {
                         MiniActionPill(
-                            text = "应用",
-                            active = canApply,
-                            onClick = { if (canApply) applySessionTribes(draftTribes) }
+                            text = "恢复 AI",
+                            active = true,
+                            onClick = { draftTribes = selectedTribes }
                         )
                     }
                 }
@@ -1809,7 +1840,7 @@ private fun DrawerSelectedTribesCard(
 
             onApplySessionTribes?.let { applySessionTribes ->
                 Text(
-                    text = "手动校正",
+                    text = "点击高亮表示选择，再点一次取消；选满 5 个会直接生效",
                     color = OverlayDrawerSubtext,
                     style = MaterialTheme.typography.labelSmall
                 )
@@ -1821,10 +1852,14 @@ private fun DrawerSelectedTribesCard(
                         val selected = tribe in draftTribes
                         Surface(
                             modifier = Modifier.clickable {
-                                draftTribes = when {
+                                val nextDraft = when {
                                     selected -> draftTribes - tribe
                                     draftTribes.size >= 5 -> draftTribes
                                     else -> draftTribes + tribe
+                                }
+                                draftTribes = nextDraft
+                                if (nextDraft.size == 5) {
+                                    applySessionTribes(nextDraft)
                                 }
                             },
                             shape = RoundedCornerShape(999.dp),
@@ -1863,9 +1898,9 @@ private fun DrawerSelectedTribesCard(
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    if (draftTribes != selectedTribes) {
                         Text(
-                            text = "重置",
+                            text = "恢复 AI",
                             modifier = Modifier
                                 .clip(RoundedCornerShape(10.dp))
                                 .clickable { draftTribes = selectedTribes }
@@ -1874,29 +1909,6 @@ private fun DrawerSelectedTribesCard(
                             color = OverlayDrawerSubtext,
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "应用",
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(10.dp))
-                                .clickable(enabled = draftTribes.size == 5 && draftTribes != selectedTribes) {
-                                    applySessionTribes(draftTribes)
-                                }
-                                .background(
-                                    if (draftTribes.size == 5 && draftTribes != selectedTribes) {
-                                        OverlayDrawerAccent.copy(alpha = 0.18f)
-                                    } else {
-                                        OverlayDrawerCore.copy(alpha = 0.64f)
-                                    }
-                                )
-                                .padding(horizontal = 8.dp, vertical = 5.dp),
-                            color = if (draftTribes.size == 5 && draftTribes != selectedTribes) {
-                                OverlayDrawerText
-                            } else {
-                                OverlayDrawerSubtext.copy(alpha = 0.5f)
-                            },
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Black
                         )
                     }
                 }
@@ -2734,11 +2746,7 @@ private fun DrawerCompItem(
             .fillMaxWidth()
             .clip(RoundedCornerShape(18.dp))
             .clickable(onClick = onClick),
-        color = if (selected) OverlayDrawerActive.copy(alpha = 0.94f) else OverlayDrawerInset.copy(alpha = 0.94f),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            if (selected) OverlayDrawerAccent else OverlayDrawerStrokeSoft
-        )
+        color = if (selected) OverlayDrawerActive.copy(alpha = 0.94f) else OverlayDrawerInset.copy(alpha = 0.94f)
     ) {
         Column(
             modifier = Modifier
@@ -2788,10 +2796,6 @@ private fun DrawerCompItem(
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        MiniMetaBadge(
-                            text = "评级 ${drawerStrategyRatingLabel(strategy.tier)}",
-                            accent = if (selected) OverlayDrawerAccent else drawerRatingColor(strategy.tier)
-                        )
                         strategy.requiredTribes.takeIf { it.isNotEmpty() }?.firstOrNull()?.let {
                             MiniMetaBadge(
                                 text = localizedRequiredTribes(listOf(it)),
@@ -2937,25 +2941,14 @@ private fun DrawerHeaderBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp, vertical = 6.dp)
-            .clip(RoundedCornerShape(14.dp))
-            .background(
-                Brush.horizontalGradient(
-                    colors = listOf(
-                        OverlayDrawerAccent.copy(alpha = 0.08f),
-                        OverlayDrawerShell.copy(alpha = 0.92f)
-                    )
-                )
-            )
-            .border(1.dp, OverlayDrawerStrokeSoft.copy(alpha = 0.8f), RoundedCornerShape(14.dp))
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+            .padding(horizontal = 12.dp, vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = sectionLabel,
-            color = OverlayDrawerSubtext,
-            style = MaterialTheme.typography.labelMedium,
+            color = OverlayDrawerSubtext.copy(alpha = 0.92f),
+            style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold
         )
         DrawerAutoDetectMicroLamp(status = status)
@@ -2971,7 +2964,7 @@ private data class AutoDetectVisualState(
 
 private fun autoDetectVisualState(status: AutoDetectStatus): AutoDetectVisualState = when (status) {
     AutoDetectStatus.WAITING -> AutoDetectVisualState(
-        label = "等待识别",
+        label = "待识别",
         hint = "酒馆等级后台同步中；点击后才会短时采集英雄选择页",
         color = DashboardIce,
         pulse = false
@@ -2989,7 +2982,7 @@ private fun autoDetectVisualState(status: AutoDetectStatus): AutoDetectVisualSta
         pulse = false
     )
     AutoDetectStatus.NEEDS_ATTENTION -> AutoDetectVisualState(
-        label = "未稳定识别",
+        label = "需重试",
         hint = "本轮识别未锁定，请点击重新识别",
         color = OverlayDrawerWarning,
         pulse = false
@@ -3020,26 +3013,21 @@ private fun DrawerAutoDetectMicroLamp(status: AutoDetectStatus) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(999.dp))
-            .background(
-                Brush.horizontalGradient(
-                    colors = listOf(visual.color.copy(alpha = 0.14f), OverlayDrawerAccent.copy(alpha = 0.10f))
-                )
-            )
-            .border(1.dp, visual.color.copy(alpha = 0.34f), RoundedCornerShape(999.dp))
-            .padding(horizontal = 8.dp, vertical = 5.dp),
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
+            .background(visual.color.copy(alpha = 0.08f))
+            .padding(horizontal = 7.dp, vertical = 3.dp),
+        horizontalArrangement = Arrangement.spacedBy(3.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(8.dp)
+                .size(6.dp)
                 .clip(CircleShape)
                 .background(visual.color.copy(alpha = alpha))
         )
         Text(
             text = visual.label,
             color = OverlayDrawerText,
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold
         )
     }
@@ -3093,8 +3081,7 @@ private fun DrawerAutoDetectActionButton(
                 .clip(RoundedCornerShape(999.dp))
                 .clickable(onClick = onTrigger),
             shape = RoundedCornerShape(999.dp),
-            color = DashboardMint.copy(alpha = 0.16f),
-            border = androidx.compose.foundation.BorderStroke(1.dp, DashboardMint.copy(alpha = 0.42f))
+            color = DashboardMint.copy(alpha = 0.16f)
         ) {
             Row(
                 modifier = Modifier.padding(
@@ -3143,11 +3130,7 @@ private fun DrawerAutoDetectActionButton(
             isScanning -> OverlayDrawerAccent.copy(alpha = 0.18f)
             enabled -> OverlayDrawerAccent.copy(alpha = 0.14f)
             else -> OverlayDrawerInset.copy(alpha = 0.3f)
-        },
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            if (enabled || isScanning) OverlayDrawerAccent.copy(alpha = 0.32f) else OverlayDrawerStrokeSoft.copy(alpha = 0.58f)
-        )
+        }
     ) {
         Row(
             modifier = Modifier.padding(horizontal = if (compact) 9.dp else 11.dp, vertical = if (compact) 5.dp else 6.dp),
@@ -4042,16 +4025,6 @@ private fun DrawerTacticalTab(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            DrawerTacticalShopHeader(
-                strategy = strategy,
-                selectedTribes = selectedTribes,
-                tavernTier = autoDetectDebugInfo.tavernTier,
-                tavernTierLabel = autoDetectDebugInfo.tavernTierLabel,
-                selectedHero = selectedHero,
-                primaryCount = liveRecommendations.primaryChoices.size,
-                secondaryCount = liveRecommendations.secondaryChoices.size
-            )
-
             DrawerSectionTitle(title = "当前酒馆先买")
             if (liveRecommendations.primaryChoices.isEmpty()) {
                 DrawerEmptyStateCard(
@@ -4095,25 +4068,11 @@ private fun DrawerTacticalTab(
                 )
             }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                DrawerActionCard(
-                    modifier = Modifier.weight(1f),
-                    title = "现在做",
-                    body = localizedStrategyText(strategy.earlyStrategy, strategy),
-                    accent = OverlayDrawerAccent,
-                    emphasize = true
-                )
-                DrawerActionCard(
-                    modifier = Modifier.weight(1f),
-                    title = "后续补完",
-                    body = localizedStrategyText(strategy.lateStrategy, strategy),
-                    accent = DashboardIce,
-                    emphasize = false
-                )
-            }
+            DrawerActionStrip(
+                title = "当前打法",
+                body = localizedStrategyText(strategy.earlyStrategy, strategy),
+                accent = OverlayDrawerAccent
+            )
 
             strategy.whenToCommit?.takeIf { it.isNotBlank() }?.let { signal ->
                 DrawerActionStrip(
@@ -5635,8 +5594,7 @@ private fun RatingBadge(
 ) {
     Surface(
         shape = RoundedCornerShape(99.dp),
-        color = accent,
-        border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.4f))
+        color = accent
     ) {
         Text(
             text = rating,
@@ -6214,8 +6172,7 @@ private fun SignalCallout(
 private fun MiniMetaBadge(text: String, accent: Color) {
     Surface(
         shape = RoundedCornerShape(99.dp),
-        color = accent.copy(alpha = 0.14f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.25f))
+        color = accent.copy(alpha = 0.14f)
     ) {
         Text(
             text = text,
