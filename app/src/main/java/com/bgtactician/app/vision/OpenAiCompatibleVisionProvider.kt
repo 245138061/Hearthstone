@@ -33,7 +33,7 @@ data class OpenAiCompatibleVisionConfig(
     val imageDetail: String = "auto",
     val imageMaxLongEdge: Int = 768,
     val jpegQuality: Int = 72,
-    val cropTopRatio: Float = 0.34f,
+    val cropTopRatio: Float = 0.42f,
     val temperature: Double = 0.0,
     val maxTokens: Int = 80,
     val fullRecognitionMaxTokens: Int = 120

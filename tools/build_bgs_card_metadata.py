@@ -52,6 +52,39 @@ def normalize_races(card: dict[str, Any]) -> list[str]:
     return normalized
 
 
+def normalize_associated_races(card: dict[str, Any]) -> list[str]:
+    raw = card.get("battlegroundsAssociatedRaces")
+    if not isinstance(raw, list):
+        return []
+
+    normalized: list[str] = []
+    for value in raw:
+        race = str(value).strip()
+        if race and race not in normalized:
+            normalized.append(race)
+    return normalized
+
+
+def normalize_mechanics(card: dict[str, Any]) -> list[str]:
+    raw = card.get("mechanics")
+    if not isinstance(raw, list):
+        return []
+
+    normalized: list[str] = []
+    for value in raw:
+        mechanic = str(value).strip()
+        if mechanic and mechanic not in normalized:
+            normalized.append(mechanic)
+    return normalized
+
+
+def normalize_card_text(card: dict[str, Any]) -> str | None:
+    raw = str(card.get("collectionText") or card.get("text") or "").strip()
+    if not raw:
+        return None
+    return raw.replace("[x]", "").strip()
+
+
 def load_cards(source: str) -> list[dict[str, Any]]:
     payload = load_json(source)
     if not isinstance(payload, list):
@@ -76,6 +109,11 @@ def build_battleground_card_metadata(
 ) -> dict[str, Any]:
     cards_en = load_cards(cards_en_source)
     cards_zh = load_cards(cards_zh_source)
+    cards_zh_lookup = {
+        str(card.get("id") or "").strip(): card
+        for card in cards_zh
+        if card.get("id")
+    }
     localized_name_map = {
         str(card.get("id") or "").strip(): str(card.get("name") or "").strip()
         for card in cards_zh
@@ -101,6 +139,7 @@ def build_battleground_card_metadata(
         premium_dbf_id = card.get("battlegroundsPremiumDbfId")
         normal_dbf_id = card.get("battlegroundsNormalDbfId")
         related_dbf_id = card.get("battlegroundsRelatedCard")
+        localized_card = cards_zh_lookup.get(card_id, {})
 
         entry = {
             "dbf_id": card.get("dbfId"),
@@ -110,6 +149,10 @@ def build_battleground_card_metadata(
             "tech_level": card.get("techLevel"),
             "races": normalize_races(card),
             "spell_school": str(card.get("spellSchool") or "").strip() or None,
+            "associated_races": normalize_associated_races(card),
+            "text": normalize_card_text(card),
+            "localized_text": normalize_card_text(localized_card),
+            "mechanics": normalize_mechanics(card),
             "is_pool_minion": bool(card.get("isBattlegroundsPoolMinion", False)),
             "is_pool_spell": bool(card.get("isBattlegroundsPoolSpell", False)),
             "premium_card_id": dbf_lookup.get(premium_dbf_id) if isinstance(premium_dbf_id, int) else None,

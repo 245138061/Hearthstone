@@ -34,6 +34,23 @@ class HeroSelectionVisionValidatorTest {
     }
 
     @Test
+    fun allowsPartialTribeResultsWhenScreenTypeIsConfirmedInRelaxedMode() {
+        val result = HeroSelectionVisionResult(
+            screenType = VisionScreenType.HERO_SELECTION,
+            availableTribes = listOf(VisionTribe.DEMON, VisionTribe.BEAST, VisionTribe.NAGA),
+            heroOptions = emptyList()
+        )
+
+        assertTrue(
+            HeroSelectionVisionValidator.validate(
+                result,
+                requireCompleteTribes = false
+            ).isValid
+        )
+        assertFalse(HeroSelectionVisionValidator.validate(result).isValid)
+    }
+
+    @Test
     fun `semantic validator rejects hero results when no option matches local index`() {
         val result = HeroSelectionVisionResult(
             screenType = VisionScreenType.HERO_SELECTION,

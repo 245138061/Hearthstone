@@ -84,6 +84,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import com.bgtactician.app.data.model.AutoDetectDebugInfo
@@ -101,7 +102,9 @@ import com.bgtactician.app.data.model.Tribe
 import com.bgtactician.app.data.repository.MinionImageCache
 import com.bgtactician.app.data.repository.MinionLobbyFilter
 import com.bgtactician.app.data.repository.RealtimeMinionRecommendationEngine
+import com.bgtactician.app.data.repository.TrinketImageCache
 import com.bgtactician.app.viewmodel.DashboardUiState
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.math.roundToInt
 import java.util.Locale
@@ -127,9 +130,13 @@ private val OverlayDrawerActive = Color(0x3D8462)
 private val DashboardJson = Json { ignoreUnknownKeys = true }
 
 private const val BUNDLED_STRATEGY_ASSET = "strategies_zerotoheroes_zhCN.json"
+private const val BUNDLED_TRINKET_RECOMMENDATION_ASSET = "tactical_trinket_recommendations.json"
+private const val BUNDLED_CARD_METADATA_ASSET = "bgs_card_metadata.json"
 private const val HERO_FRAME_IMAGE_URL =
     "https://static.zerotoheroes.com/hearthstone/asset/firestone/images/bgs_hero_frame.png"
 private const val HERO_CARD_ART_URL_PREFIX =
+    "https://static.zerotoheroes.com/hearthstone/cardart/256x/"
+private const val TRINKET_CARD_ART_URL_PREFIX =
     "https://static.zerotoheroes.com/hearthstone/cardart/256x/"
 
 private val StrategyTextAliasMap = mapOf(
@@ -220,6 +227,190 @@ private val StrategyTextAliasMap = mapOf(
     "Magicfin" to "魔鳍鱼"
 )
 
+private val TacticalVideoFinalBoardOrder: Map<String, List<String>> = mapOf(
+    "beast_self_damage" to listOf(
+        "BGS_078",
+        "BG29_808",
+        "BG24_005",
+        "BG29_807",
+        "BG29_806",
+        "BG25_354"
+    ),
+    "beast_stegodon" to listOf(
+        "BG33_840",
+        "BGS_078",
+        "BG26_800",
+        "BG35_604",
+        "BG33_371",
+        "BG33_371"
+    ),
+    "demon_fodder" to listOf(
+        "BG35_153",
+        "BG35_153",
+        "BG35_155",
+        "BG35_155",
+        "BG32_873",
+        "BG_LOE_077"
+    ),
+    "dragon_kalecgos" to listOf(
+        "BG29_815",
+        "BG29_815",
+        "BG34_633",
+        "BGS_041",
+        "BGS_041",
+        "BG_LOE_077"
+    ),
+    "elemental_cycle" to listOf(
+        "BG33_331",
+        "BG33_331",
+        "BG31_810",
+        "BG31_810",
+        "BG31_812",
+        "BG_LOE_077"
+    ),
+    "quilboar_avenge" to listOf(
+        "BG34_630",
+        "BG34_731",
+        "BG32_430",
+        "BG35_437",
+        "BG26_157",
+        "BG25_354"
+    ),
+    "quilboar_smuggler" to listOf(
+        "BGS_078",
+        "BG25_155",
+        "BG26_801",
+        "BG26_159",
+        "BG_LOE_077",
+        "BG25_354"
+    ),
+    "mech_automaton" to listOf(
+        "BG_TTN_401",
+        "BG_TTN_401",
+        "BG_TTN_401",
+        "BGS_012",
+        "BGS_012",
+        "BG25_354"
+    ),
+    "mech_shield" to listOf(
+        "BGS_071",
+        "BGS_071",
+        "BG33_809",
+        "BG33_809",
+        "BGS_012",
+        "BG_DEEP_015"
+    ),
+    "murloc_mrrglton" to listOf(
+        "BG33_318",
+        "BG33_318",
+        "BG35_142",
+        "BG35_142",
+        "BG_LOE_077",
+        "BG26_ICC_901"
+    ),
+    "murloc_handbuff" to listOf(
+        "BG26_354",
+        "BG30_122",
+        "BG27_556",
+        "BG_LOE_077",
+        "BG26_137"
+    ),
+    "murloc_scam" to listOf(
+        "BG33_318",
+        "BG27_556",
+        "BG23_318",
+        "BG34_604",
+        "BG25_039",
+        "BGS_131"
+    ),
+    "naga_spellspam" to listOf(
+        "BGS_078",
+        "BG26_801",
+        "BG34_926",
+        "BG34_922",
+        "BG32_835",
+        "BG25_354"
+    ),
+    "naga_deep_blue" to listOf(
+        "BG26_505",
+        "BG26_505",
+        "BG26_502",
+        "BG26_502",
+        "BG23_013",
+        "BG34_500"
+    ),
+    "pirate_bounty" to listOf(
+        "BG33_825",
+        "BG33_825",
+        "BG33_823",
+        "BG33_822",
+        "BG32_821",
+        "BG_LOE_077"
+    ),
+    "pirate_exodia" to listOf(
+        "BGS_078",
+        "BG35_700",
+        "BG35_700",
+        "BG35_700",
+        "BG25_354",
+        "BG25_354"
+    ),
+    "undead_attack" to listOf(
+        "BG32_880",
+        "BG25_010",
+        "BG25_010",
+        "BG25_009",
+        "BG25_354",
+        "BG32_324"
+    ),
+    "undead_end_of_turn" to listOf(
+        "BG35_334",
+        "BG26_ICC_901",
+        "BG25_354",
+        "BGS_078",
+        "BG34_630",
+        "BG19_010"
+    ),
+    "undead_overflow" to listOf(
+        "BGS_078",
+        "BG30_125",
+        "BG30_129",
+        "BG30_129",
+        "BG28_303",
+        "BG25_354"
+    ),
+    "neutral_back_to_back" to listOf(
+        "BG24_005",
+        "BG32_821",
+        "BG35_883",
+        "BG35_123",
+        "BG35_123",
+        "BG26_ICC_901"
+    )
+)
+
+@Serializable
+private data class TacticalTrinketRecommendation(
+    val lesserCardIds: List<String> = emptyList(),
+    val greaterCardIds: List<String> = emptyList()
+)
+
+private data class TacticalTrinketCard(
+    val cardId: String,
+    val name: String,
+    val spellSchool: String? = null
+)
+
+private data class TacticalResolvedTrinketRecommendation(
+    val lesser: List<TacticalTrinketCard> = emptyList(),
+    val greater: List<TacticalTrinketCard> = emptyList()
+)
+
+@Serializable
+private data class TacticalTrinketRecommendationCatalog(
+    val recommendations: Map<String, TacticalTrinketRecommendation> = emptyMap()
+)
+
 private object BundledCardNameRegistry {
     @Volatile
     private var cachedNames: Map<String, String>? = null
@@ -245,6 +436,122 @@ private object BundledCardNameRegistry {
             parsed
         }
     }
+}
+
+private object BundledStrategyIdRegistry {
+    @Volatile
+    private var cachedIdsByName: Map<String, String>? = null
+
+    fun get(context: Context): Map<String, String> {
+        cachedIdsByName?.let { return it }
+        return synchronized(this) {
+            cachedIdsByName?.let { return@synchronized it }
+            val parsed = runCatching {
+                DashboardJson.decodeFromString<StrategyCatalog>(
+                    context.assets.open(BUNDLED_STRATEGY_ASSET).bufferedReader().use { it.readText() }
+                )
+                    .comps
+                    .flatMap { comp ->
+                        listOf(
+                            comp.name to comp.id,
+                            normalizeStrategyKey(comp.name) to comp.id
+                        )
+                    }
+                    .toMap()
+            }.getOrDefault(emptyMap())
+            cachedIdsByName = parsed
+            parsed
+        }
+    }
+}
+
+private fun normalizeStrategyKey(value: String): String {
+    return value.trim().replace("\\s+".toRegex(), "").lowercase(Locale.ROOT)
+}
+
+private object BundledTrinketRecommendationRegistry {
+    @Volatile
+    private var cachedRecommendations: Map<String, TacticalTrinketRecommendation>? = null
+
+    fun get(context: Context): Map<String, TacticalTrinketRecommendation> {
+        cachedRecommendations?.let { return it }
+        return synchronized(this) {
+            cachedRecommendations?.let { return@synchronized it }
+            val parsed = runCatching {
+                DashboardJson.decodeFromString<TacticalTrinketRecommendationCatalog>(
+                    context.assets.open(BUNDLED_TRINKET_RECOMMENDATION_ASSET).bufferedReader().use { it.readText() }
+                ).recommendations
+            }.getOrDefault(emptyMap())
+            cachedRecommendations = parsed
+            parsed
+        }
+    }
+}
+
+private object BundledTrinketCardRegistry {
+    @Volatile
+    private var cachedTrinkets: Map<String, TacticalTrinketCard>? = null
+
+    fun get(context: Context): Map<String, TacticalTrinketCard> {
+        cachedTrinkets?.let { return it }
+        return synchronized(this) {
+            cachedTrinkets?.let { return@synchronized it }
+            val parsed = runCatching {
+                DashboardJson.decodeFromString<BattlegroundCardMetadataCatalog>(
+                    context.assets.open(BUNDLED_CARD_METADATA_ASSET).bufferedReader().use { it.readText() }
+                )
+                    .cards
+                    .mapNotNull { (cardId, metadata) ->
+                        if (metadata.type != "BATTLEGROUND_TRINKET") {
+                            null
+                        } else {
+                            cardId to TacticalTrinketCard(
+                                cardId = cardId,
+                                name = metadata.localizedName?.takeIf { it.isNotBlank() } ?: metadata.name,
+                                spellSchool = metadata.spellSchool
+                            )
+                        }
+                    }
+                    .toMap()
+            }.getOrDefault(emptyMap())
+            cachedTrinkets = parsed
+            parsed
+        }
+    }
+}
+
+private fun resolveStrategyIdByCatalog(
+    context: Context,
+    strategy: StrategyComp?,
+    availableIds: Set<String>
+): String? {
+    strategy ?: return null
+    if (availableIds.isEmpty()) return null
+
+    fun matchById(candidate: String?): String? {
+        val raw = candidate?.trim().orEmpty()
+        if (raw.isBlank()) return null
+        if (availableIds.contains(raw)) return raw
+
+        val normalized = normalizeStrategyKey(raw)
+        if (availableIds.contains(normalized)) return normalized
+
+        return availableIds.firstOrNull { id ->
+            val normalizedId = normalizeStrategyKey(id)
+            normalized == normalizedId ||
+                normalized.endsWith(normalizedId) ||
+                normalizedId.endsWith(normalized) ||
+                normalized.contains(normalizedId)
+        }
+    }
+
+    matchById(strategy.id)?.let { return it }
+
+    val bundledIdByName = BundledStrategyIdRegistry.get(context)[strategy.name]
+        ?: BundledStrategyIdRegistry.get(context)[normalizeStrategyKey(strategy.name)]
+    matchById(bundledIdByName)?.let { return it }
+
+    return null
 }
 
 @OptIn(ExperimentalMaterial3Api::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
@@ -712,7 +1019,7 @@ private fun DrawerSetupAiResultFooter(
         ?: if (autoDetectStatus == AutoDetectStatus.SCANNING) {
             "识别中"
         } else {
-            "未识别"
+            "--"
         }
     val aiHeroText = autoDetectDebugInfo.aiHeroesLabel
         ?.split(" / ")
@@ -732,7 +1039,7 @@ private fun DrawerSetupAiResultFooter(
         ?: if (autoDetectStatus == AutoDetectStatus.SCANNING) {
             "识别中"
         } else {
-            "未识别"
+            "--"
         }
 
     Surface(
@@ -1159,6 +1466,7 @@ private fun DrawerCompListTab(
                     selectedTribes = selectedTribes,
                     cardRules = cardRules,
                     cardMetadata = cardMetadata,
+                    selectedHeroCardId = selectedHero?.heroCardId,
                     onClick = { onSelectStrategy(strategy.id) }
                 )
             }
@@ -1173,8 +1481,19 @@ private fun DrawerCompItem(
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
     cardMetadata: BattlegroundCardMetadataCatalog,
+    selectedHeroCardId: String?,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val isTrueFinalBoard = tacticalIsTrueFinalBoard(
+        context = context,
+        strategy = strategy,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        selectedHeroCardId = selectedHeroCardId
+    )
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -1230,6 +1549,12 @@ private fun DrawerCompItem(
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
+                        if (isTrueFinalBoard) {
+                            MiniMetaBadge(
+                                text = "真成型",
+                                accent = DashboardMint
+                            )
+                        }
                         strategy.requiredTribes.takeIf { it.isNotEmpty() }?.firstOrNull()?.let {
                             MiniMetaBadge(
                                 text = localizedRequiredTribes(listOf(it)),
@@ -1980,6 +2305,58 @@ private fun cycleMinions(
         .take(limit)
 }
 
+private data class TacticalTierPriority(
+    val tier: Int,
+    val minions: List<KeyMinion>
+)
+
+private fun tavernTierStars(tier: Int): String = buildString {
+    repeat(tier.coerceIn(1, 6)) { append('★') }
+}
+
+private fun tacticalStatusPriority(minion: KeyMinion): Int = when (minion.statusRaw?.uppercase()) {
+    "CORE" -> 0
+    "RECOMMENDED" -> 1
+    "ADDON" -> 2
+    "CYCLE" -> 3
+    else -> 4
+}
+
+private fun tacticalTierPriorities(
+    strategy: StrategyComp?,
+    selectedTribes: Set<Tribe>,
+    cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
+    selectedHeroCardId: String?
+): List<TacticalTierPriority> {
+    strategy ?: return (1..6).map { TacticalTierPriority(tier = it, minions = emptyList()) }
+    val available = MinionLobbyFilter.filterMinionsForLobby(
+        minions = strategy.keyMinions,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        selectedHeroCardId = selectedHeroCardId
+    )
+        .filter { it.statusRaw == "CORE" || it.statusRaw == "RECOMMENDED" || it.statusRaw == "ADDON" }
+        .distinctBy { it.cardId ?: it.name }
+
+    return (1..6).map { tier ->
+        TacticalTierPriority(
+            tier = tier,
+            minions = available
+                .filter { it.techLevel == tier }
+                .sortedWith(
+                    compareBy<KeyMinion>(
+                        ::tacticalStatusPriority,
+                        { -(it.finalBoardWeight ?: 0) },
+                        { it.name }
+                    )
+                )
+                .take(4)
+        )
+    }
+}
+
 private fun tacticalNextTierTargets(
     strategy: StrategyComp?,
     selectedTribes: Set<Tribe>,
@@ -2002,12 +2379,7 @@ private fun tacticalNextTierTargets(
         .distinctBy { it.cardId ?: it.name }
         .sortedWith(
             compareBy<KeyMinion>(
-                { when (it.statusRaw?.uppercase()) {
-                    "CORE" -> 0
-                    "RECOMMENDED" -> 1
-                    "ADDON" -> 2
-                    else -> 3
-                } },
+                ::tacticalStatusPriority,
                 { -(it.finalBoardWeight ?: 0) },
                 { it.name }
             )
@@ -2039,10 +2411,13 @@ private fun DrawerTacticalTab(
         return
     }
 
+    val context = LocalContext.current.applicationContext
+
     DrawerTabShell(
-        title = strategy.name,
-        subtitle = strategy.requiredTribes.takeIf { it.isNotEmpty() }?.let(::localizedRequiredTribes) ?: "通用",
-        badge = autoDetectDebugInfo.tavernTier?.let { "${it}本" } ?: "酒馆未同步"
+        title = "",
+        subtitle = "",
+        badge = autoDetectDebugInfo.tavernTier?.let(::tavernTierStars).orEmpty(),
+        showHeader = false
     ) { bodyModifier ->
         val liveRecommendations = remember(
             strategy,
@@ -2078,65 +2453,402 @@ private fun DrawerTacticalTab(
                 selectedHeroCardId = selectedHero?.heroCardId
             )
         }
+        val tierPriorities = remember(
+            strategy,
+            selectedTribes,
+            cardRules,
+            cardMetadata,
+            selectedHero?.heroCardId
+        ) {
+            tacticalTierPriorities(
+                strategy = strategy,
+                selectedTribes = selectedTribes,
+                cardRules = cardRules,
+                cardMetadata = cardMetadata,
+                selectedHeroCardId = selectedHero?.heroCardId
+            )
+        }
+        val finalBoardMinions = remember(
+            strategy,
+            selectedTribes,
+            cardRules,
+            cardMetadata,
+            selectedHero?.heroCardId
+        ) {
+            tacticalFinalBoardMinions(
+                context = context,
+                strategy = strategy,
+                selectedTribes = selectedTribes,
+                cardRules = cardRules,
+                cardMetadata = cardMetadata,
+                selectedHeroCardId = selectedHero?.heroCardId
+            )
+        }
+        val recommendedTrinkets = remember(strategy, cardMetadata) {
+            tacticalRecommendedTrinkets(
+                context = context,
+                strategy = strategy,
+                cardMetadata = cardMetadata
+            )
+        }
         Column(
             modifier = bodyModifier
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            if (finalBoardMinions.isNotEmpty()) {
+                DrawerSectionTitle(title = "成型阵容")
+                DrawerFinalBoardAvatarRow(minions = finalBoardMinions)
+            }
+
+            DrawerSectionTitle(title = "推荐小饰品")
+            DrawerTrinketRecommendationRow(
+                trinkets = recommendedTrinkets.lesser,
+                emptyTitle = "视频推荐待补录",
+                emptyBody = "这套的小饰品推荐还没从视频逐帧录入。"
+            )
+
+            DrawerSectionTitle(title = "推荐大饰品")
+            DrawerTrinketRecommendationRow(
+                trinkets = recommendedTrinkets.greater,
+                emptyTitle = "视频推荐待补录",
+                emptyBody = "这套的大饰品推荐还没从视频逐帧录入。"
+            )
+
             DrawerSectionTitle(title = "当前酒馆先买")
             if (liveRecommendations.primaryChoices.isEmpty()) {
                 DrawerEmptyStateCard(
                     modifier = Modifier.fillMaxWidth(),
                     title = "当前没有可直接买的主目标",
-                    body = if (autoDetectDebugInfo.tavernTier == null) {
-                        "先同步酒馆等级，再给你更准的买牌清单。"
-                    } else {
-                        "这套在当前本数没有明确主抓牌，先稳经济或等升本。"
-                    }
+                    body = "先稳经济或等升本。"
                 )
             } else {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    liveRecommendations.primaryChoices.forEachIndexed { index, minion ->
-                        DrawerShopBuyRow(
-                            minion = minion,
-                            rank = index + 1,
-                            accent = tacticalMinionAccent(minion),
-                            badge = if (index == 0) "首抓" else "优先",
-                            currentTavernTier = autoDetectDebugInfo.tavernTier
-                        )
-                    }
+                DrawerShopBuyAvatarRow(minions = liveRecommendations.primaryChoices)
+            }
+
+            DrawerSectionTitle(title = "各本优选")
+            DrawerTierPriorityBoard(
+                priorities = tierPriorities,
+                currentTavernTier = autoDetectDebugInfo.tavernTier,
+                nextTierTargets = nextTierTargets
+            )
+        }
+    }
+}
+
+private fun tacticalFinalBoardMinions(
+    context: Context,
+    strategy: StrategyComp?,
+    selectedTribes: Set<Tribe>,
+    cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
+    selectedHeroCardId: String?
+): List<KeyMinion> {
+    strategy ?: return emptyList()
+    val resolvedStrategyId = resolveStrategyIdByCatalog(
+        context = context,
+        strategy = strategy,
+        availableIds = TacticalVideoFinalBoardOrder.keys
+    )
+    val videoOrder = resolvedStrategyId?.let { TacticalVideoFinalBoardOrder[it] }.orEmpty()
+    if (videoOrder.isNotEmpty()) {
+        val strategyMinionsByCardId = strategy.keyMinions
+            .mapNotNull { minion -> minion.cardId?.let { it to minion } }
+            .toMap()
+        return videoOrder.mapNotNull { cardId ->
+            strategyMinionsByCardId[cardId] ?: cardMetadata.cards[cardId]?.let { metadata ->
+                KeyMinion(
+                    id = -1,
+                    name = metadata.localizedName?.takeIf { it.isNotBlank() } ?: metadata.name,
+                    techLevel = metadata.techLevel ?: 1,
+                    phase = "FINAL_BOARD",
+                    statusRaw = "CORE",
+                    finalBoardWeight = 999,
+                    cardId = cardId
+                )
+            }
+        }.take(6)
+    }
+
+    val available = MinionLobbyFilter.filterMinionsForLobby(
+        minions = strategy.keyMinions,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        selectedHeroCardId = selectedHeroCardId
+    )
+
+    val cores = available
+        .filter { it.statusRaw == "CORE" && !isGenericSupportMinion(it) }
+    val generics = available
+        .filter(::isGenericSupportMinion)
+    val addOns = available
+        .filter { it.statusRaw == "ADDON" || it.statusRaw == "RECOMMENDED" }
+        .filter { !isGenericSupportMinion(it) }
+        .sortedWith(
+            compareByDescending<KeyMinion> { it.finalBoardWeight ?: 0 }
+                .thenByDescending { it.statusRaw == "RECOMMENDED" }
+                .thenBy { it.techLevel }
+                .thenBy { it.name }
+        )
+
+    val autoBoard = buildList {
+        addAll(cores.take(4))
+        if (size < 6) {
+            addAll(generics.take(6 - size))
+        }
+        if (size < 6) {
+            addAll(addOns.take(6 - size))
+        }
+        if (size < 6) {
+            addAll(
+                available
+                    .filter { it.statusRaw == "CYCLE" }
+                    .take(6 - size)
+            )
+        }
+    }
+
+    return autoBoard.take(6)
+}
+
+private fun tacticalIdealFinalBoardMinions(
+    context: Context,
+    strategy: StrategyComp?,
+    cardMetadata: BattlegroundCardMetadataCatalog
+): List<KeyMinion> {
+    strategy ?: return emptyList()
+    val resolvedStrategyId = resolveStrategyIdByCatalog(
+        context = context,
+        strategy = strategy,
+        availableIds = TacticalVideoFinalBoardOrder.keys
+    )
+    val videoOrder = resolvedStrategyId?.let { TacticalVideoFinalBoardOrder[it] }.orEmpty()
+    if (videoOrder.isNotEmpty()) {
+        val strategyMinionsByCardId = strategy.keyMinions
+            .mapNotNull { minion -> minion.cardId?.let { it to minion } }
+            .toMap()
+        return videoOrder.map { cardId ->
+            strategyMinionsByCardId[cardId] ?: cardMetadata.cards[cardId]?.let { metadata ->
+                KeyMinion(
+                    id = -1,
+                    name = metadata.localizedName?.takeIf { it.isNotBlank() } ?: metadata.name,
+                    techLevel = metadata.techLevel ?: 1,
+                    phase = "FINAL_BOARD",
+                    statusRaw = "CORE",
+                    finalBoardWeight = 999,
+                    cardId = cardId
+                )
+            } ?: KeyMinion(
+                id = -1,
+                name = cardId,
+                techLevel = 1,
+                phase = "FINAL_BOARD",
+                statusRaw = "CORE",
+                finalBoardWeight = 999,
+                cardId = cardId
+            )
+        }.take(6)
+    }
+    return tacticalFinalBoardMinions(
+        context = context,
+        strategy = strategy,
+        selectedTribes = emptySet(),
+        cardRules = emptyMap(),
+        cardMetadata = cardMetadata,
+        selectedHeroCardId = null
+    )
+}
+
+private fun tacticalIsTrueFinalBoard(
+    context: Context,
+    strategy: StrategyComp?,
+    selectedTribes: Set<Tribe>,
+    cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog,
+    selectedHeroCardId: String?
+): Boolean {
+    if (selectedTribes.size != 5) return false
+    val finalBoard = tacticalIdealFinalBoardMinions(
+        context = context,
+        strategy = strategy,
+        cardMetadata = cardMetadata
+    )
+    if (finalBoard.isEmpty()) return false
+    return finalBoard.all { minion ->
+        MinionLobbyFilter.isMinionAllowedInLobby(
+            minion = minion,
+            selectedTribes = selectedTribes,
+            cardRules = cardRules,
+            cardMetadata = cardMetadata,
+            selectedHeroCardId = selectedHeroCardId
+        )
+    }
+}
+
+private fun tacticalRecommendedTrinkets(
+    context: Context,
+    strategy: StrategyComp?,
+    cardMetadata: BattlegroundCardMetadataCatalog
+): TacticalResolvedTrinketRecommendation {
+    val recommendationCatalog = BundledTrinketRecommendationRegistry.get(context)
+    val resolvedStrategyId = resolveStrategyIdByCatalog(
+        context = context,
+        strategy = strategy,
+        availableIds = recommendationCatalog.keys
+    )
+    val recommendation = resolvedStrategyId
+        ?.let { recommendationCatalog[it] }
+        ?: return TacticalResolvedTrinketRecommendation()
+    val bundledTrinketCards = BundledTrinketCardRegistry.get(context)
+
+    fun resolve(cardIds: List<String>, expectedSchool: String): List<TacticalTrinketCard> = cardIds.mapNotNull { cardId ->
+        val runtimeCard = cardMetadata.cards[cardId]
+            ?.takeIf { metadata -> metadata.type == "BATTLEGROUND_TRINKET" }
+            ?.let { metadata ->
+                TacticalTrinketCard(
+                    cardId = cardId,
+                    name = metadata.localizedName?.takeIf { it.isNotBlank() } ?: metadata.name,
+                    spellSchool = metadata.spellSchool
+                )
+            }
+        val resolved = runtimeCard
+            ?: bundledTrinketCards[cardId]
+            ?: TacticalTrinketCard(cardId = cardId, name = cardId)
+
+        if (resolved.spellSchool != null && resolved.spellSchool != expectedSchool) {
+            return@mapNotNull null
+        }
+        resolved
+    }
+
+    return TacticalResolvedTrinketRecommendation(
+        lesser = resolve(recommendation.lesserCardIds, "LESSER_TRINKET"),
+        greater = resolve(recommendation.greaterCardIds, "GREATER_TRINKET")
+    )
+}
+
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun DrawerTierPriorityBoard(
+    priorities: List<TacticalTierPriority>,
+    currentTavernTier: Int?,
+    nextTierTargets: List<KeyMinion>
+) {
+    val nextTier = currentTavernTier
+        ?.takeIf { it < 6 }
+        ?.plus(1)
+    val displayPriorities = remember(priorities, currentTavernTier) {
+        val targetTiers = mutableSetOf<Int>().apply {
+            priorities.forEach { priority ->
+                if (priority.minions.isNotEmpty()) {
+                    add(priority.tier)
                 }
             }
+            currentTavernTier?.let { add(it) }
+            nextTier?.let { add(it) }
+        }
+        priorities.filter { it.tier in targetTiers }
+            .ifEmpty { priorities.filter { it.minions.isNotEmpty() } }
+            .ifEmpty { priorities.take(1) }
+    }
+    var selectedTier by remember(displayPriorities, currentTavernTier) {
+        mutableStateOf(
+            currentTavernTier
+                ?.takeIf { tier -> displayPriorities.any { it.tier == tier } }
+                ?: nextTier?.takeIf { tier -> displayPriorities.any { it.tier == tier } }
+                ?: displayPriorities.firstOrNull()?.tier
+                ?: 1
+        )
+    }
+    val selectedPriority = displayPriorities.firstOrNull { it.tier == selectedTier }
+        ?: displayPriorities.firstOrNull()
 
-            if (liveRecommendations.secondaryChoices.isNotEmpty()) {
-                DrawerSectionTitle(title = "补强候选")
-                DrawerShopAvatarShelf(
-                    minions = liveRecommendations.secondaryChoices,
-                    emptyLabel = "当前没有补强牌",
-                    badgeLabel = { if (isGenericSupportMinion(it)) "功能" else "补强" }
-                )
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        if (displayPriorities.size > 1) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                displayPriorities.forEach { priority ->
+                    DrawerTierPriorityTab(
+                        priority = priority,
+                        selected = priority.tier == selectedTier,
+                        currentTavernTier = currentTavernTier,
+                        onClick = { selectedTier = priority.tier }
+                    )
+                }
             }
-
-            if (nextTierTargets.isNotEmpty()) {
-                DrawerSectionTitle(title = "下本盯牌")
-                DrawerShopAvatarShelf(
-                    minions = nextTierTargets,
-                    emptyLabel = "下本还没有明确目标",
-                    badgeLabel = { "下本" }
-                )
-            }
-
-            DrawerActionStrip(
-                title = "当前打法",
-                body = localizedStrategyText(strategy.earlyStrategy, strategy),
-                accent = OverlayDrawerAccent
+        }
+        selectedPriority?.let { priority ->
+            DrawerTierPriorityRow(
+                priority = priority,
+                currentTavernTier = currentTavernTier,
+                nextTierTargets = nextTierTargets
             )
+        }
+    }
+}
 
-            strategy.whenToCommit?.takeIf { it.isNotBlank() }?.let { signal ->
-                DrawerActionStrip(
-                    title = "成型信号",
-                    body = localizedStrategyText(signal, strategy),
-                    accent = OverlayDrawerWarning
+@Composable
+private fun DrawerTierPriorityTab(
+    priority: TacticalTierPriority,
+    selected: Boolean,
+    currentTavernTier: Int?,
+    onClick: () -> Unit
+) {
+    val isCurrentTier = currentTavernTier == priority.tier
+    val isNextTier = currentTavernTier != null && currentTavernTier < 6 && currentTavernTier + 1 == priority.tier
+    val accent = when {
+        isCurrentTier -> OverlayDrawerAccent
+        isNextTier -> DashboardMint
+        else -> OverlayDrawerStrokeSoft.copy(alpha = 0.9f)
+    }
+    val label = when {
+        isCurrentTier -> "当前"
+        isNextTier -> "下本"
+        else -> null
+    }
+
+    Surface(
+        modifier = Modifier
+            .clip(RoundedCornerShape(999.dp))
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(999.dp),
+        color = if (selected) accent.copy(alpha = 0.18f) else OverlayDrawerInset.copy(alpha = 0.86f),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            accent.copy(alpha = if (selected) 0.44f else 0.18f)
+        )
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = tavernTierStars(priority.tier),
+                color = accent,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Black
+            )
+            label?.let {
+                Text(
+                    text = it,
+                    color = accent,
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            if (priority.minions.isNotEmpty()) {
+                Text(
+                    text = priority.minions.size.toString(),
+                    color = OverlayDrawerText,
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Medium
                 )
             }
         }
@@ -2145,210 +2857,404 @@ private fun DrawerTacticalTab(
 
 @OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
-private fun DrawerShopAvatarShelf(
-    minions: List<KeyMinion>,
-    emptyLabel: String,
-    badgeLabel: (KeyMinion) -> String
+private fun DrawerTierPriorityRow(
+    priority: TacticalTierPriority,
+    currentTavernTier: Int?,
+    nextTierTargets: List<KeyMinion>
 ) {
-    if (minions.isEmpty()) {
+    val isCurrentTier = currentTavernTier == priority.tier
+    val isNextTier = currentTavernTier != null && currentTavernTier < 6 && currentTavernTier + 1 == priority.tier
+    val accent = when {
+        isCurrentTier -> OverlayDrawerAccent
+        isNextTier -> DashboardMint
+        else -> OverlayDrawerStrokeSoft.copy(alpha = 0.9f)
+    }
+    val highlightTargets = nextTierTargets.map { it.cardId ?: it.name }.toSet()
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.94f),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            accent.copy(alpha = if (isCurrentTier || isNextTier) 0.34f else 0.18f)
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(accent.copy(alpha = 0.06f), OverlayDrawerCore.copy(alpha = 0.14f))
+                    )
+                )
+                .padding(horizontal = 10.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(999.dp),
+                        color = accent.copy(alpha = 0.14f)
+                    ) {
+                        Text(
+                            text = tavernTierStars(priority.tier),
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                            color = accent,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Black
+                        )
+                    }
+                    if (isCurrentTier || isNextTier) {
+                        Text(
+                            text = if (isCurrentTier) "当前" else "下本",
+                            color = accent,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+                if (priority.minions.isNotEmpty()) {
+                    Text(
+                        text = "${priority.minions.size} 张",
+                        color = accent,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+
+            if (priority.minions.isEmpty()) {
+                Text(
+                    text = "暂无优选",
+                    color = OverlayDrawerSubtext,
+                    style = MaterialTheme.typography.labelSmall
+                )
+            } else {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    priority.minions.forEach { minion ->
+                        DrawerTierMinionChip(
+                            minion = minion,
+                            highlighted = (minion.cardId ?: minion.name) in highlightTargets
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DrawerFinalBoardAvatarRow(minions: List<KeyMinion>) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.94f),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            OverlayDrawerStrokeSoft.copy(alpha = 0.16f)
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 8.dp, vertical = 7.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            minions.forEach { minion ->
+                MinionHeadshot(
+                    minion = minion,
+                    modifier = Modifier.size(42.dp),
+                    borderColor = OverlayDrawerAccent.copy(alpha = 0.78f),
+                    innerPadding = 1.dp,
+                    artScale = 1.18f
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DrawerTrinketRecommendationRow(
+    trinkets: List<TacticalTrinketCard>,
+    emptyTitle: String,
+    emptyBody: String
+) {
+    if (trinkets.isEmpty()) {
         DrawerEmptyStateCard(
             modifier = Modifier.fillMaxWidth(),
-            title = emptyLabel,
-            body = "当前先按上面的主抓顺序买牌。"
+            title = emptyTitle,
+            body = emptyBody
         )
         return
     }
 
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.94f),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            OverlayDrawerStrokeSoft.copy(alpha = 0.16f)
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 8.dp, vertical = 7.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            trinkets.forEach { trinket ->
+                DrawerTrinketChip(trinket = trinket)
+            }
+        }
+    }
+}
+
+@Composable
+private fun DrawerTrinketChip(trinket: TacticalTrinketCard) {
+    Column(
+        modifier = Modifier.width(72.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        TrinketHeadshot(
+            trinket = trinket,
+            modifier = Modifier.size(46.dp)
+        )
+        Text(
+            text = trinket.name,
+            color = OverlayDrawerText,
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontSize = 9.sp,
+                lineHeight = 11.sp
+            ),
+            fontWeight = FontWeight.Medium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun TrinketHeadshot(
+    trinket: TacticalTrinketCard,
+    modifier: Modifier = Modifier
+) {
+    val models = resolveTrinketImageModels(trinket)
+    var modelIndex by remember(models) { mutableStateOf(0) }
+    val currentModel = models.getOrNull(modelIndex)
+
+    if (currentModel == null) {
+        TrinketArtworkFallback(trinket)
+        return
+    }
+
+    Box(
+        modifier = modifier
+            .clip(CircleShape)
+            .border(2.dp, OverlayDrawerAccent.copy(alpha = 0.78f), CircleShape),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(1.dp)
+                .clip(CircleShape)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color(0xFF405773), Color(0xFF16202D))
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            SubcomposeAsyncImage(
+                model = currentModel,
+                contentDescription = trinket.name,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .scale(1.12f),
+                contentScale = ContentScale.Crop,
+                loading = { TrinketArtworkFallback(trinket) },
+                error = {
+                    val nextIndex = modelIndex + 1
+                    if (nextIndex < models.size) {
+                        LaunchedEffect(nextIndex) {
+                            modelIndex = nextIndex
+                        }
+                    } else {
+                        TrinketArtworkFallback(trinket)
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun resolveTrinketImageModels(trinket: TacticalTrinketCard): List<Any> {
+    val context = LocalContext.current.applicationContext
+    val remoteModel = remember(trinket.cardId) {
+        "$TRINKET_CARD_ART_URL_PREFIX${trinket.cardId}.jpg"
+    }
+    val models by produceState(
+        initialValue = listOfNotNull(
+            TrinketImageCache.localModel(context, trinket.cardId),
+            remoteModel
+        ),
+        key1 = trinket.cardId
+    ) {
+        val localFile = TrinketImageCache.ensureCached(context, trinket.cardId)
+        value = listOfNotNull(localFile, remoteModel).distinct()
+    }
+    return models
+}
+
+@Composable
+private fun TrinketArtworkFallback(trinket: TacticalTrinketCard) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.linearGradient(
+                    colors = listOf(Color(0xFF21384C), Color(0xFF0D1721))
+                )
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = trinket.name.take(2),
+            color = Color.White,
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Black
+        )
+    }
+}
+
+@Composable
+private fun DrawerTierMinionChip(
+    minion: KeyMinion,
+    highlighted: Boolean
+) {
+    val accent = if (highlighted) DashboardMint else tacticalMinionAccent(minion)
+    val displayName = localizedMinionTitle(minion) ?: minion.name
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = accent.copy(alpha = if (highlighted) 0.18f else 0.12f),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            accent.copy(alpha = if (highlighted) 0.34f else 0.2f)
+        )
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            MinionHeadshot(
+                minion = minion,
+                modifier = Modifier.size(26.dp),
+                borderColor = accent,
+                innerPadding = 1.dp,
+                artScale = 1.16f
+            )
+            Text(
+                text = displayName,
+                color = OverlayDrawerText,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = when (minion.statusRaw?.uppercase()) {
+                    "CORE" -> "核"
+                    "RECOMMENDED" -> "优"
+                    "ADDON" -> "补"
+                    else -> "牌"
+                },
+                color = accent,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Black
+            )
+        }
+    }
+}
+
+@Composable
+private fun DrawerShopBuyAvatarRow(minions: List<KeyMinion>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        minions.forEach { minion ->
-            DrawerAvatarShelfCard(
+        minions.forEachIndexed { index, minion ->
+            DrawerShopBuyAvatarChip(
                 minion = minion,
-                badge = badgeLabel(minion),
-                accent = tacticalMinionAccent(minion)
+                highlighted = index == 0
             )
         }
     }
 }
 
 @Composable
-private fun DrawerAvatarShelfCard(
+private fun DrawerShopBuyAvatarChip(
     minion: KeyMinion,
-    badge: String,
-    accent: Color
+    highlighted: Boolean
 ) {
-    val displayName = localizedMinionTitle(minion) ?: minion.name
+    val accent = if (highlighted) OverlayDrawerAccent else tacticalMinionAccent(minion)
     Surface(
-        modifier = Modifier.width(104.dp),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(14.dp),
         color = OverlayDrawerInset.copy(alpha = 0.94f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.34f))
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            accent.copy(alpha = if (highlighted) 0.38f else 0.24f)
+        )
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(accent.copy(alpha = 0.10f), OverlayDrawerCore.copy(alpha = 0.14f))
+                        colors = listOf(accent.copy(alpha = 0.08f), OverlayDrawerCore.copy(alpha = 0.16f))
                     )
                 )
-                .padding(horizontal = 8.dp, vertical = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+                .padding(6.dp),
+            contentAlignment = Alignment.TopEnd
         ) {
-            Box(contentAlignment = Alignment.TopEnd) {
-                MinionHeadshot(
-                    minion = minion,
-                    modifier = Modifier.size(64.dp),
-                    borderColor = accent
-                )
+            MinionHeadshot(
+                minion = minion,
+                modifier = Modifier.size(54.dp),
+                borderColor = accent,
+                innerPadding = 1.dp,
+                artScale = 1.18f
+            )
+            if (highlighted) {
                 Surface(
-                    modifier = Modifier.offset(x = 4.dp, y = (-4).dp),
+                    modifier = Modifier.offset(x = 2.dp, y = (-2).dp),
                     shape = RoundedCornerShape(999.dp),
-                    color = accent.copy(alpha = 0.18f),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.28f))
+                    color = accent.copy(alpha = 0.18f)
                 ) {
                     Text(
-                        text = badge,
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                        text = "首",
+                        modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp),
                         color = accent,
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Black
                     )
-                }
-            }
-            Text(
-                text = displayName,
-                color = OverlayDrawerText,
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.Black,
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-            MiniMetaBadge(
-                text = "${minion.techLevel}本",
-                accent = DashboardIce
-            )
-        }
-    }
-}
-
-@Composable
-private fun DrawerShopBuyRow(
-    minion: KeyMinion,
-    rank: Int,
-    accent: Color,
-    badge: String,
-    currentTavernTier: Int?
-) {
-    val displayName = localizedMinionTitle(minion) ?: minion.name
-    val reason = tacticalMinionReason(
-        minion = minion,
-        currentTavernTier = currentTavernTier,
-        rank = rank
-    )
-    Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = OverlayDrawerInset.copy(alpha = 0.94f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.38f))
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    Brush.horizontalGradient(
-                        colors = listOf(accent.copy(alpha = 0.10f), OverlayDrawerCore.copy(alpha = 0.14f))
-                    )
-                )
-                .padding(horizontal = 12.dp, vertical = 9.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Surface(
-                shape = RoundedCornerShape(999.dp),
-                color = accent.copy(alpha = 0.14f),
-                border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.28f))
-            ) {
-                Text(
-                    text = rank.toString(),
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
-                    color = accent,
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Black
-                )
-            }
-            Box(contentAlignment = Alignment.BottomEnd) {
-                MinionHeadshot(
-                    minion = minion,
-                    modifier = Modifier.size(66.dp),
-                    borderColor = accent
-                )
-                Surface(
-                    modifier = Modifier.offset(x = 4.dp, y = 2.dp),
-                    shape = RoundedCornerShape(999.dp),
-                    color = OverlayDrawerShell.copy(alpha = 0.92f),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, DashboardIce.copy(alpha = 0.34f))
-                ) {
-                    Text(
-                        text = "${minion.techLevel}本",
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                        color = DashboardIce,
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Black
-                    )
-                }
-            }
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = displayName,
-                        color = OverlayDrawerText,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Black,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Surface(
-                        shape = RoundedCornerShape(999.dp),
-                        color = accent.copy(alpha = 0.14f),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, accent.copy(alpha = 0.26f))
-                    ) {
-                        Text(
-                            text = badge,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            color = accent,
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Black
-                        )
-                    }
-                }
-                Text(
-                    text = reason,
-                    color = OverlayDrawerSubtext,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    MiniMetaBadge(text = minionStatusLabel(minion.statusRaw), accent = accent)
-                    if (minion.phase.isNotBlank()) {
-                        MiniMetaBadge(text = minion.phase, accent = DashboardMint)
-                    }
                 }
             }
         }
@@ -2684,6 +3590,7 @@ private fun RecommendationBlock(
                         selectedTribes = selectedTribes,
                         cardRules = cardRules,
                         cardMetadata = cardMetadata,
+                        selectedHeroCardId = selectedHero?.heroCardId,
                         onClick = { onSelectStrategy(strategy.id) }
                     )
                 }
@@ -3098,8 +4005,19 @@ private fun StrategyCommandCard(
     selectedTribes: Set<Tribe>,
     cardRules: CardRulesCatalog,
     cardMetadata: BattlegroundCardMetadataCatalog,
+    selectedHeroCardId: String?,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val isTrueFinalBoard = tacticalIsTrueFinalBoard(
+        context = context,
+        strategy = strategy,
+        selectedTribes = selectedTribes,
+        cardRules = cardRules,
+        cardMetadata = cardMetadata,
+        selectedHeroCardId = selectedHeroCardId
+    )
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -3140,6 +4058,12 @@ private fun StrategyCommandCard(
                                 rating = drawerStrategyRatingLabel(strategy.tier),
                                 accent = if (selected) DashboardGold else DashboardIce
                             )
+                            if (isTrueFinalBoard) {
+                                MiniMetaBadge(
+                                    text = "真成型",
+                                    accent = DashboardMint
+                                )
+                            }
                         }
                         MainCompReasonLine(strategy = strategy)
                     }

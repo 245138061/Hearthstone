@@ -44,6 +44,12 @@ data class BattlegroundCardMetadataEntry(
     val races: List<String> = emptyList(),
     @SerialName("spell_school")
     val spellSchool: String? = null,
+    @SerialName("associated_races")
+    val associatedRaces: List<String> = emptyList(),
+    val text: String? = null,
+    @SerialName("localized_text")
+    val localizedText: String? = null,
+    val mechanics: List<String> = emptyList(),
     @SerialName("is_pool_minion")
     val isPoolMinion: Boolean = false,
     @SerialName("is_pool_spell")

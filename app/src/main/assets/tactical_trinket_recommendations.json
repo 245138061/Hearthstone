@@ -1,0 +1,249 @@
+{
+  "recommendations": {
+    "beast_self_damage": {
+      "lesserCardIds": [
+        "BG30_MagicItem_700",
+        "BG30_MagicItem_427",
+        "BG35_MagicItem_872"
+      ],
+      "greaterCardIds": [
+        "BG32_MagicItem_306",
+        "BG30_MagicItem_427t",
+        "BG32_MagicItem_200"
+      ]
+    },
+    "beast_stegodon": {
+      "lesserCardIds": [
+        "BG35_MagicItem_702",
+        "BG30_MagicItem_931",
+        "BG35_MagicItem_872"
+      ],
+      "greaterCardIds": [
+        "BG32_MagicItem_200",
+        "BG30_MagicItem_427t"
+      ]
+    },
+    "demon_fodder": {
+      "lesserCardIds": [
+        "BG35_MagicItem_151",
+        "BG35_MagicItem_150",
+        "BG30_MagicItem_841"
+      ],
+      "greaterCardIds": [
+        "BG35_MagicItem_154",
+        "BG30_MagicItem_701",
+        "BG30_MagicItem_879t"
+      ]
+    },
+    "dragon_kalecgos": {
+      "lesserCardIds": [
+        "BG35_MagicItem_840",
+        "BG30_MagicItem_900",
+        "BG32_MagicItem_416"
+      ],
+      "greaterCardIds": [
+        "BG30_MagicItem_418",
+        "BG35_MagicItem_840t",
+        "BG30_MagicItem_900t"
+      ]
+    },
+    "elemental_cycle": {
+      "lesserCardIds": [
+        "BG30_MagicItem_979",
+        "BG32_MagicItem_802",
+        "BG30_MagicItem_544"
+      ],
+      "greaterCardIds": [
+        "BG32_MagicItem_888",
+        "BG30_MagicItem_544t",
+        "BG32_MagicItem_832t"
+      ]
+    },
+    "elemental_tier2_ballers": {
+      "lesserCardIds": [
+        "BG30_MagicItem_979",
+        "BG35_MagicItem_852",
+        "BG35_MagicItem_850"
+      ],
+      "greaterCardIds": [
+        "BG35_MagicItem_861",
+        "BG30_MagicItem_951",
+        "BG35_MagicItem_862"
+      ]
+    },
+    "quilboar_avenge": {
+      "lesserCardIds": [
+        "BG32_MagicItem_279",
+        "BG32_MagicItem_808",
+        "BG30_MagicItem_988"
+      ],
+      "greaterCardIds": [
+        "BG35_MagicItem_431t",
+        "BG30_MagicItem_988t",
+        "BG35_MagicItem_432"
+      ]
+    },
+    "quilboar_smuggler": {
+      "lesserCardIds": [
+        "BG32_MagicItem_809",
+        "BG35_MagicItem_434",
+        "BG30_MagicItem_411"
+      ],
+      "greaterCardIds": [
+        "BG32_MagicItem_274",
+        "BG30_MagicItem_546",
+        "BG32_MagicItem_284"
+      ]
+    },
+    "mech_automaton": {
+      "lesserCardIds": [
+        "BG30_MagicItem_984",
+        "BG30_MagicItem_303",
+        "BG35_MagicItem_300"
+      ],
+      "greaterCardIds": [
+        "BG32_MagicItem_282",
+        "BG30_MagicItem_440",
+        "BG30_MagicItem_910"
+      ]
+    },
+    "mech_shield": {
+      "lesserCardIds": [
+        "BG30_MagicItem_984",
+        "BG30_MagicItem_978",
+        "BG30_MagicItem_709"
+      ],
+      "greaterCardIds": [
+        "BG32_MagicItem_283",
+        "BG32_MagicItem_171",
+        "BG35_MagicItem_743"
+      ]
+    },
+    "murloc_mrrglton": {
+      "lesserCardIds": [
+        "BG35_MagicItem_309",
+        "BG32_MagicItem_416",
+        "BG35_MagicItem_305"
+      ],
+      "greaterCardIds": [
+        "BG35_MagicItem_753",
+        "BG30_MagicItem_418"
+      ]
+    },
+    "murloc_handbuff": {
+      "lesserCardIds": [
+        "BG35_MagicItem_305",
+        "BG32_MagicItem_893",
+        "BG30_MagicItem_914"
+      ],
+      "greaterCardIds": [
+        "BG30_MagicItem_914t",
+        "BG32_MagicItem_926",
+        "BG32_MagicItem_301"
+      ]
+    },
+    "murloc_scam": {
+      "lesserCardIds": [
+        "BG30_MagicItem_432",
+        "BG35_MagicItem_305",
+        "BG30_MagicItem_914"
+      ],
+      "greaterCardIds": [
+        "BG32_MagicItem_111",
+        "BG30_MagicItem_702",
+        "BG32_MagicItem_925"
+      ]
+    },
+    "naga_spellspam": {
+      "lesserCardIds": [
+        "BG32_MagicItem_930",
+        "BG35_MagicItem_920",
+        "BG32_MagicItem_931"
+      ],
+      "greaterCardIds": [
+        "BG30_MagicItem_548",
+        "BG35_MagicItem_923",
+        "BG32_MagicItem_801t"
+      ]
+    },
+    "naga_deep_blue": {
+      "lesserCardIds": [
+        "BG32_MagicItem_930",
+        "BG30_MagicItem_434",
+        "BG30_MagicItem_422"
+      ],
+      "greaterCardIds": [
+        "BG30_MagicItem_828",
+        "BG30_MagicItem_828",
+        "BG30_MagicItem_422t"
+      ]
+    },
+    "pirate_bounty": {
+      "lesserCardIds": [
+        "BG35_MagicItem_890",
+        "BG30_MagicItem_924"
+      ],
+      "greaterCardIds": [
+        "BG32_MagicItem_801t",
+        "BG35_MagicItem_712",
+        "BG35_MagicItem_710"
+      ]
+    },
+    "pirate_exodia": {
+      "lesserCardIds": [
+        "BG30_MagicItem_924",
+        "BG32_MagicItem_231",
+        "BG30_MagicItem_706"
+      ],
+      "greaterCardIds": [
+        "BG35_MagicItem_714",
+        "BG30_MagicItem_987",
+        "BG30_MagicItem_439"
+      ]
+    },
+    "undead_attack": {
+      "lesserCardIds": [
+        "BG30_MagicItem_437",
+        "BG30_MagicItem_713",
+        "BG30_MagicItem_547"
+      ],
+      "greaterCardIds": [
+        "BG32_MagicItem_270t",
+        "BG30_MagicItem_547t"
+      ]
+    },
+    "undead_end_of_turn": {
+      "lesserCardIds": [
+        "BG35_MagicItem_306",
+        "BG30_MagicItem_301",
+        "BG30_MagicItem_989"
+      ],
+      "greaterCardIds": [
+        "BG32_MagicItem_204",
+        "BG35_MagicItem_310",
+        "BG32_MagicItem_270t"
+      ]
+    },
+    "undead_overflow": {
+      "lesserCardIds": [
+        "BG30_MagicItem_547",
+        "BG30_MagicItem_700",
+        "BG30_MagicItem_706"
+      ],
+      "greaterCardIds": [
+        "BG30_MagicItem_310"
+      ]
+    },
+    "neutral_back_to_back": {
+      "lesserCardIds": [
+        "BG30_MagicItem_706",
+        "BG30_MagicItem_422"
+      ],
+      "greaterCardIds": [
+        "BG30_MagicItem_548",
+        "BG30_MagicItem_422t",
+        "BG35_MagicItem_923"
+      ]
+    }
+  }
+}

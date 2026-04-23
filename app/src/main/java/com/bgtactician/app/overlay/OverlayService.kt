@@ -930,6 +930,7 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
         var bestHeroSourceLabel = "AI全量识别"
         var bestResolvedTribes = selectedTribes
         var stableTribes: Set<Tribe>? = null
+        val observedTribes = linkedSetOf<Tribe>()
         var latestTavernTierDetection: TavernTierDetection? = null
         val failures = mutableListOf<String>()
 
@@ -979,10 +980,18 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
             latestTribeAttempt = attempt.result?.let { attempt } ?: latestTribeAttempt
 
             val attemptResult = attempt.result
-            attemptResult
+            val detectedTribes = attemptResult
                 ?.toDomainTribes()
-                ?.takeIf { it.size == 5 }
+                .orEmpty()
+            if (detectedTribes.isNotEmpty()) {
+                observedTribes += detectedTribes
+            }
+            detectedTribes
+                .takeIf { it.size == 5 }
                 ?.let { stableTribes = it }
+            if (stableTribes == null && attemptCount >= 2 && observedTribes.size == 5) {
+                stableTribes = observedTribes.toSet()
+            }
 
             val effectiveSelectedTribes = stableTribes?.takeIf { it.size == 5 } ?: selectedTribes
             val aiHeroOptions = attemptResult
@@ -1021,6 +1030,7 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
                         result = recognizedResult,
                         sourceLabel = attempt.sourceLabel.trim(),
                         tavernTierDetection = tavernTierDetection,
+                        resolvedHeroes = resolvedHeroes,
                         summaryText = buildString {
                             append(attempt.sourceLabel.trim().ifBlank { "AI全量识别" })
                             append(" 已锁定 ")
@@ -1053,6 +1063,7 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
                     result = bestVisionResult,
                     sourceLabel = bestHeroSourceLabel,
                     tavernTierDetection = latestTavernTierDetection,
+                    resolvedHeroes = bestResolvedHeroes,
                     summaryText = "${bestHeroSourceLabel}已识别 ${bestResolvedHeroes.size} 个英雄，其余槽位仍在波动，请手动确认".take(160),
                     headerLabel = "识别槽位=${bestHeroOptions.size}"
                 )
@@ -1082,6 +1093,7 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
                         result = latestResult,
                         sourceLabel = latestTribeAttempt.sourceLabel.trim(),
                         tavernTierDetection = latestTavernTierDetection,
+                        resolvedHeroes = latestResolvedHeroes,
                         summaryText = "${latestTribeAttempt.sourceLabel.orEmpty()}已识别 ${latestAiHeroOptions.size} 个英雄，正在等待进一步确认".take(160),
                         headerLabel = "识别槽位=${latestAiHeroOptions.size}"
                     )
@@ -1227,10 +1239,17 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
                 )
             },
             validate = { execution ->
-                HeroSelectionVisionValidator.validate(execution.result)
-                    .errors
-                    .takeIf { it.isNotEmpty() }
-                    ?.joinToString("；", prefix = "校验失败: ")
+                val validation = HeroSelectionVisionValidator.validate(
+                    result = execution.result,
+                    requireCompleteTribes = false
+                )
+                when {
+                    validation.errors.isNotEmpty() ->
+                        validation.errors.joinToString("；", prefix = "校验失败: ")
+                    execution.result.availableTribes.distinct().isEmpty() ->
+                        "校验失败: available_tribes 为空"
+                    else -> null
+                }
             }
         )
 
@@ -1307,8 +1326,10 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
         result: HeroSelectionVisionResult,
         sourceLabel: String,
         summaryText: String,
-        tavernTierDetection: TavernTierDetection? = null
+        tavernTierDetection: TavernTierDetection? = null,
+        resolvedHeroes: List<ResolvedHeroStatOption> = emptyList()
     ): AutoDetectDebugInfo {
+        val resolvedBySlot = resolvedHeroes.associateBy(ResolvedHeroStatOption::slot)
         return AutoDetectDebugInfo(
             recognizedTribesLabel = result.availableTribes.joinToString(" / ") { it.label },
             rawText = summaryText,
@@ -1321,12 +1342,20 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
             aiHeroesLabel = result.selectableHeroOptions
                 .sortedBy(HeroSelectionVisionHeroOption::slot)
                 .joinToString(" / ") { option ->
+                    val resolvedHero = resolvedBySlot[option.slot]
                     buildString {
                         append("槽")
                         append(option.slot + 1)
                         append(":")
-                        append(option.name?.trim()?.takeIf(String::isNotBlank) ?: "未命名")
-                        option.heroCardId?.trim()?.takeIf(String::isNotBlank)?.let { heroCardId ->
+                        append(
+                            resolvedHero?.displayName?.takeIf(String::isNotBlank)
+                                ?: option.name?.trim()?.takeIf(String::isNotBlank)
+                                ?: "未命名"
+                        )
+                        (resolvedHero?.heroCardId ?: option.heroCardId)
+                            ?.trim()
+                            ?.takeIf(String::isNotBlank)
+                            ?.let { heroCardId ->
                             append(" [")
                             append(heroCardId)
                             append("]")
@@ -1344,13 +1373,15 @@ class OverlayService : LifecycleService(), SavedStateRegistryOwner {
         sourceLabel: String,
         summaryText: String,
         tavernTierDetection: TavernTierDetection? = null,
-        headerLabel: String? = null
+        headerLabel: String? = null,
+        resolvedHeroes: List<ResolvedHeroStatOption> = emptyList()
     ): AutoDetectDebugInfo {
         return buildAiRecognitionDebugInfo(
             result = result,
             sourceLabel = sourceLabel.ifBlank { "AI全量识别" },
             summaryText = summaryText,
-            tavernTierDetection = tavernTierDetection
+            tavernTierDetection = tavernTierDetection,
+            resolvedHeroes = resolvedHeroes
         ).copy(
             headerLabel = headerLabel
         )

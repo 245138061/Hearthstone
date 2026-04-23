@@ -36,6 +36,10 @@ class BattlegroundCardMetadataModelsTest {
                   "type": "MINION",
                   "tech_level": 6,
                   "races": ["DEMON"],
+                  "associated_races": ["DEMON"],
+                  "text": "After you buy a minion, eat one in the Tavern.",
+                  "localized_text": "在你购买一个随从后，吞食酒馆中的一个随从。",
+                  "mechanics": ["TRIGGER_VISUAL"],
                   "is_pool_minion": true,
                   "premium_card_id": "BG21_005_G"
                 },
@@ -62,6 +66,10 @@ class BattlegroundCardMetadataModelsTest {
         assertEquals("MINION", felbat.type)
         assertEquals(6, felbat.techLevel)
         assertEquals(listOf("DEMON"), felbat.races)
+        assertEquals(listOf("DEMON"), felbat.associatedRaces)
+        assertEquals("After you buy a minion, eat one in the Tavern.", felbat.text)
+        assertEquals("在你购买一个随从后，吞食酒馆中的一个随从。", felbat.localizedText)
+        assertEquals(listOf("TRIGGER_VISUAL"), felbat.mechanics)
         assertTrue(felbat.isPoolMinion)
         assertFalse(felbat.isPoolSpell)
 
