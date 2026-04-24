@@ -14,6 +14,7 @@ import com.bgtactician.app.data.model.CatalogRefreshResult
 import com.bgtactician.app.data.model.CatalogSnapshot
 import com.bgtactician.app.data.model.RemoteCatalogFile
 import com.bgtactician.app.data.model.RemoteManifest
+import com.bgtactician.app.data.model.SeasonLineupCatalog
 import com.bgtactician.app.data.model.StrategyCatalog
 import com.bgtactician.app.data.model.StrategyDataSource
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +40,7 @@ class StrategyRepository {
     private var cachedCardStats: BattlegroundCardStatsCatalog? = null
     private var cachedHeroStats: BattlegroundHeroStatsCatalog? = null
     private var cachedHeroNameIndex: BattlegroundHeroNameIndex? = null
+    private var cachedSeasonLineupCatalog: SeasonLineupCatalog? = null
 
     suspend fun loadCatalog(context: Context, ignoreMemoryCache: Boolean = false): CatalogSnapshot {
         if (!ignoreMemoryCache) {
@@ -87,6 +89,22 @@ class StrategyRepository {
                 emptyMap()
             }
             snapshot.also { cachedCardRules = it }
+        }
+    }
+
+    suspend fun loadSeasonLineupCatalog(
+        context: Context,
+        ignoreMemoryCache: Boolean = false
+    ): SeasonLineupCatalog {
+        if (!ignoreMemoryCache) {
+            cachedSeasonLineupCatalog?.let { return it }
+        }
+
+        return withContext(Dispatchers.IO) {
+            val snapshot = decodeSeasonLineupCatalog(
+                context.assets.open(SEASON_LINEUP_ASSET_FILE).bufferedReader().use { it.readText() }
+            )
+            snapshot.also { cachedSeasonLineupCatalog = it }
         }
     }
 
@@ -305,6 +323,9 @@ class StrategyRepository {
     }
 
     private fun decode(raw: String): StrategyCatalog = json.decodeFromString<StrategyCatalog>(raw)
+
+    private fun decodeSeasonLineupCatalog(raw: String): SeasonLineupCatalog =
+        json.decodeFromString<SeasonLineupCatalog>(raw)
 
     private fun decodeCardRules(raw: String): CardRulesCatalog = json.decodeFromString<Map<String, CardRuleEntry>>(raw)
 
@@ -621,6 +642,7 @@ class StrategyRepository {
 
     companion object {
         private const val ASSET_FILE = "strategies_zerotoheroes_zhCN.json"
+        private const val SEASON_LINEUP_ASSET_FILE = "s13_lineup_variants_zhCN.json"
         private const val CARD_METADATA_ASSET_FILE = "bgs_card_metadata.json"
         private const val HERO_NAME_INDEX_ASSET = "bgs_hero_name_index.json"
         private const val CACHE_FILE = "strategies_cache.json"

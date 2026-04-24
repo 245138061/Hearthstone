@@ -1,0 +1,393 @@
+{
+  "season": "S13",
+  "title": "酒馆战棋S13赛季推荐阵容变体",
+  "groups": [
+    {
+      "id": "beast",
+      "name": "野兽",
+      "variants": [
+        {
+          "id": "beast_octopus_high_attack",
+          "name": "章鱼高攻流",
+          "tribes": [
+            "野兽"
+          ],
+          "final_board": [
+            "下水道老鼠",
+            "魔刃豹",
+            "下水道老鼠头目",
+            "香蕉猛猿",
+            "深潜巨兽"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": "剩余名称待继续校对。"
+        },
+        {
+          "id": "beast_parrot_big_wolf",
+          "name": "野兽鹦大狼",
+          "tribes": [
+            "野兽"
+          ],
+          "final_board": [
+            "巨大的金刚鹦鹉",
+            "巨狼戈德林",
+            "下水道老鼠头目",
+            "狡猾的迅猛龙",
+            "香蕉猛猿",
+            "提图斯·瑞文戴尔"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": ""
+        },
+        {
+          "id": "beast_self_damage_variant_1",
+          "name": "自伤野兽1号",
+          "tribes": [
+            "野兽"
+          ],
+          "final_board": [
+            "巨大的金刚鹦鹉",
+            "重金属双头飞龙",
+            "猎食的虎鲨",
+            "炫彩灼天者",
+            "狂乱的猎豹",
+            "布莱恩·铜须"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": "可评估是否并入现有自伤流野兽。"
+        },
+        {
+          "id": "beast_self_damage_variant_2",
+          "name": "自伤野兽2号",
+          "tribes": [
+            "野兽"
+          ],
+          "final_board": [
+            "巨大的金刚鹦鹉",
+            "尖角救星",
+            "尖角救星",
+            "炫彩灼天者",
+            "鞭笞者特里高雷",
+            "提图斯·瑞文戴尔"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": "和当前主文档的自伤流野兽较接近，可作为分支版本保留。"
+        },
+        {
+          "id": "beast_charge_divine_chicken",
+          "name": "进击鸡神流",
+          "tribes": [
+            "野兽",
+            "机械"
+          ],
+          "final_board": [
+            "重踏剑龙",
+            "魔刃豹",
+            "下水道老鼠",
+            "下水道老鼠头目",
+            "P-0UL-TR-0N护巢机",
+            "P-0UL-TR-0N护巢机"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "murloc",
+      "name": "鱼人",
+      "variants": [
+        {
+          "id": "murloc_mrrglton_family",
+          "name": "莫格顿家族",
+          "tribes": [
+            "鱼人"
+          ],
+          "final_board": [
+            "厄戈尔表弟",
+            "莫格顿大妈",
+            "莫格顿老爹",
+            "布莱恩·铜须",
+            "达卡莱附魔师"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": "后续可继续补满6个站位。"
+        },
+        {
+          "id": "murloc_handbuff_classic",
+          "name": "传统手牌鱼",
+          "tribes": [
+            "鱼人"
+          ],
+          "final_board": [
+            "低音提琴鱼人",
+            "狂热变装鱼人",
+            "凶饿的觅食者",
+            "布莱恩·铜须",
+            "裁脍鱼人"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": ""
+        },
+        {
+          "id": "murloc_painter",
+          "name": "鱼人画家流",
+          "tribes": [
+            "鱼人"
+          ],
+          "final_board": [
+            "原始鱼人画家",
+            "原始鱼人画家",
+            "布莱恩·铜须",
+            "江河弹跳鱼"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": "随从数量暂不满6，需结合截图补齐。"
+        },
+        {
+          "id": "murloc_scam_poison",
+          "name": "卑鄙下毒人",
+          "tribes": [
+            "中立",
+            "鱼人"
+          ],
+          "final_board": [
+            "怒胆喷毒鱼人",
+            "凶饿的觅食者",
+            "莽神火车王",
+            "英勇的逆袭者",
+            "魔鳍真菌学家",
+            "致命的孢子"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": "适合作为“下毒鱼人”的分支阵容。"
+        }
+      ]
+    },
+    {
+      "id": "elemental",
+      "name": "元素",
+      "variants": [
+        {
+          "id": "elemental_arcane_absorb",
+          "name": "奥术吸收流",
+          "tribes": [
+            "元素"
+          ],
+          "final_board": [
+            "灯中熔岩",
+            "巴琳达·斯通赫尔斯",
+            "魔网浮灵",
+            "空气亡魂",
+            "活化艾泽里特",
+            "布莱恩·铜须"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": ""
+        },
+        {
+          "id": "elemental_drake",
+          "name": "飞龙元素流",
+          "tribes": [
+            "元素",
+            "野兽"
+          ],
+          "final_board": [
+            "巴琳达·斯通赫尔斯",
+            "魔网浮灵",
+            "重金属双头飞龙",
+            "爆焰灯神",
+            "布莱恩·铜须",
+            "提图斯·瑞文戴尔"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": "属于混合流派，后续可评估是否单独建策略。"
+        },
+        {
+          "id": "elemental_azzinoth_meter",
+          "name": "电表法糯流",
+          "tribes": [
+            "海盗",
+            "元素"
+          ],
+          "final_board": [
+            "空军上将罗杰斯",
+            "骄傲的私掠者",
+            "布莱恩·铜须",
+            "活化艾泽里特",
+            "空气亡魂",
+            "魔网浮灵"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": ""
+        },
+        {
+          "id": "elemental_ultraviolet",
+          "name": "极紫外流",
+          "tribes": [
+            "元素"
+          ],
+          "final_board": [
+            "灯中熔岩",
+            "极紫外升腾者",
+            "极紫外升腾者",
+            "守护者艾库隆",
+            "布莱恩·铜须",
+            "酒馆旋风"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": ""
+        },
+        {
+          "id": "elemental_tier2_ballers",
+          "name": "二本投球流",
+          "tribes": [
+            "元素"
+          ],
+          "final_board": [
+            "火焰投球手",
+            "冰雪投球手"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": "当前只有核心组件，后续需要补完整成型阵容。"
+        }
+      ]
+    },
+    {
+      "id": "undead",
+      "name": "亡灵",
+      "variants": [
+        {
+          "id": "undead_spellpower_cleave",
+          "name": "法强宰割流",
+          "tribes": [
+            "亡灵"
+          ],
+          "final_board": [
+            "友善的恶鬼",
+            "骨火巨龙夜之魇",
+            "断手被遗忘者",
+            "致命打击者",
+            "德鲁斯特堕落屠夫",
+            "提图斯·瑞文戴尔"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": ""
+        },
+        {
+          "id": "undead_meter",
+          "name": "电表亡灵流",
+          "tribes": [
+            "亡灵",
+            "海盗"
+          ],
+          "final_board": [
+            "空军上将罗杰斯",
+            "骄傲的私掠者",
+            "被遗忘者纺织工",
+            "断手被遗忘者",
+            "致命打击者"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": ""
+        },
+        {
+          "id": "undead_overflow",
+          "name": "亡灵挤爆流",
+          "tribes": [
+            "野兽",
+            "亡灵",
+            "纳迦"
+          ],
+          "final_board": [
+            "巨大的金刚鹦鹉",
+            "古墓捣蛋鬼",
+            "遗骸看管者",
+            "海上双雄",
+            "提图斯·瑞文戴尔",
+            "熔岩潜伏者"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": "可与主文档的“溢出流亡灵”互相对照。"
+        },
+        {
+          "id": "undead_exodia",
+          "name": "亡灵跳操流",
+          "tribes": [
+            "亡灵",
+            "海盗"
+          ],
+          "final_board": [
+            "骨火巨龙夜之魇",
+            "义肢假手",
+            "疫病行尸",
+            "跳船海盗",
+            "跳船海盗",
+            "提图斯·瑞文戴尔"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": ""
+        },
+        {
+          "id": "undead_frequency_skull",
+          "name": "频率骷髅流",
+          "tribes": [
+            "亡灵",
+            "混合"
+          ],
+          "final_board": [
+            "暮光龙崽",
+            "暮光巢母",
+            "下水道老鼠头目",
+            "达卡莱附魔师",
+            "提图斯·瑞文戴尔",
+            "骷髅狂射手"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "neutral",
+      "name": "中立",
+      "variants": [
+        {
+          "id": "neutral_cataclysm_school",
+          "name": "灾变小学生",
+          "tribes": [
+            "中立"
+          ],
+          "final_board": [
+            "邪火咒龙",
+            "灾变先锋",
+            "灾变先锋",
+            "达卡莱附魔师"
+          ],
+          "lesser_trinkets": [],
+          "greater_trinkets": [],
+          "notes": "可作为“背靠背”体系的简化版本记录。"
+        }
+      ]
+    }
+  ]
+}

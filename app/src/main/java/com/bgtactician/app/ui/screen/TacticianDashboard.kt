@@ -68,6 +68,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -95,6 +96,9 @@ import com.bgtactician.app.data.model.HeroRecommendationTier
 import com.bgtactician.app.data.model.HeroStatsMatchSource
 import com.bgtactician.app.data.model.KeyMinion
 import com.bgtactician.app.data.model.ResolvedHeroStatOption
+import com.bgtactician.app.data.model.SeasonLineupCatalog
+import com.bgtactician.app.data.model.SeasonLineupGroup
+import com.bgtactician.app.data.model.SeasonLineupVariant
 import com.bgtactician.app.data.model.StrategyComp
 import com.bgtactician.app.data.model.StrategyCatalog
 import com.bgtactician.app.data.model.StrategyDataSource
@@ -132,6 +136,7 @@ private val DashboardJson = Json { ignoreUnknownKeys = true }
 private const val BUNDLED_STRATEGY_ASSET = "strategies_zerotoheroes_zhCN.json"
 private const val BUNDLED_TRINKET_RECOMMENDATION_ASSET = "tactical_trinket_recommendations.json"
 private const val BUNDLED_CARD_METADATA_ASSET = "bgs_card_metadata.json"
+private const val BUNDLED_SEASON_LINEUP_ASSET = "s13_lineup_variants_zhCN.json"
 private const val HERO_FRAME_IMAGE_URL =
     "https://static.zerotoheroes.com/hearthstone/asset/firestone/images/bgs_hero_frame.png"
 private const val HERO_CARD_ART_URL_PREFIX =
@@ -406,6 +411,15 @@ private data class TacticalResolvedTrinketRecommendation(
     val greater: List<TacticalTrinketCard> = emptyList()
 )
 
+private data class TacticalSeasonLineupPayload(
+    val group: SeasonLineupGroup,
+    val variant: SeasonLineupVariant,
+    val finalBoard: List<KeyMinion>,
+    val lesserTrinkets: List<TacticalTrinketCard>,
+    val greaterTrinkets: List<TacticalTrinketCard>,
+    val isTrueFinalBoard: Boolean
+)
+
 @Serializable
 private data class TacticalTrinketRecommendationCatalog(
     val recommendations: Map<String, TacticalTrinketRecommendation> = emptyMap()
@@ -515,6 +529,25 @@ private object BundledTrinketCardRegistry {
                     .toMap()
             }.getOrDefault(emptyMap())
             cachedTrinkets = parsed
+            parsed
+        }
+    }
+}
+
+private object BundledSeasonLineupRegistry {
+    @Volatile
+    private var cachedCatalog: SeasonLineupCatalog? = null
+
+    fun get(context: Context): SeasonLineupCatalog {
+        cachedCatalog?.let { return it }
+        return synchronized(this) {
+            cachedCatalog?.let { return@synchronized it }
+            val parsed = runCatching {
+                DashboardJson.decodeFromString<SeasonLineupCatalog>(
+                    context.assets.open(BUNDLED_SEASON_LINEUP_ASSET).bufferedReader().use { it.readText() }
+                )
+            }.getOrDefault(SeasonLineupCatalog(season = "", title = "", groups = emptyList()))
+            cachedCatalog = parsed
             parsed
         }
     }
@@ -2396,21 +2429,6 @@ private fun DrawerTacticalTab(
     cardRules: CardRulesCatalog,
     cardMetadata: BattlegroundCardMetadataCatalog
 ) {
-    if (strategy == null) {
-        DrawerTabShell(
-            title = "战术详情",
-            subtitle = "先选流派",
-            badge = "${selectedTribes.size}/5"
-        ) { bodyModifier ->
-            DrawerEmptyStateCard(
-                modifier = bodyModifier,
-                title = "还没选流派",
-                body = "先去流派页选一套。"
-            )
-        }
-        return
-    }
-
     val context = LocalContext.current.applicationContext
 
     DrawerTabShell(
@@ -2496,42 +2514,58 @@ private fun DrawerTacticalTab(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (finalBoardMinions.isNotEmpty()) {
-                DrawerSectionTitle(title = "成型阵容")
-                DrawerFinalBoardAvatarRow(minions = finalBoardMinions)
-            }
-
-            DrawerSectionTitle(title = "推荐小饰品")
-            DrawerTrinketRecommendationRow(
-                trinkets = recommendedTrinkets.lesser,
-                emptyTitle = "视频推荐待补录",
-                emptyBody = "这套的小饰品推荐还没从视频逐帧录入。"
+            SeasonLineupVariantBlock(
+                sectionTitle = { DrawerSectionTitle(it) },
+                selectedTribes = selectedTribes,
+                cardRules = cardRules,
+                cardMetadata = cardMetadata
             )
 
-            DrawerSectionTitle(title = "推荐大饰品")
-            DrawerTrinketRecommendationRow(
-                trinkets = recommendedTrinkets.greater,
-                emptyTitle = "视频推荐待补录",
-                emptyBody = "这套的大饰品推荐还没从视频逐帧录入。"
-            )
-
-            DrawerSectionTitle(title = "当前酒馆先买")
-            if (liveRecommendations.primaryChoices.isEmpty()) {
+            if (strategy == null) {
+                DrawerSectionTitle(title = "当前流派执行")
                 DrawerEmptyStateCard(
                     modifier = Modifier.fillMaxWidth(),
-                    title = "当前没有可直接买的主目标",
-                    body = "先稳经济或等升本。"
+                    title = "还没选流派",
+                    body = "这上面是独立的 S13 理想成型；下面的先买和各本优选仍然要先去流派页选一套。"
                 )
             } else {
-                DrawerShopBuyAvatarRow(minions = liveRecommendations.primaryChoices)
-            }
+                if (finalBoardMinions.isNotEmpty()) {
+                    DrawerSectionTitle(title = "当前流派成型")
+                    DrawerFinalBoardAvatarRow(minions = finalBoardMinions)
+                }
 
-            DrawerSectionTitle(title = "各本优选")
-            DrawerTierPriorityBoard(
-                priorities = tierPriorities,
-                currentTavernTier = autoDetectDebugInfo.tavernTier,
-                nextTierTargets = nextTierTargets
-            )
+                DrawerSectionTitle(title = "当前流派小饰品")
+                DrawerTrinketRecommendationRow(
+                    trinkets = recommendedTrinkets.lesser,
+                    emptyTitle = "视频推荐待补录",
+                    emptyBody = "这套的小饰品推荐还没从视频逐帧录入。"
+                )
+
+                DrawerSectionTitle(title = "当前流派大饰品")
+                DrawerTrinketRecommendationRow(
+                    trinkets = recommendedTrinkets.greater,
+                    emptyTitle = "视频推荐待补录",
+                    emptyBody = "这套的大饰品推荐还没从视频逐帧录入。"
+                )
+
+                DrawerSectionTitle(title = "当前酒馆先买")
+                if (liveRecommendations.primaryChoices.isEmpty()) {
+                    DrawerEmptyStateCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = "当前没有可直接买的主目标",
+                        body = "先稳经济或等升本。"
+                    )
+                } else {
+                    DrawerShopBuyAvatarRow(minions = liveRecommendations.primaryChoices)
+                }
+
+                DrawerSectionTitle(title = "各本优选")
+                DrawerTierPriorityBoard(
+                    priorities = tierPriorities,
+                    currentTavernTier = autoDetectDebugInfo.tavernTier,
+                    nextTierTargets = nextTierTargets
+                )
+            }
         }
     }
 }
@@ -2726,6 +2760,519 @@ private fun tacticalRecommendedTrinkets(
         lesser = resolve(recommendation.lesserCardIds, "LESSER_TRINKET"),
         greater = resolve(recommendation.greaterCardIds, "GREATER_TRINKET")
     )
+}
+
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun SeasonLineupVariantBlock(
+    sectionTitle: @Composable (String) -> Unit,
+    selectedTribes: Set<Tribe>,
+    cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog
+) {
+    val context = LocalContext.current.applicationContext
+    val seasonCatalog = remember(context) { BundledSeasonLineupRegistry.get(context) }
+    val activeTribeLabels = remember(selectedTribes) { selectedTribes.map(Tribe::label).toSet() }
+    val defaultGroupId = remember(seasonCatalog, activeTribeLabels) {
+        defaultSeasonLineupGroupId(
+            catalog = seasonCatalog,
+            activeTribeLabels = activeTribeLabels
+        ).orEmpty()
+    }
+    var selectedGroupId by rememberSaveable(seasonCatalog.season) {
+        mutableStateOf(defaultGroupId)
+    }
+    var manuallySelectedGroup by rememberSaveable(seasonCatalog.season) {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(seasonCatalog.season, defaultGroupId, selectedGroupId, manuallySelectedGroup) {
+        if (selectedGroupId.isBlank() || seasonCatalog.groups.none { it.id == selectedGroupId }) {
+            selectedGroupId = defaultGroupId
+            manuallySelectedGroup = false
+        } else if (!manuallySelectedGroup && defaultGroupId.isNotBlank() && selectedGroupId != defaultGroupId) {
+            selectedGroupId = defaultGroupId
+        }
+    }
+    val selectedGroup = remember(seasonCatalog, selectedGroupId) {
+        seasonCatalog.groups.firstOrNull { it.id == selectedGroupId } ?: seasonCatalog.groups.firstOrNull()
+    }
+    var selectedVariantId by rememberSaveable(seasonCatalog.season, selectedGroup?.id) {
+        mutableStateOf(selectedGroup?.variants?.firstOrNull()?.id.orEmpty())
+    }
+    val selectedVariant = remember(selectedGroup, selectedVariantId) {
+        selectedGroup?.variants?.firstOrNull { it.id == selectedVariantId }
+            ?: selectedGroup?.variants?.firstOrNull()
+    }
+    LaunchedEffect(selectedGroup?.id, selectedVariant?.id) {
+        if (selectedVariantId != selectedVariant?.id) {
+            selectedVariantId = selectedVariant?.id.orEmpty()
+        }
+    }
+    val selectedPayload = remember(
+        selectedGroup,
+        selectedVariant,
+        selectedTribes,
+        cardRules,
+        cardMetadata
+    ) {
+        resolveSeasonLineupPayload(
+            group = selectedGroup,
+            variant = selectedVariant,
+            selectedTribes = selectedTribes,
+            cardRules = cardRules,
+            cardMetadata = cardMetadata
+        )
+    }
+
+    sectionTitle("S13 推荐变体")
+    if (seasonCatalog.groups.isEmpty()) {
+        DrawerEmptyStateCard(
+            modifier = Modifier.fillMaxWidth(),
+            title = "赛季变体还没载入",
+            body = "当前内置包没有可用的 S13 推荐阵容。"
+        )
+        return
+    }
+
+    DrawerSeasonLineupSelectorCard(
+        groups = seasonCatalog.groups,
+        selectedGroupId = selectedGroupId,
+        selectedVariantId = selectedVariantId,
+        activeTribeLabels = activeTribeLabels,
+        selectedPayload = selectedPayload,
+        onSelectGroup = {
+            selectedGroupId = it
+            manuallySelectedGroup = true
+        },
+        onSelectVariant = { selectedVariantId = it }
+    )
+
+    sectionTitle("理想成型阵容")
+    val finalBoard = selectedPayload?.finalBoard.orEmpty()
+    if (finalBoard.isEmpty()) {
+        DrawerEmptyStateCard(
+            modifier = Modifier.fillMaxWidth(),
+            title = "理想成型待补录",
+            body = "这套变体的最终站位还没整理完整。"
+        )
+    } else {
+        DrawerFinalBoardAvatarRow(minions = finalBoard)
+    }
+
+    sectionTitle("理想小饰品")
+    DrawerTrinketRecommendationRow(
+        trinkets = selectedPayload?.lesserTrinkets.orEmpty(),
+        emptyTitle = "理想小饰品待补录",
+        emptyBody = "这套变体的小饰品还没补进 S13 资产。"
+    )
+
+    sectionTitle("理想大饰品")
+    DrawerTrinketRecommendationRow(
+        trinkets = selectedPayload?.greaterTrinkets.orEmpty(),
+        emptyTitle = "理想大饰品待补录",
+        emptyBody = "这套变体的大饰品还没补进 S13 资产。"
+    )
+}
+
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun DrawerSeasonLineupSelectorCard(
+    groups: List<SeasonLineupGroup>,
+    selectedGroupId: String,
+    selectedVariantId: String,
+    activeTribeLabels: Set<String>,
+    selectedPayload: TacticalSeasonLineupPayload?,
+    onSelectGroup: (String) -> Unit,
+    onSelectVariant: (String) -> Unit
+) {
+    val selectedGroup = selectedPayload?.group ?: groups.firstOrNull { it.id == selectedGroupId } ?: groups.firstOrNull()
+    val selectedVariant = selectedPayload?.variant
+    val statusLabel = when {
+        selectedPayload == null -> "待选择"
+        activeTribeLabels.size < 5 -> "理想阵容"
+        selectedPayload.isTrueFinalBoard -> "真成型"
+        selectedGroup?.name in activeTribeLabels -> "含禁用"
+        else -> "主族禁用"
+    }
+    val statusAccent = when (statusLabel) {
+        "真成型" -> DashboardMint
+        "含禁用" -> OverlayDrawerWarning
+        "主族禁用" -> DashboardCoral
+        else -> DashboardIce
+    }
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        color = OverlayDrawerInset.copy(alpha = 0.94f),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            OverlayDrawerStrokeSoft.copy(alpha = 0.22f)
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            OverlayDrawerAccent.copy(alpha = 0.05f),
+                            OverlayDrawerCore.copy(alpha = 0.18f)
+                        )
+                    )
+                )
+                .padding(horizontal = 10.dp, vertical = 9.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    Text(
+                        text = "先选主种族，再选变体",
+                        color = OverlayDrawerSubtext,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                    Text(
+                        text = selectedVariant?.name ?: "请选择 S13 变体",
+                        color = OverlayDrawerText,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Black
+                    )
+                }
+                selectedGroup?.let { group ->
+                    MiniMetaBadge(
+                        text = group.name,
+                        accent = seasonTribeAccent(group.name)
+                    )
+                }
+                MiniMetaBadge(
+                    text = statusLabel,
+                    accent = statusAccent
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                groups.forEach { group ->
+                    SeasonLineupGroupChip(
+                        label = group.name,
+                        selected = group.id == selectedGroup?.id,
+                        active = group.name in activeTribeLabels,
+                        onClick = { onSelectGroup(group.id) }
+                    )
+                }
+            }
+
+            selectedGroup?.variants?.takeIf { it.isNotEmpty() }?.let { variants ->
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    variants.forEach { variant ->
+                        SeasonLineupVariantChip(
+                            label = variant.name,
+                            selected = variant.id == selectedVariantId,
+                            onClick = { onSelectVariant(variant.id) }
+                        )
+                    }
+                }
+            }
+
+            selectedVariant?.tribes?.takeIf { it.isNotEmpty() }?.let { tribes ->
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    tribes.distinct().forEach { tribeLabel ->
+                        MiniMetaBadge(
+                            text = tribeLabel,
+                            accent = if (tribeLabel in activeTribeLabels) {
+                                seasonTribeAccent(tribeLabel)
+                            } else {
+                                OverlayDrawerWarning
+                            }
+                        )
+                    }
+                }
+            }
+
+            selectedVariant?.notes?.takeIf { it.isNotBlank() }?.let { note ->
+                Text(
+                    text = note,
+                    color = OverlayDrawerSubtext,
+                    style = MaterialTheme.typography.bodySmall,
+                    lineHeight = 18.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SeasonLineupGroupChip(
+    label: String,
+    selected: Boolean,
+    active: Boolean,
+    onClick: () -> Unit
+) {
+    val accent = when {
+        active -> seasonTribeAccent(label)
+        else -> OverlayDrawerWarning
+    }
+    Surface(
+        modifier = Modifier
+            .heightIn(min = 40.dp)
+            .clip(RoundedCornerShape(999.dp))
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(999.dp),
+        color = if (selected) accent.copy(alpha = 0.18f) else OverlayDrawerShell.copy(alpha = 0.86f),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            accent.copy(alpha = if (selected) 0.48f else 0.22f)
+        )
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 9.dp),
+            color = if (selected) accent else OverlayDrawerText,
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = if (selected) FontWeight.Black else FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+private fun SeasonLineupVariantChip(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .heightIn(min = 40.dp)
+            .clip(RoundedCornerShape(999.dp))
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(999.dp),
+        color = if (selected) OverlayDrawerAccent.copy(alpha = 0.18f) else OverlayDrawerInset.copy(alpha = 0.88f),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            if (selected) OverlayDrawerAccent.copy(alpha = 0.42f) else OverlayDrawerStrokeSoft.copy(alpha = 0.18f)
+        )
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 9.dp),
+            color = if (selected) OverlayDrawerAccent else OverlayDrawerText,
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = if (selected) FontWeight.Black else FontWeight.Medium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+private fun defaultSeasonLineupGroupId(
+    catalog: SeasonLineupCatalog,
+    activeTribeLabels: Set<String>
+): String? {
+    return catalog.groups.firstOrNull { it.name in activeTribeLabels }?.id
+        ?: catalog.groups.firstOrNull()?.id
+}
+
+private fun resolveSeasonLineupPayload(
+    group: SeasonLineupGroup?,
+    variant: SeasonLineupVariant?,
+    selectedTribes: Set<Tribe>,
+    cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog
+): TacticalSeasonLineupPayload? {
+    if (group == null || variant == null) return null
+    val finalBoard = resolveSeasonLineupFinalBoard(variant, cardMetadata)
+    return TacticalSeasonLineupPayload(
+        group = group,
+        variant = variant,
+        finalBoard = finalBoard,
+        lesserTrinkets = resolveSeasonLineupTrinkets(
+            names = variant.lesserTrinkets,
+            expectedSchool = "LESSER_TRINKET",
+            cardMetadata = cardMetadata
+        ),
+        greaterTrinkets = resolveSeasonLineupTrinkets(
+            names = variant.greaterTrinkets,
+            expectedSchool = "GREATER_TRINKET",
+            cardMetadata = cardMetadata
+        ),
+        isTrueFinalBoard = seasonLineupIsTrueFinalBoard(
+            finalBoard = finalBoard,
+            selectedTribes = selectedTribes,
+            cardRules = cardRules,
+            cardMetadata = cardMetadata
+        )
+    )
+}
+
+private fun resolveSeasonLineupFinalBoard(
+    variant: SeasonLineupVariant?,
+    cardMetadata: BattlegroundCardMetadataCatalog
+): List<KeyMinion> {
+    variant ?: return emptyList()
+    val candidates = buildMetadataCandidates(
+        cardMetadata = cardMetadata,
+        type = "MINION"
+    )
+    return variant.finalBoard.map { name ->
+        val resolved = resolveMetadataCandidateByName(name, candidates)
+        if (resolved == null) {
+            KeyMinion(
+                id = -1,
+                name = name,
+                techLevel = 1,
+                phase = "FINAL_BOARD",
+                statusRaw = "CORE",
+                finalBoardWeight = 999
+            )
+        } else {
+            KeyMinion(
+                id = -1,
+                name = resolved.displayName,
+                techLevel = resolved.techLevel ?: 1,
+                phase = "FINAL_BOARD",
+                statusRaw = "CORE",
+                finalBoardWeight = 999,
+                cardId = resolved.cardId
+            )
+        }
+    }
+}
+
+private fun resolveSeasonLineupTrinkets(
+    names: List<String>,
+    expectedSchool: String,
+    cardMetadata: BattlegroundCardMetadataCatalog
+): List<TacticalTrinketCard> {
+    if (names.isEmpty()) return emptyList()
+    val candidates = buildMetadataCandidates(
+        cardMetadata = cardMetadata,
+        type = "BATTLEGROUND_TRINKET",
+        expectedSchool = expectedSchool
+    )
+    return names.map { name ->
+        val resolved = resolveMetadataCandidateByName(name, candidates)
+        if (resolved == null) {
+            TacticalTrinketCard(
+                cardId = name,
+                name = name,
+                spellSchool = expectedSchool
+            )
+        } else {
+            TacticalTrinketCard(
+                cardId = resolved.cardId,
+                name = resolved.displayName,
+                spellSchool = resolved.spellSchool
+            )
+        }
+    }
+}
+
+private fun seasonLineupIsTrueFinalBoard(
+    finalBoard: List<KeyMinion>,
+    selectedTribes: Set<Tribe>,
+    cardRules: CardRulesCatalog,
+    cardMetadata: BattlegroundCardMetadataCatalog
+): Boolean {
+    if (selectedTribes.size != 5 || finalBoard.isEmpty()) return false
+    if (finalBoard.any { it.cardId.isNullOrBlank() }) return false
+    return finalBoard.all { minion ->
+        MinionLobbyFilter.isMinionAllowedInLobby(
+            minion = minion,
+            selectedTribes = selectedTribes,
+            cardRules = cardRules,
+            cardMetadata = cardMetadata,
+            selectedHeroCardId = null
+        )
+    }
+}
+
+private data class MetadataCardCandidate(
+    val cardId: String,
+    val displayName: String,
+    val techLevel: Int?,
+    val spellSchool: String?,
+    val names: List<String>
+)
+
+private fun buildMetadataCandidates(
+    cardMetadata: BattlegroundCardMetadataCatalog,
+    type: String,
+    expectedSchool: String? = null
+): List<MetadataCardCandidate> {
+    return cardMetadata.cards.mapNotNull { (cardId, metadata) ->
+        if (metadata.type != type) {
+            null
+        } else if (expectedSchool != null && metadata.spellSchool != expectedSchool) {
+            null
+        } else {
+            MetadataCardCandidate(
+                cardId = cardId,
+                displayName = metadata.localizedName?.takeIf { it.isNotBlank() } ?: metadata.name,
+                techLevel = metadata.techLevel,
+                spellSchool = metadata.spellSchool,
+                names = listOfNotNull(
+                    metadata.localizedName?.takeIf { it.isNotBlank() },
+                    metadata.name.takeIf { it.isNotBlank() }
+                )
+            )
+        }
+    }
+}
+
+private fun resolveMetadataCandidateByName(
+    name: String,
+    candidates: List<MetadataCardCandidate>
+): MetadataCardCandidate? {
+    val normalizedTarget = normalizeCardLookupName(name)
+    if (normalizedTarget.isBlank()) return null
+
+    candidates.firstOrNull { candidate ->
+        candidate.names.any { candidateName ->
+            normalizeCardLookupName(candidateName) == normalizedTarget
+        }
+    }?.let { return it }
+
+    return candidates.mapNotNull { candidate ->
+        candidate.names
+            .map(::normalizeCardLookupName)
+            .filter(String::isNotBlank)
+            .mapNotNull { candidateName ->
+                when {
+                    candidateName.contains(normalizedTarget) -> candidate to (candidateName.length - normalizedTarget.length)
+                    normalizedTarget.contains(candidateName) -> candidate to (normalizedTarget.length - candidateName.length + 2_000)
+                    else -> null
+                }
+            }
+            .minByOrNull { it.second }
+    }.minByOrNull { it.second }?.first
+}
+
+private fun normalizeCardLookupName(value: String): String {
+    return value.trim()
+        .replace(Regex("[^\\p{L}\\p{N}]"), "")
+        .lowercase(Locale.ROOT)
+}
+
+private fun seasonTribeAccent(label: String): Color {
+    val tribe = Tribe.entries.firstOrNull { it.label == label }
+    return tribe?.let(::tribeOverlayAccent) ?: OverlayDrawerAccent
 }
 
 @OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
@@ -3618,6 +4165,13 @@ private fun DetailBlock(
                 subtitle = "看转型和拿牌"
             )
 
+            SeasonLineupVariantBlock(
+                sectionTitle = { SubsectionTitle(it) },
+                selectedTribes = selectedTribes,
+                cardRules = cardRules,
+                cardMetadata = cardMetadata
+            )
+
             if (strategy == null) {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
@@ -3629,7 +4183,7 @@ private fun DetailBlock(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text("还没选流派", fontWeight = FontWeight.Bold)
-                        Text("先从上面选一套。", color = DashboardMuted)
+                        Text("上面这块是独立的 S13 理想成型；下面的战术执行仍然要先从流派列表里选一套。", color = DashboardMuted)
                     }
                 }
                 return@Column
