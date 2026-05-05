@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -29,16 +28,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bgtactician.app.data.model.AutoDetectStatus
 
 private val BubbleNight = Color(0xFF1A2235)
 private val BubbleBoard = Color(0xFF26344C)
 private val BubbleTrim = Color(0x66FFD45B)
 private val BubbleGold = Color(0xFFFFD45B)
 private val BubbleIvory = Color(0xFFFFF1C9)
-private val BubbleMint = Color(0xFF6BE0A5)
-private val BubbleWarn = Color(0xFFFFC36E)
-private val BubbleDanger = Color(0xFFFF8364)
 
 @Composable
 fun MiniOverlayBubble() {
@@ -76,13 +71,13 @@ fun MiniOverlayBubble() {
             }
 
             Text(
-                text = "酒",
+                text = "流",
                 color = BubbleIvory,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Black
             )
             Text(
-                text = "馆",
+                text = "派",
                 color = BubbleIvory,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Black
@@ -97,62 +92,6 @@ fun MiniOverlayBubble() {
                     .background(BubbleGold.copy(alpha = 0.56f))
             )
         }
-    }
-}
-
-@Composable
-fun MiniOverlayDetectChip(
-    status: AutoDetectStatus,
-    tavernTierLabel: String? = null
-) {
-    val visual = when (status) {
-        AutoDetectStatus.WAITING -> DetectChipVisual("等待", BubbleWarn, 1f)
-        AutoDetectStatus.SCANNING -> DetectChipVisual("识别中", BubbleGold, 0.84f)
-        AutoDetectStatus.LOCKED -> DetectChipVisual("已锁定", BubbleMint, 1f)
-        AutoDetectStatus.NEEDS_ATTENTION -> DetectChipVisual("重试", BubbleDanger, 1f)
-    }
-
-    Column(
-        modifier = Modifier
-            .widthIn(min = 52.dp)
-            .padding(horizontal = 2.dp, vertical = 2.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(1.dp)
-    ) {
-        RowStatus(visual = visual)
-        tavernTierLabel?.takeIf(String::isNotBlank)?.let {
-            Text(
-                text = it.substringBefore(" · "),
-                color = BubbleIvory.copy(alpha = 0.88f),
-                fontSize = 8.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1
-            )
-        }
-    }
-}
-
-@Composable
-private fun RowStatus(
-    visual: DetectChipVisual
-) {
-    androidx.compose.foundation.layout.Row(
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(6.dp)
-                .clip(CircleShape)
-                .background(visual.signal.copy(alpha = visual.alpha))
-        )
-        Text(
-            text = visual.text,
-            color = BubbleIvory,
-            fontSize = 9.sp,
-            fontWeight = FontWeight.Black,
-            maxLines = 1
-        )
     }
 }
 
@@ -184,9 +123,3 @@ private fun BubbleDoorGlyph(
         )
     }
 }
-
-private data class DetectChipVisual(
-    val text: String,
-    val signal: Color,
-    val alpha: Float
-)

@@ -30,24 +30,6 @@ fun readLocalProperty(key: String): String {
 val remoteManifestUrl = providers.gradleProperty("BGT_REMOTE_MANIFEST_URL")
     .orElse(readLocalProperty("BGT_REMOTE_MANIFEST_URL"))
     .get()
-val defaultVisionBaseUrl = providers.gradleProperty("BGT_VISION_BASE_URL")
-    .orElse(readLocalProperty("BGT_VISION_BASE_URL"))
-    .get()
-val defaultVisionApiKey = providers.gradleProperty("BGT_VISION_API_KEY")
-    .orElse(readLocalProperty("BGT_VISION_API_KEY"))
-    .get()
-val defaultVisionModel = providers.gradleProperty("BGT_VISION_MODEL")
-    .orElse(readLocalProperty("BGT_VISION_MODEL"))
-    .get()
-val backupVisionBaseUrl = providers.gradleProperty("BGT_VISION_BACKUP_BASE_URL")
-    .orElse(readLocalProperty("BGT_VISION_BACKUP_BASE_URL"))
-    .get()
-val backupVisionApiKey = providers.gradleProperty("BGT_VISION_BACKUP_API_KEY")
-    .orElse(readLocalProperty("BGT_VISION_BACKUP_API_KEY"))
-    .get()
-val backupVisionModel = providers.gradleProperty("BGT_VISION_BACKUP_MODEL")
-    .orElse(readLocalProperty("BGT_VISION_BACKUP_MODEL"))
-    .get()
 
 android {
     namespace = "com.bgtactician.app"
@@ -61,12 +43,6 @@ android {
         versionName = "2026.04.10-alpha"
         vectorDrawables.useSupportLibrary = true
         buildConfigField("String", "DEFAULT_MANIFEST_URL", remoteManifestUrl.asBuildConfigString())
-        buildConfigField("String", "DEFAULT_VISION_BASE_URL", defaultVisionBaseUrl.asBuildConfigString())
-        buildConfigField("String", "DEFAULT_VISION_API_KEY", defaultVisionApiKey.asBuildConfigString())
-        buildConfigField("String", "DEFAULT_VISION_MODEL", defaultVisionModel.asBuildConfigString())
-        buildConfigField("String", "DEFAULT_VISION_BACKUP_BASE_URL", backupVisionBaseUrl.asBuildConfigString())
-        buildConfigField("String", "DEFAULT_VISION_BACKUP_API_KEY", backupVisionApiKey.asBuildConfigString())
-        buildConfigField("String", "DEFAULT_VISION_BACKUP_MODEL", backupVisionModel.asBuildConfigString())
     }
 
     buildTypes {
@@ -111,7 +87,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.service)
     implementation(libs.androidx.activity.compose)
 
@@ -123,12 +98,10 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons)
 
-    implementation(libs.coil.core)
-    implementation(libs.coil.compose)
-    implementation(libs.coil.svg)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.google.material)
-    implementation(libs.opencv)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.svg)
 
     testImplementation(libs.junit4)
 

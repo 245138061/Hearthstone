@@ -1,7 +1,6 @@
 package com.bgtactician.app.data.local
 
 import android.content.Context
-import com.bgtactician.app.BuildConfig
 import com.bgtactician.app.data.model.Tribe
 
 data class DashboardPreferences(
@@ -19,27 +18,6 @@ data class OverlaySettings(
     val bubbleOpacityPercent: Int = 72
 )
 
-enum class VisionRoutingMode(val wireValue: String, val label: String) {
-    AUTO("auto", "自动"),
-    PRIMARY_ONLY("primary_only", "仅主模型"),
-    BACKUP_ONLY("backup_only", "仅备用模型");
-
-    companion object {
-        fun fromWireValue(value: String?): VisionRoutingMode? =
-            entries.firstOrNull { it.wireValue == value?.trim() }
-    }
-}
-
-data class VisionApiSettings(
-    val baseUrl: String = "",
-    val apiKey: String = "",
-    val model: String = "",
-    val backupBaseUrl: String = "",
-    val backupApiKey: String = "",
-    val backupModel: String = "",
-    val routingMode: VisionRoutingMode = VisionRoutingMode.AUTO
-)
-
 class AppPreferences(context: Context) {
 
     private val prefs = context.getSharedPreferences("bgtactician_prefs", Context.MODE_PRIVATE)
@@ -48,7 +26,6 @@ class AppPreferences(context: Context) {
         val tribeSet = prefs.getStringSet(KEY_SELECTED_TRIBES, null)
             ?.mapNotNull(Tribe::fromWireName)
             ?.toSet()
-            ?.takeIf { it.isNotEmpty() }
             ?: DEFAULT_TRIBES
 
         return DashboardPreferences(
@@ -62,7 +39,10 @@ class AppPreferences(context: Context) {
         manifestUrlOverride: String
     ) {
         prefs.edit()
-            .putStringSet(KEY_SELECTED_TRIBES, selectedTribes.map(Tribe::wireName).toSet())
+            .putStringSet(
+                KEY_SELECTED_TRIBES,
+                selectedTribes.map(Tribe::wireName).toSet()
+            )
             .putString(KEY_MANIFEST_URL_OVERRIDE, manifestUrlOverride.trim())
             .apply()
     }
@@ -96,33 +76,6 @@ class AppPreferences(context: Context) {
             .apply()
     }
 
-    fun loadVisionApiSettings(): VisionApiSettings {
-        val baseUrl = prefs.getString(KEY_VISION_BASE_URL, null)?.trim().orEmpty()
-        val apiKey = prefs.getString(KEY_VISION_API_KEY, null)?.trim().orEmpty()
-        val model = prefs.getString(KEY_VISION_MODEL, null)?.trim().orEmpty()
-        val backupBaseUrl = prefs.getString(KEY_VISION_BACKUP_BASE_URL, null)?.trim().orEmpty()
-        val backupApiKey = prefs.getString(KEY_VISION_BACKUP_API_KEY, null)?.trim().orEmpty()
-        val backupModel = prefs.getString(KEY_VISION_BACKUP_MODEL, null)?.trim().orEmpty()
-        val routingMode = VisionRoutingMode.fromWireValue(
-            prefs.getString(KEY_VISION_ROUTING_MODE, null)
-        ) ?: VisionRoutingMode.AUTO
-        return VisionApiSettings(
-            baseUrl = baseUrl.ifBlank { BuildConfig.DEFAULT_VISION_BASE_URL },
-            apiKey = apiKey.ifBlank { BuildConfig.DEFAULT_VISION_API_KEY },
-            model = model.ifBlank { BuildConfig.DEFAULT_VISION_MODEL },
-            backupBaseUrl = backupBaseUrl.ifBlank { BuildConfig.DEFAULT_VISION_BACKUP_BASE_URL },
-            backupApiKey = backupApiKey.ifBlank { BuildConfig.DEFAULT_VISION_BACKUP_API_KEY },
-            backupModel = backupModel.ifBlank { BuildConfig.DEFAULT_VISION_BACKUP_MODEL },
-            routingMode = routingMode
-        )
-    }
-
-    fun saveVisionRoutingMode(mode: VisionRoutingMode) {
-        prefs.edit()
-            .putString(KEY_VISION_ROUTING_MODE, mode.wireValue)
-            .apply()
-    }
-
     fun saveLastSync(timestampMillis: Long) {
         prefs.edit().putLong(KEY_LAST_SYNC, timestampMillis).apply()
     }
@@ -138,12 +91,6 @@ class AppPreferences(context: Context) {
 
     fun loadLastManifestVersion(): String? = prefs.getString(KEY_LAST_MANIFEST_VERSION, null)?.trim()
 
-    fun saveLastManifestUpdatedAt(value: String) {
-        prefs.edit().putString(KEY_LAST_MANIFEST_UPDATED_AT, value).apply()
-    }
-
-    fun loadLastManifestUpdatedAt(): String? = prefs.getString(KEY_LAST_MANIFEST_UPDATED_AT, null)?.trim()
-
     fun saveLastCatalogHash(hash: String) {
         prefs.edit().putString(KEY_LAST_CATALOG_HASH, hash).apply()
     }
@@ -151,30 +98,16 @@ class AppPreferences(context: Context) {
     fun loadLastCatalogHash(): String? = prefs.getString(KEY_LAST_CATALOG_HASH, null)?.trim()
 
     companion object {
-        private val DEFAULT_TRIBES = setOf(
-            Tribe.MECH,
-            Tribe.DEMON,
-            Tribe.UNDEAD,
-            Tribe.PIRATE,
-            Tribe.ELEMENTAL
-        )
+        val DEFAULT_TRIBES: Set<Tribe> = emptySet()
 
-        private const val KEY_SELECTED_TRIBES = "selected_tribes"
+        private const val KEY_SELECTED_TRIBES = "selected_tribes_v2"
         private const val KEY_MANIFEST_URL_OVERRIDE = "manifest_url_override"
         private const val KEY_OVERLAY_X = "overlay_x"
         private const val KEY_OVERLAY_Y = "overlay_y"
         private const val KEY_OVERLAY_INTERACTION_ENABLED = "overlay_interaction_enabled"
         private const val KEY_BUBBLE_OPACITY_PERCENT = "bubble_opacity_percent"
-        private const val KEY_VISION_BASE_URL = "vision_base_url"
-        private const val KEY_VISION_API_KEY = "vision_api_key"
-        private const val KEY_VISION_MODEL = "vision_model"
-        private const val KEY_VISION_BACKUP_BASE_URL = "vision_backup_base_url"
-        private const val KEY_VISION_BACKUP_API_KEY = "vision_backup_api_key"
-        private const val KEY_VISION_BACKUP_MODEL = "vision_backup_model"
-        private const val KEY_VISION_ROUTING_MODE = "vision_routing_mode"
         private const val KEY_LAST_SYNC = "last_sync"
         private const val KEY_LAST_MANIFEST_VERSION = "last_manifest_version"
-        private const val KEY_LAST_MANIFEST_UPDATED_AT = "last_manifest_updated_at"
         private const val KEY_LAST_CATALOG_HASH = "last_catalog_hash"
     }
 }

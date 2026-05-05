@@ -186,6 +186,15 @@ class SourceUrls:
     card_metadata: str | None = None
 
 
+@dataclass
+class ConversionIssue:
+    comp_id: str
+    reason: str
+
+
+LAST_CONVERSION_ISSUES: list[ConversionIssue] = []
+
+
 def load_json(source: str) -> Any:
     if source.startswith("http://") or source.startswith("https://"):
         request = Request(
@@ -418,6 +427,9 @@ def convert(
     language: str = "enUS",
     translations: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    global LAST_CONVERSION_ISSUES
+    LAST_CONVERSION_ISSUES = []
+
     raw_comps = load_json(source_urls.strategies)
     locale = load_json(source_urls.locale)
     localized_card_names = load_card_name_map(source_urls.card_names)
@@ -434,8 +446,8 @@ def convert(
         name = translation.get("name") or localized_names.get(comp_id) or raw.get("name") or comp_id
         tips = raw.get("tips") or []
         first_tip = tips[0] if tips else {}
-        tip_text = translation.get("tip") or first_tip.get("tip")
-        when_to_commit = translation.get("whenToCommit") or first_tip.get("whenToCommit")
+        tip_text = first_tip.get("tip")
+        when_to_commit = first_tip.get("whenToCommit")
         difficulty = raw.get("difficulty", "")
         source_patch_number = to_int(raw.get("patchNumber"))
         power_level = (raw.get("powerLevel") or "").strip() or None
@@ -447,21 +459,40 @@ def convert(
             [
                 tip_text,
                 when_to_commit,
-                translation.get("earlyStrategy"),
-                translation.get("lateStrategy"),
             ],
         )
         localized_tip_text = localize_embedded_card_names(tip_text, card_name_replacements)
         localized_when_to_commit = localize_embedded_card_names(when_to_commit, card_name_replacements)
-        overview = to_overview(name, localized_tip_text, localized_when_to_commit, language)
-        early_strategy = localize_embedded_card_names(
-            translation.get("earlyStrategy") or default_early_strategy(localized_when_to_commit, language),
-            card_name_replacements,
+        if language == "zhCN":
+            overview = name
+            early_strategy = ""
+            late_strategy = ""
+            localized_when_to_commit = None
+            positioning_hints: list[dict[str, Any]] = []
+        else:
+            overview = to_overview(name, localized_tip_text, localized_when_to_commit, language)
+            early_strategy = localize_embedded_card_names(
+                default_early_strategy(localized_when_to_commit, language),
+                card_name_replacements,
+            )
+            late_strategy = localize_embedded_card_names(
+                localized_tip_text or default_late_strategy(language),
+                card_name_replacements,
+            )
+            positioning_hints = build_positioning_hints(required_tribes)
+        key_minions = normalize_cards(
+            raw.get("cards", []),
+            primary_tribe,
+            language,
+            localized_card_names,
+            card_metadata_by_id,
         )
-        late_strategy = localize_embedded_card_names(
-            translation.get("lateStrategy") or localized_tip_text or default_late_strategy(language),
-            card_name_replacements,
-        )
+
+        if not key_minions:
+            LAST_CONVERSION_ISSUES.append(
+                ConversionIssue(comp_id=comp_id, reason="no_key_minions")
+            )
+            continue
 
         comps.append(
             {
@@ -479,14 +510,8 @@ def convert(
                 "early_strategy": early_strategy,
                 "late_strategy": late_strategy,
                 "upgrade_turns": DIFFICULTY_TO_TURNS.get(difficulty, DIFFICULTY_TO_TURNS[""]),
-                "positioning_hints": build_positioning_hints(required_tribes),
-                "key_minions": normalize_cards(
-                    raw.get("cards", []),
-                    primary_tribe,
-                    language,
-                    localized_card_names,
-                    card_metadata_by_id,
-                ),
+                "positioning_hints": positioning_hints,
+                "key_minions": key_minions,
             }
         )
 

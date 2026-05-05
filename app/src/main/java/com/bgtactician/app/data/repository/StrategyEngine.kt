@@ -5,10 +5,16 @@ import com.bgtactician.app.data.model.Tribe
 
 object StrategyEngine {
 
+    private const val REQUIRED_TRIBE_COUNT = 5
+
     fun filter(
         allStrategies: List<StrategyComp>,
         selectedTribes: Set<Tribe>
     ): List<StrategyComp> {
+        if (selectedTribes.size != REQUIRED_TRIBE_COUNT) {
+            return emptyList()
+        }
+
         return allStrategies
             .filter { comp ->
                 comp.requiredTribes

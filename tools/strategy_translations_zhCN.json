@@ -208,5 +208,14 @@
     "name": "背靠背",
     "whenToCommit": "背靠背 + 灾变先锋 + 巴琳达·斯通赫尔斯",
     "tip": "核心是想办法多造背靠背，常见触发组件是灾变先锋和达卡莱附魔师。同时要尽快把酒馆法术做大，邪火咒龙就是很好的放大器。"
+  },
+  "dragon_ring_bearer": {
+    "name": "龙戒流龙"
+  },
+  "elemental_shop_buff": {
+    "name": "商店增益元素"
+  },
+  "beast_leviathan": {
+    "name": "利维坦野兽"
   }
 }

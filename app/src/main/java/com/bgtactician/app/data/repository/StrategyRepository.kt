@@ -3,26 +3,18 @@ package com.bgtactician.app.data.repository
 import android.content.Context
 import com.bgtactician.app.BuildConfig
 import com.bgtactician.app.data.local.AppPreferences
-import com.bgtactician.app.data.model.BattlegroundCardMetadataCatalog
-import com.bgtactician.app.data.model.BattlegroundHeroNameEntry
-import com.bgtactician.app.data.model.BattlegroundCardStatsCatalog
-import com.bgtactician.app.data.model.CardRuleEntry
-import com.bgtactician.app.data.model.CardRulesCatalog
-import com.bgtactician.app.data.model.BattlegroundHeroNameIndex
-import com.bgtactician.app.data.model.BattlegroundHeroStatsCatalog
 import com.bgtactician.app.data.model.CatalogRefreshResult
 import com.bgtactician.app.data.model.CatalogSnapshot
 import com.bgtactician.app.data.model.RemoteCatalogFile
 import com.bgtactician.app.data.model.RemoteManifest
-import com.bgtactician.app.data.model.SeasonLineupCatalog
 import com.bgtactician.app.data.model.StrategyCatalog
 import com.bgtactician.app.data.model.StrategyDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.io.File
-import java.net.URI
 import java.net.HttpURLConnection
+import java.net.URI
 import java.net.URL
 import java.security.MessageDigest
 import java.util.Locale
@@ -35,12 +27,6 @@ class StrategyRepository {
     }
 
     private var cachedSnapshot: CatalogSnapshot? = null
-    private var cachedCardMetadata: BattlegroundCardMetadataCatalog? = null
-    private var cachedCardRules: CardRulesCatalog? = null
-    private var cachedCardStats: BattlegroundCardStatsCatalog? = null
-    private var cachedHeroStats: BattlegroundHeroStatsCatalog? = null
-    private var cachedHeroNameIndex: BattlegroundHeroNameIndex? = null
-    private var cachedSeasonLineupCatalog: SeasonLineupCatalog? = null
 
     suspend fun loadCatalog(context: Context, ignoreMemoryCache: Boolean = false): CatalogSnapshot {
         if (!ignoreMemoryCache) {
@@ -54,145 +40,17 @@ class StrategyRepository {
 
             val cached = if (cacheFile.exists()) {
                 runCatching {
-                    val catalog = decode(cacheFile.readText())
-                    catalog.takeIf(::hasRenderableMinionMetadata)?.let {
-                        CatalogSnapshot(
-                            catalog = it,
-                            source = StrategyDataSource.CACHE,
-                            lastSyncAt = preferences.loadLastSync() ?: cacheFile.lastModified().takeIf { it > 0L }
-                        )
-                    }
+                    CatalogSnapshot(
+                        catalog = decode(cacheFile.readText()),
+                        source = StrategyDataSource.CACHE,
+                        lastSyncAt = preferences.loadLastSync() ?: cacheFile.lastModified().takeIf { it > 0L }
+                    )
                 }.getOrNull()
             } else {
                 null
             }
 
-            val snapshot = cached ?: assetSnapshot
-
-            MinionImageCache.schedulePrefetch(context, snapshot.catalog)
-            snapshot.also { cachedSnapshot = it }
-        }
-    }
-
-    suspend fun loadCardRules(context: Context, ignoreMemoryCache: Boolean = false): CardRulesCatalog {
-        if (!ignoreMemoryCache) {
-            cachedCardRules?.let { return it }
-        }
-
-        return withContext(Dispatchers.IO) {
-            val cacheFile = cardRulesCacheFile(context)
-            val snapshot = if (cacheFile.exists()) {
-                runCatching {
-                    decodeCardRules(cacheFile.readText())
-                }.getOrDefault(emptyMap())
-            } else {
-                emptyMap()
-            }
-            snapshot.also { cachedCardRules = it }
-        }
-    }
-
-    suspend fun loadSeasonLineupCatalog(
-        context: Context,
-        ignoreMemoryCache: Boolean = false
-    ): SeasonLineupCatalog {
-        if (!ignoreMemoryCache) {
-            cachedSeasonLineupCatalog?.let { return it }
-        }
-
-        return withContext(Dispatchers.IO) {
-            val snapshot = decodeSeasonLineupCatalog(
-                context.assets.open(SEASON_LINEUP_ASSET_FILE).bufferedReader().use { it.readText() }
-            )
-            snapshot.also { cachedSeasonLineupCatalog = it }
-        }
-    }
-
-    suspend fun loadBattlegroundCardMetadata(
-        context: Context,
-        ignoreMemoryCache: Boolean = false
-    ): BattlegroundCardMetadataCatalog {
-        if (!ignoreMemoryCache) {
-            cachedCardMetadata?.let { return it }
-        }
-
-        return withContext(Dispatchers.IO) {
-            val cacheFile = cardMetadataCacheFile(context)
-            val snapshot = when {
-                cacheFile.exists() -> runCatching {
-                    decodeCardMetadata(cacheFile.readText())
-                }.getOrElse {
-                    bundledCardMetadata(context)
-                }
-
-                else -> bundledCardMetadata(context)
-            }
-            snapshot.also { cachedCardMetadata = it }
-        }
-    }
-
-    suspend fun loadHeroStats(
-        context: Context,
-        ignoreMemoryCache: Boolean = false
-    ): BattlegroundHeroStatsCatalog {
-        if (!ignoreMemoryCache) {
-            cachedHeroStats?.let { return it }
-        }
-
-        return withContext(Dispatchers.IO) {
-            val cacheFile = heroStatsCacheFile(context)
-            val snapshot = if (cacheFile.exists()) {
-                runCatching {
-                    decodeHeroStats(cacheFile.readText())
-                }.getOrDefault(BattlegroundHeroStatsCatalog())
-            } else {
-                BattlegroundHeroStatsCatalog()
-            }
-            snapshot.also { cachedHeroStats = it }
-        }
-    }
-
-    suspend fun loadCardStats(
-        context: Context,
-        ignoreMemoryCache: Boolean = false
-    ): BattlegroundCardStatsCatalog {
-        if (!ignoreMemoryCache) {
-            cachedCardStats?.let { return it }
-        }
-
-        return withContext(Dispatchers.IO) {
-            val cacheFile = cardStatsCacheFile(context)
-            val snapshot = if (cacheFile.exists()) {
-                runCatching {
-                    decodeCardStats(cacheFile.readText())
-                }.getOrDefault(BattlegroundCardStatsCatalog())
-            } else {
-                BattlegroundCardStatsCatalog()
-            }
-            snapshot.also { cachedCardStats = it }
-        }
-    }
-
-    suspend fun refreshHeroStats(context: Context): BattlegroundHeroStatsCatalog {
-        return withContext(Dispatchers.IO) {
-            val raw = downloadTextWithRetry(HERO_STATS_URL)
-            val decoded = decodeHeroStats(raw)
-            writeAtomically(heroStatsCacheFile(context), raw)
-            decoded.also { cachedHeroStats = it }
-        }
-    }
-
-    suspend fun loadHeroNameIndex(
-        context: Context,
-        ignoreMemoryCache: Boolean = false
-    ): BattlegroundHeroNameIndex {
-        if (!ignoreMemoryCache) {
-            cachedHeroNameIndex?.let { return it }
-        }
-
-        return withContext(Dispatchers.IO) {
-            val snapshot = readHeroNameIndex(context)
-            snapshot.also { cachedHeroNameIndex = it }
+            (cached ?: assetSnapshot).also { cachedSnapshot = it }
         }
     }
 
@@ -219,28 +77,17 @@ class StrategyRepository {
                 ?: throw IllegalStateException("远程 manifest 中没有可用的数据文件")
             val catalogUrl = resolveCatalogUrl(manifestUrl, selectedFile)
             val cacheFile = cacheFile(context)
-            val cacheText = when {
-                cacheFile.exists() -> cacheFile.readText()
-                else -> null
-            }
-            val existingHash = when {
-                cacheText != null -> sha256(cacheText)
-                else -> preferences.loadLastCatalogHash()
-            }
+            val cacheText = cacheFile.takeIf(File::exists)?.readText()
+            val existingHash = cacheText?.let(::sha256) ?: preferences.loadLastCatalogHash()
             val syncedAt = System.currentTimeMillis()
             val catalogUpdated = existingHash != selectedFile.sha256
 
             val snapshot = if (cacheText != null && existingHash == selectedFile.sha256) {
-                val catalog = decode(cacheText)
-                if (hasRenderableMinionMetadata(catalog)) {
-                    CatalogSnapshot(
-                        catalog = catalog,
-                        source = StrategyDataSource.CACHE,
-                        lastSyncAt = syncedAt
-                    )
-                } else {
-                    bundledSnapshot(context)
-                }
+                CatalogSnapshot(
+                    catalog = decode(cacheText),
+                    source = StrategyDataSource.CACHE,
+                    lastSyncAt = syncedAt
+                )
             } else {
                 val raw = downloadTextWithRetry(catalogUrl)
                 val actualHash = sha256(raw)
@@ -248,50 +95,30 @@ class StrategyRepository {
                     "远程数据校验失败，哈希不匹配"
                 }
                 val catalog = decode(raw)
-                if (hasRenderableMinionMetadata(catalog)) {
-                    writeAtomically(cacheFile, raw)
-                    preferences.saveLastCatalogHash(actualHash)
-                    CatalogSnapshot(
-                        catalog = catalog,
-                        source = StrategyDataSource.REMOTE,
-                        lastSyncAt = syncedAt
-                    )
-                } else {
-                    bundledSnapshot(context)
-                }
+                writeAtomically(cacheFile, raw)
+                preferences.saveLastCatalogHash(actualHash)
+                CatalogSnapshot(
+                    catalog = catalog,
+                    source = StrategyDataSource.REMOTE,
+                    lastSyncAt = syncedAt
+                )
             }
-            val supportSync = syncSupportFiles(
-                context = context,
-                manifest = manifest,
-                manifestUrl = manifestUrl
-            )
 
             preferences.saveLastSync(syncedAt)
             preferences.saveLastManifestVersion(manifest.version)
-            preferences.saveLastManifestUpdatedAt(manifest.updatedAt)
-            MinionImageCache.schedulePrefetch(context, snapshot.catalog)
-            cachedHeroNameIndex = readHeroNameIndex(context)
 
             CatalogRefreshResult(
                 snapshot = snapshot.also { cachedSnapshot = it },
-                wasUpdated = catalogUpdated || supportSync.updated,
+                wasUpdated = catalogUpdated,
                 manifestVersion = manifest.version,
                 manifestUpdatedAt = manifest.updatedAt,
                 sourceUrl = catalogUrl,
-                warnings = supportSync.warnings
+                warnings = emptyList()
             )
         }
     }
 
     private fun cacheFile(context: Context): File = File(context.filesDir, CACHE_FILE)
-
-    private fun cardRulesCacheFile(context: Context): File = File(context.filesDir, CARD_RULES_CACHE_FILE)
-
-    private fun cardMetadataCacheFile(context: Context): File = File(context.filesDir, CARD_METADATA_CACHE_FILE)
-
-    private fun cardStatsCacheFile(context: Context): File = File(context.filesDir, CARD_STATS_CACHE_FILE)
-
-    private fun heroStatsCacheFile(context: Context): File = File(context.filesDir, HERO_STATS_CACHE_FILE)
 
     private fun bundledSnapshot(context: Context): CatalogSnapshot {
         return CatalogSnapshot(
@@ -300,46 +127,7 @@ class StrategyRepository {
         )
     }
 
-    private fun bundledCardMetadata(context: Context): BattlegroundCardMetadataCatalog {
-        return decodeCardMetadata(
-            context.assets.open(CARD_METADATA_ASSET_FILE).bufferedReader().use { it.readText() }
-        )
-    }
-
-    private fun readHeroNameIndex(context: Context): BattlegroundHeroNameIndex {
-        val baseIndex = decodeHeroNameIndex(
-            context.assets.open(HERO_NAME_INDEX_ASSET).bufferedReader().use { it.readText() }
-        )
-        val cardMetadata = runCatching {
-            val cacheFile = cardMetadataCacheFile(context)
-            when {
-                cacheFile.exists() -> decodeCardMetadata(cacheFile.readText())
-                else -> bundledCardMetadata(context)
-            }
-        }.getOrElse {
-            bundledCardMetadata(context)
-        }
-        return mergeHeroNameIndexWithCardMetadata(baseIndex, cardMetadata)
-    }
-
     private fun decode(raw: String): StrategyCatalog = json.decodeFromString<StrategyCatalog>(raw)
-
-    private fun decodeSeasonLineupCatalog(raw: String): SeasonLineupCatalog =
-        json.decodeFromString<SeasonLineupCatalog>(raw)
-
-    private fun decodeCardRules(raw: String): CardRulesCatalog = json.decodeFromString<Map<String, CardRuleEntry>>(raw)
-
-    private fun decodeCardMetadata(raw: String): BattlegroundCardMetadataCatalog =
-        json.decodeFromString<BattlegroundCardMetadataCatalog>(raw)
-
-    private fun decodeCardStats(raw: String): BattlegroundCardStatsCatalog =
-        json.decodeFromString<BattlegroundCardStatsCatalog>(raw)
-
-    private fun decodeHeroStats(raw: String): BattlegroundHeroStatsCatalog =
-        json.decodeFromString<BattlegroundHeroStatsCatalog>(raw)
-
-    private fun decodeHeroNameIndex(raw: String): BattlegroundHeroNameIndex =
-        json.decodeFromString<BattlegroundHeroNameIndex>(raw)
 
     private fun decodeManifest(raw: String): RemoteManifest = json.decodeFromString<RemoteManifest>(raw)
 
@@ -380,133 +168,6 @@ class StrategyRepository {
     private fun validateHttps(url: String) {
         require(url.startsWith("https://")) {
             "远程更新地址必须使用 https://"
-        }
-    }
-
-    private fun syncSupportFiles(
-        context: Context,
-        manifest: RemoteManifest,
-        manifestUrl: String
-    ): SupportSyncResult {
-        var updated = false
-        val warnings = mutableListOf<String>()
-
-        manifest.supportFiles[CARD_RULES_RESOURCE_KEY]?.let { supportFile ->
-            val result = syncSupportFile(
-                cacheFile = cardRulesCacheFile(context),
-                manifestUrl = manifestUrl,
-                supportFile = supportFile,
-                resourceLabel = "卡牌规则"
-            )
-            warnings += result.warnings
-            if (result.raw != null) {
-                cachedCardRules = decodeCardRules(result.raw)
-                updated = updated || result.updated
-            } else if (cachedCardRules == null) {
-                cachedCardRules = runCatching {
-                    decodeCardRules(cardRulesCacheFile(context).readText())
-                }.getOrDefault(emptyMap())
-            }
-        }
-
-        manifest.supportFiles[CARD_METADATA_RESOURCE_KEY]?.let { supportFile ->
-            val result = syncSupportFile(
-                cacheFile = cardMetadataCacheFile(context),
-                manifestUrl = manifestUrl,
-                supportFile = supportFile,
-                resourceLabel = "战棋卡牌元数据"
-            )
-            warnings += result.warnings
-            if (result.raw != null) {
-                cachedCardMetadata = decodeCardMetadata(result.raw)
-                updated = updated || result.updated
-            } else if (cachedCardMetadata == null) {
-                cachedCardMetadata = runCatching {
-                    if (cardMetadataCacheFile(context).exists()) {
-                        decodeCardMetadata(cardMetadataCacheFile(context).readText())
-                    } else {
-                        bundledCardMetadata(context)
-                    }
-                }.getOrElse {
-                    bundledCardMetadata(context)
-                }
-            }
-        }
-
-        manifest.supportFiles[CARD_STATS_RESOURCE_KEY]?.let { supportFile ->
-            val result = syncSupportFile(
-                cacheFile = cardStatsCacheFile(context),
-                manifestUrl = manifestUrl,
-                supportFile = supportFile,
-                resourceLabel = "卡牌统计"
-            )
-            warnings += result.warnings
-            if (result.raw != null) {
-                cachedCardStats = decodeCardStats(result.raw)
-                updated = updated || result.updated
-            } else if (cachedCardStats == null) {
-                cachedCardStats = runCatching {
-                    decodeCardStats(cardStatsCacheFile(context).readText())
-                }.getOrDefault(BattlegroundCardStatsCatalog())
-            }
-        }
-
-        manifest.supportFiles[HERO_STATS_RESOURCE_KEY]?.let { supportFile ->
-            val result = syncSupportFile(
-                cacheFile = heroStatsCacheFile(context),
-                manifestUrl = manifestUrl,
-                supportFile = supportFile,
-                resourceLabel = "英雄统计"
-            )
-            warnings += result.warnings
-            if (result.raw != null) {
-                cachedHeroStats = decodeHeroStats(result.raw)
-                updated = updated || result.updated
-            } else if (cachedHeroStats == null) {
-                cachedHeroStats = runCatching {
-                    decodeHeroStats(heroStatsCacheFile(context).readText())
-                }.getOrDefault(BattlegroundHeroStatsCatalog())
-            }
-        }
-
-        return SupportSyncResult(
-            updated = updated,
-            warnings = warnings
-        )
-    }
-
-    private fun syncSupportFile(
-        cacheFile: File,
-        manifestUrl: String,
-        supportFile: RemoteCatalogFile,
-        resourceLabel: String
-    ): SupportFileSyncResult {
-        val cacheText = cacheFile.takeIf(File::exists)?.readText()
-        val existingHash = cacheText?.let(::sha256)
-
-        if (existingHash == supportFile.sha256) {
-            return SupportFileSyncResult()
-        }
-
-        val supportUrl = resolveCatalogUrl(manifestUrl, supportFile)
-        return runCatching {
-            val raw = downloadTextWithRetry(supportUrl)
-            val actualHash = sha256(raw)
-            require(actualHash == supportFile.sha256) {
-                "远程 $resourceLabel 校验失败，哈希不匹配"
-            }
-            writeAtomically(cacheFile, raw)
-            SupportFileSyncResult(
-                raw = raw,
-                updated = true
-            )
-        }.getOrElse { error ->
-            val fallbackAction = if (cacheFile.exists()) "已保留本地缓存" else "本次跳过"
-            SupportFileSyncResult(
-                warnings = listOf(
-                    "$resourceLabel 更新失败：${error.message ?: "未知错误"}；$fallbackAction"
-                )
-            )
         }
     }
 
@@ -568,104 +229,8 @@ class StrategyRepository {
         return digest.joinToString(separator = "") { byte -> "%02x".format(byte) }
     }
 
-    private fun hasRenderableMinionMetadata(catalog: StrategyCatalog): Boolean {
-        val minions = catalog.comps.flatMap { it.keyMinions }
-        if (minions.isEmpty()) return false
-
-        val withImageMetadata = minions.count {
-            !it.cardId.isNullOrBlank() || !it.imageUrl.isNullOrBlank()
-        }
-        val withStatusMetadata = minions.count { !it.statusRaw.isNullOrBlank() }
-
-        return withImageMetadata > 0 && withStatusMetadata > 0
-    }
-
-    internal fun mergeHeroNameIndexWithCardMetadata(
-        baseIndex: BattlegroundHeroNameIndex,
-        cardMetadata: BattlegroundCardMetadataCatalog
-    ): BattlegroundHeroNameIndex {
-        val mergedHeroes = linkedMapOf<String, BattlegroundHeroNameEntry>()
-        baseIndex.heroes.forEach { entry ->
-            mergedHeroes[entry.heroCardId] = entry.normalize()
-        }
-
-        cardMetadata.cards.forEach { (cardId, entry) ->
-            if (entry.type != "HERO") return@forEach
-
-            val englishName = entry.name.trim()
-            val localizedName = entry.localizedName?.trim().orEmpty()
-            if (englishName.isBlank() && localizedName.isBlank()) return@forEach
-
-            val existing = mergedHeroes[cardId]
-            val aliases = buildSet {
-                existing?.aliases
-                    ?.map(String::trim)
-                    ?.filter(String::isNotBlank)
-                    ?.forEach(::add)
-                englishName.takeIf(String::isNotBlank)?.let(::add)
-                localizedName.takeIf(String::isNotBlank)?.let(::add)
-                existing?.name?.trim()?.takeIf(String::isNotBlank)?.let(::add)
-                existing?.localizedName?.trim()?.takeIf(String::isNotBlank)?.let(::add)
-            }.toList()
-
-            mergedHeroes[cardId] = BattlegroundHeroNameEntry(
-                heroCardId = cardId,
-                name = existing?.name?.takeIf(String::isNotBlank)
-                    ?: englishName.takeIf(String::isNotBlank)
-                    ?: localizedName,
-                localizedName = existing?.localizedName?.takeIf(String::isNotBlank)
-                    ?: localizedName,
-                aliases = aliases
-            ).normalize()
-        }
-
-        return baseIndex.copy(
-            heroes = mergedHeroes.values.sortedBy(BattlegroundHeroNameEntry::heroCardId)
-        )
-    }
-
-    private fun BattlegroundHeroNameEntry.normalize(): BattlegroundHeroNameEntry {
-        val normalizedAliases = buildList {
-            aliases.map(String::trim)
-                .filter(String::isNotBlank)
-                .forEach(::add)
-            name.trim().takeIf(String::isNotBlank)?.let(::add)
-            localizedName.trim().takeIf(String::isNotBlank)?.let(::add)
-        }.distinct()
-
-        return copy(
-            name = name.trim(),
-            localizedName = localizedName.trim(),
-            aliases = normalizedAliases
-        )
-    }
-
     companion object {
         private const val ASSET_FILE = "strategies_zerotoheroes_zhCN.json"
-        private const val SEASON_LINEUP_ASSET_FILE = "s13_lineup_variants_zhCN.json"
-        private const val CARD_METADATA_ASSET_FILE = "bgs_card_metadata.json"
-        private const val HERO_NAME_INDEX_ASSET = "bgs_hero_name_index.json"
         private const val CACHE_FILE = "strategies_cache.json"
-        private const val CARD_RULES_CACHE_FILE = "card_rules_cache.json"
-        private const val CARD_METADATA_CACHE_FILE = "bgs_card_metadata_cache.json"
-        private const val CARD_STATS_CACHE_FILE = "card_stats_cache.json"
-        private const val HERO_STATS_CACHE_FILE = "hero_stats_cache.json"
-        private const val CARD_RULES_RESOURCE_KEY = "cardRules"
-        private const val CARD_METADATA_RESOURCE_KEY = "cardMetadata"
-        private const val CARD_STATS_RESOURCE_KEY = "cardStats"
-        private const val HERO_STATS_RESOURCE_KEY = "heroStats"
-        private const val HERO_STATS_URL =
-            "https://static.zerotoheroes.com/api/bgs/hero-stats/mmr-100/all-time/overview-from-hourly.gz.json"
     }
-
-    private data class SupportSyncResult(
-        val updated: Boolean = false,
-        val warnings: List<String> = emptyList()
-    )
-
-    private data class SupportFileSyncResult(
-        val raw: String? = null,
-        val updated: Boolean = false,
-        val warnings: List<String> = emptyList()
-    )
 }

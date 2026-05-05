@@ -15,6 +15,7 @@ from build_bgs_card_metadata import (
     DEFAULT_CARDS_ZH_URL,
     build_battleground_card_metadata,
 )
+import import_external_strategies
 from import_external_strategies import SourceUrls, convert, load_json
 
 
@@ -39,11 +40,6 @@ REQUIRED_COMP_FIELDS = {
     "required_tribes",
     "allowed_anomalies",
     "recommended_mode",
-    "overview",
-    "early_strategy",
-    "late_strategy",
-    "upgrade_turns",
-    "positioning_hints",
     "key_minions",
 }
 
@@ -103,6 +99,8 @@ def validate_catalog(
             raise ValueError(f"{locale} comp contains empty id")
         if not comp["key_minions"]:
             raise ValueError(f"{locale} comp {comp['id']} has no key minions")
+        if not str(comp.get("name") or "").strip():
+            raise ValueError(f"{locale} comp {comp.get('id')} has empty name")
 
     if locale == "zhCN":
         violations = collect_zh_catalog_localization_violations(comps)
@@ -124,7 +122,11 @@ def collect_zh_catalog_localization_violations(comps: list[dict[str, Any]]) -> l
 
     for comp in comps:
         comp_id = str(comp.get("id") or "<unknown>")
-        for field in ("overview", "early_strategy", "late_strategy", "when_to_commit"):
+        name = str(comp.get("name") or "").strip()
+        if name and contains_ascii_word(name):
+            violations.append(f"{comp_id}.name: {name}")
+
+        for field in ("when_to_commit",):
             value = str(comp.get(field) or "").strip()
             if value and contains_ascii_word(value):
                 violations.append(f"{comp_id}.{field}: {value}")
@@ -163,7 +165,7 @@ def build_catalog_with_fallback(
     translations: dict[str, Any] | None = None,
     *,
     strict_zh_localization: bool = False,
-) -> tuple[dict[str, Any], str, bool]:
+) -> tuple[dict[str, Any], str, bool, list[dict[str, str]]]:
     try:
         catalog = convert(
             source_urls,
@@ -171,12 +173,16 @@ def build_catalog_with_fallback(
             language=language,
             translations=translations,
         )
+        issues = [
+            {"comp_id": issue.comp_id, "reason": issue.reason}
+            for issue in import_external_strategies.LAST_CONVERSION_ISSUES
+        ]
         validate_catalog(
             catalog,
             language,
             strict_zh_localization=strict_zh_localization,
         )
-        return catalog, source_urls.strategies, False
+        return catalog, source_urls.strategies, False, issues
     except Exception as error:
         if not fallback_path.exists():
             raise
@@ -189,7 +195,7 @@ def build_catalog_with_fallback(
             language,
             strict_zh_localization=strict_zh_localization,
         )
-        return catalog, str(fallback_path), True
+        return catalog, str(fallback_path), True, []
 
 
 def build_bundle(
@@ -212,7 +218,7 @@ def build_bundle(
     timestamp = datetime.now(timezone.utc)
     base_version = timestamp.strftime("%Y.%m.%d")
 
-    zh_catalog, zh_catalog_source, zh_used_fallback = build_catalog_with_fallback(
+    zh_catalog, zh_catalog_source, zh_used_fallback, zh_issues = build_catalog_with_fallback(
         SourceUrls(
             strategies=strategies_source,
             locale=locale_zh_source,
@@ -225,7 +231,7 @@ def build_bundle(
         translations=load_json(translations_zh_source),
         strict_zh_localization=strict_zh_localization,
     )
-    en_catalog, en_catalog_source, en_used_fallback = build_catalog_with_fallback(
+    en_catalog, en_catalog_source, en_used_fallback, en_issues = build_catalog_with_fallback(
         SourceUrls(
             strategies=strategies_source,
             locale=locale_en_source,
@@ -333,13 +339,19 @@ def build_bundle(
             },
         },
     }
+    build_notes: dict[str, Any] = {}
     if zh_used_fallback or en_used_fallback:
-        manifest["build_notes"] = {
-            "strategy_catalog_fallback": {
-                "zhCN": zh_used_fallback,
-                "enUS": en_used_fallback,
-            }
+        build_notes["strategy_catalog_fallback"] = {
+            "zhCN": zh_used_fallback,
+            "enUS": en_used_fallback,
         }
+    if zh_issues or en_issues:
+        build_notes["strategy_catalog_issues"] = {
+            "zhCN": zh_issues,
+            "enUS": en_issues,
+        }
+    if build_notes:
+        manifest["build_notes"] = build_notes
     write_json(output_dir / "manifest.json", manifest)
 
     (output_dir / ".nojekyll").write_text("", encoding="utf-8")
