@@ -3,3 +3,7 @@
 /app/build/
 /build/
 /local.properties
+/.agents
+/.codex
+/.trellis
+
