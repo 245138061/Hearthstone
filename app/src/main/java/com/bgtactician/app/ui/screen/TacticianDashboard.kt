@@ -1,9 +1,11 @@
 package com.bgtactician.app.ui.screen
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -18,7 +20,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -58,6 +63,7 @@ import com.bgtactician.app.data.model.KeyMinion
 import com.bgtactician.app.data.model.PositioningHint
 import com.bgtactician.app.data.model.StrategyComp
 import com.bgtactician.app.data.model.Tribe
+import com.bgtactician.app.data.repository.MinionTribeIndex
 import com.bgtactician.app.data.repository.StrategyEngine
 import com.bgtactician.app.viewmodel.DashboardUiState
 
@@ -75,6 +81,15 @@ private val OverlayDrawerStroke = Color(0x7AFFD45B)
 private val OverlayDrawerAccent = Color(0xFFFFD45B)
 private val OverlayDrawerText = Color(0xFFFFF1C9)
 private val OverlayDrawerSubtext = Color(0xFFB3C2DA)
+
+private fun dashboardCardColor(overlayMode: Boolean): Color =
+    if (overlayMode) DashboardCard.copy(alpha = 0.6f) else DashboardCard
+
+private fun dashboardRaisedColor(overlayMode: Boolean): Color =
+    if (overlayMode) DashboardRaised.copy(alpha = 0.66f) else DashboardRaised
+
+private fun overlayPanelContainerColor(overlayMode: Boolean): Color =
+    if (overlayMode) OverlayDrawerInset.copy(alpha = 0.62f) else OverlayDrawerInset
 
 @Composable
 fun TacticianDashboard(
@@ -96,6 +111,8 @@ fun TacticianDashboard(
             selectedTribes = workingTribes
         )
     }
+    val context = androidx.compose.ui.platform.LocalContext.current.applicationContext
+    val minionTribesByCardId = remember(context) { MinionTribeIndex.get(context) }
     val selectedStrategy = displayedStrategies.firstOrNull { it.id == workingSelectedStrategyId }
         ?: displayedStrategies.firstOrNull()
 
@@ -158,7 +175,7 @@ fun TacticianDashboard(
                 Modifier.fillMaxSize()
             },
             shape = RoundedCornerShape(if (overlayMode) 28.dp else 0.dp),
-            colors = CardDefaults.cardColors(containerColor = OverlayDrawerInset),
+            colors = CardDefaults.cardColors(containerColor = overlayPanelContainerColor(overlayMode)),
             elevation = CardDefaults.cardElevation(defaultElevation = if (overlayMode) 14.dp else 0.dp)
         ) {
             Box(
@@ -168,8 +185,8 @@ fun TacticianDashboard(
                         brush = Brush.verticalGradient(
                             colors = listOf(
                                 OverlayDrawerAccent.copy(alpha = 0.12f),
-                                OverlayDrawerCore,
-                                OverlayDrawerInset
+                                OverlayDrawerCore.copy(alpha = if (overlayMode) 0.56f else 1f),
+                                OverlayDrawerInset.copy(alpha = if (overlayMode) 0.62f else 1f)
                             )
                         )
                     )
@@ -236,6 +253,7 @@ fun TacticianDashboard(
                                 strategies = displayedStrategies,
                                 selectedStrategyId = selectedStrategy?.id,
                                 selectedTribeCount = workingTribes.size,
+                                selectedTribes = workingTribes,
                                 onSelectStrategy = { strategyId ->
                                     workingSelectedStrategyId = strategyId
                                     strategyDirty = true
@@ -315,7 +333,7 @@ private fun DashboardTabs(
             .fillMaxWidth()
             .height(if (compactMode) 40.dp else 44.dp)
             .clip(RoundedCornerShape(14.dp))
-            .background(OverlayDrawerShell.copy(alpha = 0.78f))
+            .background(OverlayDrawerShell.copy(alpha = 0.68f))
             .padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
@@ -461,7 +479,7 @@ private fun ManualSetupTab(
                             color = if (selected) {
                                 tribeAccent(tribe).copy(alpha = 0.20f)
                             } else {
-                                OverlayDrawerShell.copy(alpha = 0.74f)
+                                OverlayDrawerShell.copy(alpha = 0.64f)
                             },
                             border = androidx.compose.foundation.BorderStroke(
                                 1.dp,
@@ -516,8 +534,12 @@ private fun StrategyListTab(
     strategies: List<StrategyComp>,
     selectedStrategyId: String?,
     selectedTribeCount: Int,
+    selectedTribes: Set<Tribe>,
     onSelectStrategy: (String) -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current.applicationContext
+    val minionTribesByCardId = remember(context) { MinionTribeIndex.get(context) }
+
     if (strategies.isEmpty()) {
         DashboardEmptyState(
             title = if (selectedTribeCount < 5) "先选满 5 个种族" else "当前没有匹配流派",
@@ -530,64 +552,125 @@ private fun StrategyListTab(
         return
     }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        contentPadding = PaddingValues(bottom = 12.dp)
-    ) {
-        items(strategies, key = StrategyComp::id) { strategy ->
-            val selected = strategy.id == selectedStrategyId
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onSelectStrategy(strategy.id) },
-                shape = RoundedCornerShape(20.dp),
-                color = if (selected) DashboardRaised else DashboardCard,
-                border = androidx.compose.foundation.BorderStroke(
-                    1.dp,
-                    if (selected) OverlayDrawerAccent.copy(alpha = 0.6f) else DashboardLine.copy(alpha = 0.26f)
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(14.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val landscapeList = maxWidth > maxHeight
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            contentPadding = PaddingValues(bottom = 12.dp)
+        ) {
+            items(strategies, key = StrategyComp::id) { strategy ->
+                val selected = strategy.id == selectedStrategyId
+                val ready = remember(strategy, selectedTribes, minionTribesByCardId) {
+                    StrategyEngine.isReady(
+                        strategy = strategy,
+                        selectedTribes = selectedTribes,
+                        minionTribesByCardId = minionTribesByCardId
+                    )
+                }
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onSelectStrategy(strategy.id) },
+                    shape = RoundedCornerShape(20.dp),
+                    color = if (selected) dashboardRaisedColor(overlayMode = true) else dashboardCardColor(overlayMode = true),
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        if (selected) OverlayDrawerAccent.copy(alpha = 0.6f) else DashboardLine.copy(alpha = 0.26f)
+                    )
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Top
-                    ) {
-                        Column(
-                            modifier = Modifier.weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                    if (landscapeList) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                            horizontalArrangement = Arrangement.spacedBy(14.dp),
+                            verticalAlignment = Alignment.Top
                         ) {
-                            Text(
-                                text = strategy.name,
-                                color = OverlayDrawerText,
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Black
-                            )
-                        }
-                        Spacer(modifier = Modifier.size(12.dp))
-                        TierBadge(strategy.tier)
-                    }
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.Top
+                                ) {
+                                    Text(
+                                        text = strategy.name,
+                                        color = OverlayDrawerText,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Black,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    Spacer(modifier = Modifier.size(12.dp))
+                                    TierBadge(strategy.tier)
+                                }
 
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        strategy.requiredTribes
-                            .mapNotNull(Tribe::fromWireName)
-                            .forEach { tribe ->
-                                DetailChip(tribe.label, tribeAccent(tribe))
+                                FlowRow(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    ReadyChip(ready)
+                                    strategy.requiredTribes
+                                        .mapNotNull(Tribe::fromWireName)
+                                        .forEach { tribe ->
+                                            DetailChip(tribe.label, tribeAccent(tribe))
+                                        }
+                                }
                             }
-                    }
 
-                    if (strategy.keyMinions.isNotEmpty()) {
-                        MinionStrip(
-                            minions = strategy.keyMinions.take(5),
-                            borderColor = if (selected) OverlayDrawerAccent else DashboardLine
-                        )
+                            if (strategy.keyMinions.isNotEmpty()) {
+                                MinionStrip(
+                                    minions = strategy.keyMinions.take(5),
+                                    borderColor = if (selected) OverlayDrawerAccent else DashboardLine,
+                                    modifier = Modifier
+                                        .padding(top = 4.dp)
+                                        .widthIn(min = 172.dp)
+                                )
+                            }
+                        }
+                    } else {
+                        Column(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                Text(
+                                    text = strategy.name,
+                                    color = OverlayDrawerText,
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Black,
+                                    modifier = Modifier.weight(1f),
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Spacer(modifier = Modifier.size(12.dp))
+                                TierBadge(strategy.tier)
+                            }
+
+                            if (strategy.keyMinions.isNotEmpty()) {
+                                MinionStrip(
+                                    minions = strategy.keyMinions.take(5),
+                                    borderColor = if (selected) OverlayDrawerAccent else DashboardLine
+                                )
+                            }
+
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                ReadyChip(ready)
+                                strategy.requiredTribes
+                                    .mapNotNull(Tribe::fromWireName)
+                                    .forEach { tribe ->
+                                        DetailChip(tribe.label, tribeAccent(tribe))
+                                    }
+                            }
+                        }
                     }
                 }
             }
@@ -607,53 +690,188 @@ private fun StrategyDetailTab(
         return
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        DashboardPanel(
-            title = strategy.name,
-            icon = Icons.AutoMirrored.Outlined.MenuBook
-        ) {
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                TierBadge(strategy.tier)
-                strategy.requiredTribes
-                    .mapNotNull(Tribe::fromWireName)
-                    .forEach { tribe ->
-                        DetailChip(tribe.label, tribeAccent(tribe))
-                    }
-            }
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val landscape = maxWidth > maxHeight
+        val coreMinions = remember(strategy) {
+            strategy.keyMinions.filter { it.statusRaw == "CORE" }.ifEmpty { strategy.keyMinions.take(4) }
         }
-
-        if (strategy.keyMinions.isNotEmpty()) {
-            DashboardPanel(
-                title = "关键卡",
-                icon = Icons.AutoMirrored.Outlined.MenuBook
+        val finalBoardMinions = remember(strategy) {
+            strategy.keyMinions
+                .sortedWith(
+                    compareBy<KeyMinion> { if (it.statusRaw == "CORE") 0 else 1 }
+                        .thenByDescending { it.finalBoardWeight ?: 0 }
+                        .thenBy { it.techLevel }
+                )
+                .take(7)
+        }
+        if (landscape) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                strategy.keyMinions.forEach { minion ->
-                    KeyMinionLine(minion)
+                Column(
+                    modifier = Modifier
+                        .weight(0.56f)
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    DashboardPanel(
+                        modifier = Modifier.weight(0.48f),
+                        title = "核心卡牌",
+                        icon = Icons.AutoMirrored.Outlined.MenuBook,
+                        outlined = false
+                    ) {
+                        CoreMinionGallery(
+                            minions = coreMinions,
+                            itemSize = 84.dp,
+                            topPadding = 18.dp,
+                            startPadding = 42.dp
+                        )
+                    }
+
+                    DashboardPanel(
+                        modifier = Modifier.weight(0.52f),
+                        title = "成型阵容",
+                        icon = Icons.AutoMirrored.Outlined.MenuBook,
+                        outlined = false
+                    ) {
+                        MinionCardGallery(
+                            minions = finalBoardMinions,
+                            cardWidth = 50.dp,
+                            topPadding = 24.dp
+                        )
+                    }
+                }
+
+                if (strategy.keyMinions.isNotEmpty()) {
+                    DashboardPanel(
+                        modifier = Modifier
+                            .weight(0.44f)
+                            .fillMaxHeight(),
+                        title = "关键卡",
+                        icon = Icons.AutoMirrored.Outlined.MenuBook
+                    ) {
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            contentPadding = PaddingValues(bottom = 4.dp)
+                        ) {
+                            items(strategy.keyMinions, key = KeyMinion::id) { minion ->
+                                KeyMinionLine(minion)
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                DashboardPanel(
+                    title = "核心卡牌",
+                    icon = Icons.AutoMirrored.Outlined.MenuBook,
+                    outlined = false
+                ) {
+                    CoreMinionGallery(
+                        minions = coreMinions,
+                        itemSize = 92.dp,
+                        topPadding = 18.dp,
+                        startPadding = 38.dp
+                    )
+                }
+
+                DashboardPanel(
+                    title = "成型阵容",
+                    icon = Icons.AutoMirrored.Outlined.MenuBook,
+                    outlined = false
+                ) {
+                    MinionCardGallery(
+                        minions = finalBoardMinions,
+                        cardWidth = 58.dp,
+                        topPadding = 20.dp
+                    )
+                }
+
+                if (strategy.keyMinions.isNotEmpty()) {
+                    DashboardPanel(
+                        title = "关键卡",
+                        icon = Icons.AutoMirrored.Outlined.MenuBook
+                    ) {
+                        strategy.keyMinions.forEach { minion ->
+                            KeyMinionLine(minion)
+                        }
+                    }
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun CoreMinionGallery(
+    minions: List<KeyMinion>,
+    itemSize: androidx.compose.ui.unit.Dp,
+    topPadding: androidx.compose.ui.unit.Dp = 14.dp,
+    startPadding: androidx.compose.ui.unit.Dp = 36.dp
+) {
+    FlowRow(
+        modifier = Modifier.padding(start = startPadding, top = topPadding),
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        minions.forEach { minion ->
+            MinionHeadshot(
+                minion = minion,
+                modifier = Modifier.requiredSize(itemSize),
+                borderColor = DashboardGold
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun MinionCardGallery(
+    minions: List<KeyMinion>,
+    cardWidth: androidx.compose.ui.unit.Dp,
+    topPadding: androidx.compose.ui.unit.Dp = 14.dp,
+    startPadding: androidx.compose.ui.unit.Dp = 54.dp
+) {
+    FlowRow(
+        modifier = Modifier.padding(start = startPadding, top = topPadding),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        minions.forEach { minion ->
+            MinionFullCard(
+                minion = minion,
+                modifier = Modifier.width(cardWidth)
+            )
+        }
+    }
+}
+
 @Composable
 private fun DashboardPanel(
+    modifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
+    outlined: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(
+        modifier = modifier,
         shape = RoundedCornerShape(22.dp),
-        color = DashboardCard,
-        border = androidx.compose.foundation.BorderStroke(1.dp, DashboardLine.copy(alpha = 0.32f))
+        color = dashboardCardColor(overlayMode = true),
+        border = if (outlined) {
+            androidx.compose.foundation.BorderStroke(1.dp, DashboardLine.copy(alpha = 0.32f))
+        } else {
+            null
+        }
     ) {
         Column(
             modifier = Modifier.padding(14.dp),
@@ -710,7 +928,7 @@ private fun DashboardEmptyState(
     ) {
         Surface(
             shape = RoundedCornerShape(22.dp),
-            color = DashboardCard,
+            color = dashboardCardColor(overlayMode = true),
             border = androidx.compose.foundation.BorderStroke(1.dp, DashboardLine.copy(alpha = 0.28f))
         ) {
             Column(
@@ -799,22 +1017,31 @@ private fun TierBadge(tier: String) {
 }
 
 @Composable
+private fun ReadyChip(ready: Boolean) {
+    if (ready) {
+        DetailChip("成型", DashboardMint)
+    } else {
+        DetailChip("待成型", DashboardCoral)
+    }
+}
+
+@Composable
 private fun KeyMinionLine(minion: KeyMinion) {
     Surface(
         shape = RoundedCornerShape(18.dp),
-        color = OverlayDrawerShell.copy(alpha = 0.7f),
+        color = OverlayDrawerShell.copy(alpha = 0.38f),
         border = androidx.compose.foundation.BorderStroke(1.dp, DashboardLine.copy(alpha = 0.2f))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp),
+                .padding(horizontal = 10.dp, vertical = 9.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             MinionHeadshot(
                 minion = minion,
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(44.dp),
                 borderColor = DashboardGold
             )
             Column(
@@ -847,9 +1074,11 @@ private fun KeyMinionLine(minion: KeyMinion) {
 @Composable
 private fun MinionStrip(
     minions: List<KeyMinion>,
-    borderColor: Color
+    borderColor: Color,
+    modifier: Modifier = Modifier
 ) {
     Row(
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -860,6 +1089,70 @@ private fun MinionStrip(
                 borderColor = borderColor
             )
         }
+    }
+}
+
+@Composable
+private fun MinionFullCard(
+    minion: KeyMinion,
+    modifier: Modifier = Modifier
+) {
+    val models = remember(minion.cardId, minion.imageUrl) {
+        buildList {
+            minion.cardId?.trim()?.takeIf(String::isNotBlank)?.let {
+                add("https://static.firestoneapp.com/cards/bgs/zhCN/256/$it.png")
+                add("https://static.firestoneapp.com/cards/bgs/enUS/256/$it.png")
+            }
+            minion.imageUrl?.trim()?.takeIf(String::isNotBlank)?.let(::add)
+            minion.cardId?.trim()?.takeIf(String::isNotBlank)?.let {
+                add("https://art.hearthstonejson.com/v1/render/latest/zhCN/256x/$it.png")
+                add("https://art.hearthstonejson.com/v1/render/latest/enUS/256x/$it.png")
+                add("https://art.hearthstonejson.com/v1/256x/$it.jpg")
+            }
+        }
+    }
+    var modelIndex by remember(models) { mutableStateOf(0) }
+    val currentModel = models.getOrNull(modelIndex)
+
+    val scaledModifier = modifier.aspectRatio(256f / 388f)
+
+    if (currentModel == null) {
+        Box(
+            modifier = scaledModifier.clip(RoundedCornerShape(12.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            MinionArtworkFallback(minion)
+        }
+    } else {
+        SubcomposeAsyncImage(
+            model = currentModel,
+            contentDescription = minion.name,
+            modifier = scaledModifier,
+            contentScale = ContentScale.FillBounds,
+            loading = {
+                Box(
+                    modifier = scaledModifier.clip(RoundedCornerShape(12.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    MinionArtworkFallback(minion)
+                }
+            },
+            error = {
+                val nextIndex = modelIndex + 1
+                if (nextIndex < models.size) {
+                    LaunchedEffect(nextIndex) {
+                        modelIndex = nextIndex
+                    }
+                } else {
+                    Box(
+                        modifier = scaledModifier.clip(RoundedCornerShape(12.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        MinionArtworkFallback(minion)
+                    }
+                }
+            }
+        )
     }
 }
 

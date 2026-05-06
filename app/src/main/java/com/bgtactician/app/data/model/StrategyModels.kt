@@ -86,6 +86,7 @@ enum class Tribe(val wireName: String, val label: String, val shortLabel: String
             "DEMON" -> DEMON
             "DRAGON" -> DRAGON
             "ELEMENTAL" -> ELEMENTAL
+            "MECHANICAL" -> MECH
             "MECH" -> MECH
             "MURLOC" -> MURLOC
             "NAGA" -> NAGA

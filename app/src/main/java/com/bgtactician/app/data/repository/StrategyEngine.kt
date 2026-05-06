@@ -1,5 +1,6 @@
 package com.bgtactician.app.data.repository
 
+import com.bgtactician.app.data.model.KeyMinion
 import com.bgtactician.app.data.model.StrategyComp
 import com.bgtactician.app.data.model.Tribe
 
@@ -40,5 +41,26 @@ object StrategyEngine {
         "中" -> 1
         "高" -> 2
         else -> 3
+    }
+
+    fun isReady(
+        strategy: StrategyComp,
+        selectedTribes: Set<Tribe>,
+        minionTribesByCardId: Map<String, Set<Tribe>>
+    ): Boolean {
+        if (selectedTribes.size != REQUIRED_TRIBE_COUNT) {
+            return false
+        }
+
+        val requiredCoreTribes = strategy.keyMinions
+            .filter { it.statusRaw == "CORE" }
+            .flatMap { minion ->
+                minion.cardId
+                    ?.let(minionTribesByCardId::get)
+                    .orEmpty()
+            }
+            .toSet()
+
+        return requiredCoreTribes.all(selectedTribes::contains)
     }
 }
